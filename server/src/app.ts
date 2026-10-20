@@ -105,8 +105,8 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Start Server (only when run directly as a Node server, not when imported by Vercel serverless handler)
-if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+// Start Server
+if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`🚀 FormLocal Server running on http://localhost:${PORT}`);
     console.log(`📡 CORS allowed for: ${CLIENT_URL}`);
