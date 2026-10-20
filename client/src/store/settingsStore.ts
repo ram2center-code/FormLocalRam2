@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import apiClient from '../api/axios';
 
 export type SystemFontType = 'Sarabun' | 'IBMPlexSans';
 
@@ -91,23 +90,16 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   fetchSettings: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await apiClient.get('/settings');
-      if (response.data?.success && response.data?.data?.systemFont) {
-        const font: SystemFontType =
-          response.data.data.systemFont === 'IBMPlexSans' ? 'IBMPlexSans' : 'Sarabun';
-        
-        localStorage.setItem(LOCAL_STORAGE_KEY, font);
-        applyFontToDom(font);
-
-        set({
-          systemFont: font,
-          updatedAt: response.data.data.updatedAt || null,
-          updatedBy: response.data.data.updatedBy || null,
-          isLoading: false,
-        });
-      }
-    } catch (err: any) {
-      console.warn('Could not sync system settings from server, using local preference:', err);
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY) as SystemFontType;
+      const font: SystemFontType = saved === 'IBMPlexSans' ? 'IBMPlexSans' : 'Sarabun';
+      applyFontToDom(font);
+      set({
+        systemFont: font,
+        updatedAt: null,
+        updatedBy: null,
+        isLoading: false,
+      });
+    } catch {
       set({ isLoading: false });
     }
   },
@@ -115,23 +107,18 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   setSystemFont: async (font: SystemFontType) => {
     set({ isSaving: true, error: null });
     try {
-      const response = await apiClient.patch('/settings', { systemFont: font });
-      if (response.data?.success) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, font);
-        applyFontToDom(font);
+      localStorage.setItem(LOCAL_STORAGE_KEY, font);
+      applyFontToDom(font);
 
-        set({
-          systemFont: font,
-          updatedAt: response.data.data?.updatedAt || new Date().toISOString(),
-          updatedBy: response.data.data?.updatedBy || 'ADMIN',
-          isSaving: false,
-        });
-        return true;
-      }
-      set({ isSaving: false });
-      return false;
+      set({
+        systemFont: font,
+        updatedAt: new Date().toISOString(),
+        updatedBy: 'ผู้ดูแลระบบ',
+        isSaving: false,
+      });
+      return true;
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'ไม่สามารถบันทึกการตั้งค่าฟอนต์ได้';
+      const msg = err.message || 'ไม่สามารถบันทึกการตั้งค่าฟอนต์ได้';
       set({ isSaving: false, error: msg });
       throw new Error(msg);
     }
