@@ -15,17 +15,31 @@ import bcrypt from "bcryptjs";
 // server/src/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 var DEFAULT_SUPABASE_URL = "postgresql://postgres.pgokdsqumwbitqtptuom:ram2Ram2@10666@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres";
-var databaseUrl = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
 var globalForPrisma = globalThis;
-var prisma = globalForPrisma.prisma ?? new PrismaClient({
-  datasources: {
-    db: {
-      url: databaseUrl
+function getPrismaClient() {
+  if (!globalForPrisma.prisma) {
+    const databaseUrl = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
+    globalForPrisma.prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: databaseUrl
+        }
+      },
+      log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"]
+    });
+  }
+  return globalForPrisma.prisma;
+}
+var prisma = new Proxy({}, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = client[prop];
+    if (typeof value === "function") {
+      return value.bind(client);
     }
-  },
-  log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"]
+    return value;
+  }
 });
-globalForPrisma.prisma = prisma;
 
 // server/src/utils/jwt.ts
 import jwt from "jsonwebtoken";
@@ -2878,6 +2892,9 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+app.get(["/api/ping", "/ping"], (_req, res) => {
+  res.status(200).send("pong");
+});
 app.get(["/api/health", "/health"], (_req, res) => {
   res.status(200).json({
     status: "healthy",

@@ -55,6 +55,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // 3. Health Check & Network Info
+app.get(['/api/ping', '/ping'], (_req: Request, res: Response) => {
+  res.status(200).send('pong');
+});
+
 app.get(['/api/health', '/health'], (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'healthy',
