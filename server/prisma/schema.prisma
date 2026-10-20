@@ -1,0 +1,172 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum FormVisibility {
+  PRIVATE
+  DEPARTMENT
+  PUBLIC
+}
+
+enum FormType {
+  GENERAL
+  SCORE_TEST
+}
+
+enum FormStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssignTarget {
+  USER
+  DEPARTMENT
+  ALL
+}
+
+enum Requirement {
+  REQUIRED
+  OPTIONAL
+}
+
+model Department {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  users           User[]
+  forms           Form[]
+  formAssignments FormAssignment[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model User {
+  id              String           @id @default(cuid())
+  username        String           @unique
+  email           String           @unique
+  passwordHash    String
+  fullName        String
+  role            Role             @default(USER)
+  isActive        Boolean          @default(true)
+  departmentId    String?
+  department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  forms           Form[]           @relation("FormOwner")
+  submissions     Submission[]
+  formShares      FormShare[]
+  formAssignments FormAssignment[] @relation("AssignedToUser")
+  assignedByMe    FormAssignment[] @relation("AssignedByUser")
+  auditLogs       AuditLog[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Form {
+  id                   String           @id @default(cuid())
+  title                String
+  description          String?
+  type                 FormType         @default(GENERAL)
+  visibility           FormVisibility   @default(PRIVATE)
+  status               FormStatus       @default(DRAFT)
+  ownerId              String
+  owner                User             @relation("FormOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  departmentId         String?
+  department           Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  isAcceptingResponses Boolean          @default(true)
+  requireLogin         Boolean          @default(true)
+  pdpaEnabled          Boolean          @default(false)
+  pdpaTitle            String?
+  pdpaContent          String?          @db.Text
+  openAt               DateTime?
+  closeAt              DateTime?
+  allowMultiple        Boolean          @default(true)
+  maxAttempts          Int?
+  deletedAt            DateTime?
+  versions             FormVersion[]
+  shares               FormShare[]
+  assignments          FormAssignment[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([deletedAt])
+}
+
+model FormVersion {
+  id          String       @id @default(cuid())
+  formId      String
+  form        Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
+  version     Int          @default(1)
+  schema      Json
+  scoreConfig Json?
+  submissions Submission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([formId, version])
+}
+
+model FormShare {
+  id        String   @id @default(cuid())
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([formId, userId])
+}
+
+model FormAssignment {
+  id           String       @id @default(cuid())
+  formId       String
+  form         Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
+  targetType   AssignTarget
+  userId       String?
+  user         User?        @relation("AssignedToUser", fields: [userId], references: [id], onDelete: Cascade)
+  departmentId String?
+  department   Department?  @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  requirement  Requirement  @default(REQUIRED)
+  dueDate      DateTime?
+  assignedById String
+  assignedBy   User         @relation("AssignedByUser", fields: [assignedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Submission {
+  id            String      @id @default(cuid())
+  formVersionId String
+  formVersion   FormVersion @relation(fields: [formVersionId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  answers       Json
+  score         Float?
+  maxScore      Float?
+  passed        Boolean?
+  grade         String?
+  pdpaConsent   Boolean     @default(false)
+  submittedAt   DateTime    @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  meta      Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}

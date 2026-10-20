@@ -1,0 +1,14 @@
+{
+  "name": "formlocal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix server run prisma:generate && npm --prefix server run build && npm --prefix client run build",
+    "vercel-build": "npm --prefix server run prisma:generate && npm --prefix server run build && npm --prefix client run build",
+    "dev": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "server": "npm --prefix server run dev"
+  }
+}
