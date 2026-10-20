@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "src/app.ts",
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "prisma generate && tsc",
