@@ -35,10 +35,11 @@ export const LoginPage: React.FC = () => {
       style={{
         minHeight: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f0f2f5',
-        padding: '16px',
+        padding: '24px 16px',
       }}
     >
       <Card
@@ -173,10 +174,11 @@ export const LoginPage: React.FC = () => {
       {/* Footer */}
       <div
         style={{
-          marginTop: 18,
+          marginTop: 24,
           textAlign: 'center',
-          color: 'rgba(255, 255, 255, 0.85)',
+          color: token.colorTextTertiary,
           fontSize: 13,
+          letterSpacing: '0.2px',
         }}
       >
         FormLocal ©{new Date().getFullYear()} — Powered By: <strong>Pantamit.Y</strong>
