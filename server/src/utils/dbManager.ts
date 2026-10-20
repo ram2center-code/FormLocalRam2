@@ -95,23 +95,24 @@ export async function pingDatabase(url: string): Promise<{ ok: boolean; latencyM
   }
 }
 
+const DEFAULT_SUPABASE_URL =
+  'postgresql://postgres.pgokdsqumwbitqtptuom:ram2Ram2@10666@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres';
+
 /**
  * ตรวจสอบสถานะการเชื่อมต่อฐานข้อมูลปัจจุบัน
  */
 export async function getDbStatus(): Promise<DbStatusResponse> {
-  const activeDb = (process.env.ACTIVE_DB as DatabaseTarget) || 'LOCAL';
-  const currentUrl = process.env.DATABASE_URL || '';
-  const supabaseUrl = process.env.DATABASE_URL_SUPABASE || '';
-  const localUrl = process.env.DATABASE_URL_LOCAL || '';
+  const activeDb: DatabaseTarget = 'SUPABASE';
+  const currentUrl = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
 
   const pingResult = await pingDatabase(currentUrl);
 
   return {
     activeDb,
     currentHost: extractHostFromUrl(currentUrl),
-    isSupabaseConfigured: !!supabaseUrl && supabaseUrl.trim().length > 15,
-    maskedSupabaseUrl: maskDatabaseUrl(supabaseUrl),
-    hasLocalConfigured: !!localUrl,
+    isSupabaseConfigured: true,
+    maskedSupabaseUrl: maskDatabaseUrl(currentUrl),
+    hasLocalConfigured: false,
     isConnected: pingResult.ok,
     latencyMs: pingResult.latencyMs ?? null,
     error: pingResult.error,
@@ -125,8 +126,13 @@ export async function switchDatabaseTarget(
   target: DatabaseTarget,
   newSupabaseUrl?: string
 ): Promise<{ success: boolean; message: string; activeDb: DatabaseTarget; latencyMs?: number }> {
-  // อ่านไฟล์ .env ปัจจุบัน
-  let envContent = fs.readFileSync(ENV_PATH, 'utf-8');
+  // อ่านไฟล์ .env ปัจจุบัน (หากมี)
+  let envContent = '';
+  if (fs.existsSync(ENV_PATH)) {
+    try {
+      envContent = fs.readFileSync(ENV_PATH, 'utf-8');
+    } catch {}
+  }
 
   let localUrl = process.env.DATABASE_URL_LOCAL || 'postgresql://postgres:ram2%231234@localhost:5432/formlocal_db?schema=public';
   let supabaseUrl = newSupabaseUrl?.trim() || process.env.DATABASE_URL_SUPABASE || '';
