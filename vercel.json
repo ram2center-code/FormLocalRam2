@@ -7,9 +7,7 @@
     "server": {
       "root": "server",
       "framework": "express",
-      "entrypoint": "dist/app.js",
-      "installCommand": "npm install",
-      "buildCommand": "npm run build"
+      "entrypoint": "app.js"
     }
   },
   "rewrites": [
