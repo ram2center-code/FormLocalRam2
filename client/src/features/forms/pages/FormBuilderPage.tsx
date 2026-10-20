@@ -57,6 +57,7 @@ import {
   GlobalOutlined,
   ApartmentOutlined,
   LockOutlined,
+  UserOutlined,
   CheckOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
@@ -146,6 +147,7 @@ interface SortableFieldItemProps {
   onAddFieldToLayer: (layerId: string, type: FieldType) => void;
   onMoveChild: (layerId: string, childIndex: number, direction: 'up' | 'down') => void;
   onDeleteChild: (childId: string) => void;
+  onChangeFieldType: (fieldId: string, newType: FieldType) => void;
   index: number;
   isActive: boolean;
   onSelect: () => void;
@@ -165,7 +167,8 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
   onAddFieldToLayer,
   onMoveChild,
   onDeleteChild,
-  index,
+  onChangeFieldType,
+  index: _index,
   isActive,
   onSelect,
   onDelete,
@@ -382,10 +385,47 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <Tag color="cyan" style={{ fontSize: 11, margin: 0, padding: '0 4px' }}>
-                            {paletteItem?.label.split(' ')[0] || child.type}
-                          </Tag>
-                          <Tag color="default" style={{ fontSize: 11, margin: 0, padding: '0 4px' }}>
+                          <Dropdown
+                            menu={{
+                              items: QUESTION_PALETTE.map((p) => ({
+                                key: p.type,
+                                icon: p.icon,
+                                label: (
+                                  <span style={{ fontWeight: p.type === child.type ? 600 : 400, color: p.type === child.type ? '#1677ff' : undefined }}>
+                                    {p.label} {p.type === child.type ? '✓' : ''}
+                                  </span>
+                                ),
+                                onClick: () => onChangeFieldType(child.id, p.type),
+                              })),
+                            }}
+                            trigger={['click']}
+                          >
+                            <Tag
+                              color="cyan"
+                              style={{
+                                fontSize: 11,
+                                margin: 0,
+                                padding: '1px 6px',
+                                cursor: 'pointer',
+                                borderRadius: 4,
+                                border: '1px solid #87e8de',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 3,
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              title="คลิกเพื่อเปลี่ยนประเภทคำถามนี้"
+                            >
+                              <span>{paletteItem?.label.split(' ')[0] || child.type}</span>
+                              <DownOutlined style={{ fontSize: 9 }} />
+                            </Tag>
+                          </Dropdown>
+
+                          <Tag
+                            color="default"
+                            style={{ fontSize: 11, margin: 0, padding: '0 4px' }}
+                            title="ความกว้างของฟิลด์ในกล่อง"
+                          >
                             {child.colSpan === 24 ? 'เต็มแถว' : 'ครึ่งแถว (1/2)'}
                           </Tag>
                           {child.placeholder && (
@@ -430,6 +470,8 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
   }
 
   // กรณีคำถามทั่วไป Standalone
+  const standalonePalette = QUESTION_PALETTE.find((p) => p.type === field.type);
+
   return (
     <div ref={setNodeRef} style={style}>
       <Card
@@ -462,8 +504,43 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
             </div>
 
             <Text strong style={{ fontSize: 16 }}>
-              {index + 1}. {field.label || 'ระบุหัวข้อคำถาม'}
+              {field.label || 'ระบุหัวข้อคำถาม'}
             </Text>
+
+            <Dropdown
+              menu={{
+                items: QUESTION_PALETTE.map((p) => ({
+                  key: p.type,
+                  icon: p.icon,
+                  label: (
+                    <span style={{ fontWeight: p.type === field.type ? 600 : 400, color: p.type === field.type ? '#1677ff' : undefined }}>
+                      {p.label} {p.type === field.type ? '✓' : ''}
+                    </span>
+                  ),
+                  onClick: () => onChangeFieldType(field.id, p.type),
+                })),
+              }}
+              trigger={['click']}
+            >
+              <Tag
+                color="blue"
+                style={{
+                  borderRadius: 4,
+                  fontSize: 12,
+                  padding: '2px 8px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+                onClick={(e) => e.stopPropagation()}
+                title="คลิกเพื่อเปลี่ยนประเภทคำถาม"
+              >
+                {standalonePalette?.icon}
+                <span>{standalonePalette?.label.split(' ')[0] || field.type}</span>
+                <DownOutlined style={{ fontSize: 10 }} />
+              </Tag>
+            </Dropdown>
 
             {field.required && (
               <Tag color="red" style={{ borderRadius: 4, fontSize: 11, padding: '1px 6px' }}>
@@ -661,6 +738,7 @@ export const FormBuilderPage: React.FC = () => {
   const [formDescription, setFormDescription] = useState('');
   const [formType, setFormType] = useState<FormType>('GENERAL');
   const [formVisibility, setFormVisibility] = useState<FormVisibility>('PRIVATE');
+  const [requireLogin, setRequireLogin] = useState<boolean>(true);
   const [pdpaEnabled, setPdpaEnabled] = useState(false);
   const [pdpaTitle, setPdpaTitle] = useState(DEFAULT_PDPA_TITLE);
   const [pdpaContent, setPdpaContent] = useState(DEFAULT_PDPA_CONTENT);
@@ -687,6 +765,7 @@ export const FormBuilderPage: React.FC = () => {
       setFormDescription('');
       setFormType('GENERAL');
       setFormVisibility('PRIVATE');
+      setRequireLogin(true);
       setPdpaEnabled(false);
       setPdpaTitle(DEFAULT_PDPA_TITLE);
       setPdpaContent(DEFAULT_PDPA_CONTENT);
@@ -696,6 +775,7 @@ export const FormBuilderPage: React.FC = () => {
       setFormDescription(formDetail.description || '');
       setFormType(formDetail.type);
       setFormVisibility(formDetail.visibility || 'PRIVATE');
+      setRequireLogin(formDetail.requireLogin !== false);
       setPdpaEnabled(Boolean(formDetail.pdpaEnabled));
       setPdpaTitle(formDetail.pdpaTitle || DEFAULT_PDPA_TITLE);
       setPdpaContent(formDetail.pdpaContent || DEFAULT_PDPA_CONTENT);
@@ -720,6 +800,7 @@ export const FormBuilderPage: React.FC = () => {
         type: formType,
         visibility: formVisibility,
         departmentId: formVisibility === 'DEPARTMENT' ? (currentUser?.departmentId || undefined) : undefined,
+        requireLogin,
         pdpaEnabled,
         pdpaTitle,
         pdpaContent,
@@ -746,6 +827,7 @@ export const FormBuilderPage: React.FC = () => {
         type: formType,
         visibility: formVisibility,
         departmentId: formVisibility === 'DEPARTMENT' ? (formDetail?.departmentId || currentUser?.departmentId || undefined) : undefined,
+        requireLogin,
         pdpaEnabled,
         pdpaTitle,
         pdpaContent,
@@ -853,13 +935,14 @@ export const FormBuilderPage: React.FC = () => {
           ]
         : undefined;
 
+    const isChoiceQuestion = type === 'single_choice' || type === 'multi_choice';
     const newField: FormField = {
       id: newId,
       type,
-      label: `คำถามข้อที่ ${fields.filter((f) => f.type !== 'layer_box').length + 1}`,
+      label: '',
       required: false,
       options: defaultOptions,
-      points: isScoreTest ? 1 : undefined,
+      points: isScoreTest && isChoiceQuestion ? 1 : undefined,
     };
 
     setFields([...fields, newField]);
@@ -869,18 +952,17 @@ export const FormBuilderPage: React.FC = () => {
   // Layer Box Operations: Add Layer Box
   const handleAddLayerBox = () => {
     const newId = `layer_${Date.now()}`;
-    const currentBoxCount = fields.filter((f) => f.type === 'layer_box').length + 1;
     const newLayer: FormField = {
       id: newId,
       type: 'layer_box',
-      label: `กล่องที่ ${currentBoxCount}: กล่องข้อมูล`,
+      label: 'กล่องข้อมูล',
       description: '',
       required: false,
       columns: 2,
     };
     setFields([...fields, newLayer]);
     setActiveFieldId(newId);
-    message.success(`เพิ่มกล่องที่ ${currentBoxCount} เรียบร้อยแล้ว`);
+    message.success('เพิ่มกล่องข้อมูลเรียบร้อยแล้ว');
   };
 
   // Layer Box Operations: Add Child Info Template (ตรงตามตัวอย่างรูปเป๊ะๆ)
@@ -982,12 +1064,12 @@ export const FormBuilderPage: React.FC = () => {
     const newField: FormField = {
       id: newId,
       type,
-      label: `คำถามย่อย`,
+      label: `ช่องข้อมูล`,
       required: false,
       options: defaultOptions,
       layerId: layerId,
       colSpan: 12,
-      points: isScoreTest ? 1 : undefined,
+      points: undefined,
     };
 
     const layerChildren = fields.filter((f) => f.layerId === layerId);
@@ -1001,7 +1083,7 @@ export const FormBuilderPage: React.FC = () => {
     newFields.splice(insertIndex + 1, 0, newField);
     setFields(newFields);
     setActiveFieldId(newId);
-    message.success('เพิ่มคำถามลงในกล่องสำเร็จ');
+    message.success('เพิ่มช่องข้อมูลลงในกล่องสำเร็จ');
   };
 
   // Move child within its Layer Box
@@ -1103,11 +1185,49 @@ export const FormBuilderPage: React.FC = () => {
     );
   };
 
-  // คำนวณคะแนนเต็มรวมทั้งหมดของฟอร์ม (ไม่รวมกล่อง layer_box)
-  const totalPoints = fields.reduce(
-    (sum, f) => sum + (f.type !== 'layer_box' ? f.points || 0 : 0),
-    0
-  );
+  // เปลี่ยนประเภทคำถามของฟิลด์ที่กำหนด
+  const handleChangeFieldType = (targetFieldId: string, newType: FieldType) => {
+    if (newType === 'layer_box') return;
+    setFields((prev) =>
+      prev.map((f) => {
+        if (f.id !== targetFieldId) return f;
+        const isChoice = newType === 'single_choice' || newType === 'multi_choice' || newType === 'dropdown';
+        let options = f.options;
+        if (isChoice && (!options || options.length === 0)) {
+          options = [
+            { id: 'opt_1', label: 'ตัวเลือกที่ 1' },
+            { id: 'opt_2', label: 'ตัวเลือกที่ 2' },
+          ];
+        }
+
+        let correctAnswer = f.correctAnswer;
+        if (newType === 'multi_choice' && !Array.isArray(correctAnswer)) {
+          correctAnswer = correctAnswer !== undefined && correctAnswer !== null && correctAnswer !== '' ? [String(correctAnswer)] : [];
+        } else if ((newType === 'single_choice' || newType === 'dropdown') && Array.isArray(correctAnswer)) {
+          correctAnswer = correctAnswer[0] ? String(correctAnswer[0]) : undefined;
+        }
+
+        return {
+          ...f,
+          type: newType,
+          options: isChoice ? options : f.options,
+          correctAnswer,
+        };
+      })
+    );
+    message.success('เปลี่ยนประเภทคำถามเรียบร้อยแล้ว');
+  };
+
+  // คำนวณคะแนนเต็มรวมทั้งหมดของฟอร์ม (เฉพาะข้อสอบที่มีคะแนนและเฉลยคำตอบจริง ไม่รวมกล่องข้อมูล)
+  const totalPoints = fields.reduce((sum, f) => {
+    if (f.type === 'layer_box' || f.layerId) return sum;
+    const pts = Number(f.points || 0);
+    if (pts > 0 && f.correctAnswer !== undefined && f.correctAnswer !== null && f.correctAnswer !== '') {
+      if (Array.isArray(f.correctAnswer) && f.correctAnswer.length === 0) return sum;
+      return sum + pts;
+    }
+    return sum;
+  }, 0);
 
   if (isLoading) {
     return (
@@ -1433,6 +1553,7 @@ export const FormBuilderPage: React.FC = () => {
                       onAddFieldToLayer={(layerId, type) => handleAddFieldToLayer(layerId, type)}
                       onMoveChild={(layerId, cIdx, dir) => handleMoveChildInLayer(layerId, cIdx, dir)}
                       onDeleteChild={(childId) => handleDeleteFieldById(childId)}
+                      onChangeFieldType={handleChangeFieldType}
                       index={index}
                       isActive={activeFieldId === field.id}
                       onSelect={() => setActiveFieldId(field.id)}
@@ -1572,13 +1693,34 @@ export const FormBuilderPage: React.FC = () => {
                       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                         <div>
                           <Text strong style={{ display: 'block', marginBottom: 6 }}>
+                            ประเภทคำถาม / รูปแบบข้อมูล (Field Type)
+                          </Text>
+                          <Select
+                            value={activeField.type}
+                            onChange={(newType: FieldType) => handleChangeFieldType(activeField.id, newType)}
+                            style={{ width: '100%' }}
+                            size="large"
+                          >
+                            {QUESTION_PALETTE.map((p) => (
+                              <Option key={p.type} value={p.type}>
+                                <Space>
+                                  {p.icon}
+                                  <span>{p.label}</span>
+                                </Space>
+                              </Option>
+                            ))}
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Text strong style={{ display: 'block', marginBottom: 6 }}>
                             หัวข้อคำถาม (Question Label)
                           </Text>
                         <Input
                           value={activeField.label}
                           onChange={(e) => updateActiveField({ label: e.target.value })}
                           size="large"
-                          placeholder="ระบุหัวข้อคำถาม เช่น 1+2 = เท่าไร"
+                          placeholder="ระบุหัวข้อคำถาม เช่น 1. ... หรือ ข้อ 1. ..."
                         />
                       </div>
 
@@ -1617,19 +1759,21 @@ export const FormBuilderPage: React.FC = () => {
                       </div>
 
                       {/* Options Manager for choice fields */}
-                      {activeField.options && (
+                      {(activeField.type === 'single_choice' || activeField.type === 'multi_choice' || activeField.type === 'dropdown') && (
                         <div style={{ marginTop: 8 }}>
                           <Text strong style={{ display: 'block', marginBottom: 8 }}>
                             ตัวเลือกคำตอบ (Options)
                           </Text>
                           <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                            {activeField.options.map((opt, optIdx) => (
+                            {(activeField.options || []).map((opt, optIdx) => (
                               <div key={opt.id} style={{ display: 'flex', gap: 8 }}>
                                 <Input
                                   value={opt.label}
                                   onChange={(e) => {
-                                    const newOpts = [...activeField.options!];
-                                    newOpts[optIdx].label = e.target.value;
+                                    const newOpts = [...(activeField.options || [])];
+                                    if (newOpts[optIdx]) {
+                                      newOpts[optIdx].label = e.target.value;
+                                    }
                                     updateActiveField({ options: newOpts });
                                   }}
                                   placeholder={`ตัวเลือกที่ ${optIdx + 1}`}
@@ -1637,9 +1781,9 @@ export const FormBuilderPage: React.FC = () => {
                                 <Button
                                   danger
                                   icon={<DeleteOutlined />}
-                                  disabled={activeField.options!.length <= 1}
+                                  disabled={(activeField.options || []).length <= 1}
                                   onClick={() => {
-                                    const newOpts = activeField.options!.filter((_, i) => i !== optIdx);
+                                    const newOpts = (activeField.options || []).filter((_, i) => i !== optIdx);
                                     // หากตัวเลือกที่ถูกลบเป็นเฉลยคำตอบ ให้เคลียร์ออก
                                     let newAns = activeField.correctAnswer;
                                     if (newAns === opt.id) newAns = undefined;
@@ -1654,11 +1798,12 @@ export const FormBuilderPage: React.FC = () => {
                               block
                               icon={<PlusOutlined />}
                               onClick={() => {
+                                const currentOpts = activeField.options || [];
                                 const newOpts = [
-                                  ...activeField.options!,
+                                  ...currentOpts,
                                   {
                                     id: `opt_${Date.now()}`,
-                                    label: `ตัวเลือกที่ ${activeField.options!.length + 1}`,
+                                    label: `ตัวเลือกที่ ${currentOpts.length + 1}`,
                                   },
                                 ];
                                 updateActiveField({ options: newOpts });
@@ -1717,11 +1862,21 @@ export const FormBuilderPage: React.FC = () => {
                           </Text>
                           <InputNumber
                             min={0}
-                            value={activeField.points ?? (isScoreTest ? 1 : 0)}
+                            value={activeField.points ?? 0}
                             onChange={(val) => updateActiveField({ points: val ?? 0 })}
                             style={{ width: '100%' }}
                             addonAfter="คะแนน"
                           />
+                          {activeField.layerId && (
+                            <Text type="secondary" style={{ display: 'block', fontSize: 11, marginTop: 4 }}>
+                              * ฟิลด์นี้อยู่ในกล่องข้อมูล (ปกติไม่ต้องใส่คะแนน เว้นแต่ต้องการตรวจวัดผล)
+                            </Text>
+                          )}
+                          {activeField.points !== undefined && activeField.points > 0 && (activeField.correctAnswer === undefined || activeField.correctAnswer === null || activeField.correctAnswer === '') && (
+                            <Text style={{ display: 'block', fontSize: 11, marginTop: 4, color: '#fa8c16' }}>
+                              ⚠️ ระบุคะแนนแล้ว แต่ยังไม่ได้ใส่เฉลยคำตอบ ระบบจะไม่นำไปคำนวณคะแนน
+                            </Text>
+                          )}
                         </div>
 
                         {/* เฉลยคำตอบตามประเภทคำถาม */}
@@ -2093,6 +2248,47 @@ export const FormBuilderPage: React.FC = () => {
 
                       <Divider style={{ margin: '12px 0' }} />
 
+                      {/* ส่วนตั้งค่าการเข้าสู่ระบบก่อนตอบ (Require Login Settings) */}
+                      <Card
+                        title={
+                          <Space size="middle">
+                            <UserOutlined style={{ color: requireLogin ? '#1677ff' : '#52c41a', fontSize: 18 }} />
+                            <span>การเข้าสู่ระบบก่อนตอบ (Authentication)</span>
+                          </Space>
+                        }
+                        size="small"
+                        style={{
+                          backgroundColor: !requireLogin ? '#f6ffed' : '#fafafa',
+                          border: `1px solid ${!requireLogin ? '#b7eb8f' : '#e2e8f0'}`,
+                          borderRadius: 10,
+                        }}
+                        styles={{ body: { padding: 14 } }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ paddingRight: 16 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <Text strong style={{ fontSize: 13 }}>
+                                {!requireLogin ? '🔓 ไม่ต้องเข้าสู่ระบบ (Guest / Public)' : '🔒 ต้องเข้าสู่ระบบก่อนตอบ'}
+                              </Text>
+                              {!requireLogin && <Tag color="green">เปิดสาธารณะ</Tag>}
+                            </div>
+                            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 4 }}>
+                              {!requireLogin
+                                ? 'ทุกคนที่มีลิงก์หรือสแกน QR Code (เช่น บน iPad, คนไข้ หรือบุคคลภายนอก) สามารถเปิดทำแบบฟอร์มได้ทันทีโดยไม่ต้องมีบัญชีผู้ใช้'
+                                : 'ผู้ตอบต้องมีบัญชีและล็อกอินเข้าระบบก่อนจึงจะเปิดดูและส่งคำตอบได้ โดยจะบันทึกชื่อผู้ตอบอัตโนมัติ'}
+                            </Text>
+                          </div>
+                          <Switch
+                            checked={!requireLogin}
+                            onChange={(checked) => setRequireLogin(!checked)}
+                            checkedChildren="เปิด"
+                            unCheckedChildren="ปิด"
+                          />
+                        </div>
+                      </Card>
+
+                      <Divider style={{ margin: '12px 0' }} />
+
                       <div>
                         <Text strong style={{ display: 'block', marginBottom: 6 }}>
                           คำชี้แจงแบบฟอร์ม (Description)
@@ -2353,7 +2549,6 @@ export const FormBuilderPage: React.FC = () => {
             };
 
             const top = fields.filter((f) => !f.layerId);
-            let qIndex = 0;
 
             return (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -2400,14 +2595,13 @@ export const FormBuilderPage: React.FC = () => {
                     );
                   }
 
-                  qIndex++;
                   const answerText = getAnswerDisplay(field);
                   return (
                     <Card key={field.id} style={{ borderRadius: 12 }}>
                       <div style={{ marginBottom: 12 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <Text strong style={{ fontSize: 16 }}>
-                            {qIndex}. {field.label}
+                            {field.label || 'ระบุหัวข้อคำถาม'}
                             {field.required && <span style={{ color: 'red', marginLeft: 4 }}>*</span>}
                           </Text>
                           {field.points !== undefined && field.points > 0 && (

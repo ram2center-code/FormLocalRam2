@@ -459,8 +459,12 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
       layers.forEach((layer, idx) => {
         const boxDiv = document.createElement('div');
         boxDiv.className = 'layer-box';
+        const cleanTitle = (layer.label || '')
+          .replace(/\\s*\\(Layer Box\\)/i, '')
+          .replace(/^กล่องที่\\s*\\d+[:\\s]*/i, '')
+          .trim();
         boxDiv.innerHTML = \`
-          <div class="layer-title">📦 กล่องที่ \${idx + 1}: \${escapeHtml(layer.label || 'กล่องข้อมูล')}</div>
+          \${cleanTitle ? \`<div class="layer-title">\${escapeHtml(cleanTitle)}</div>\` : ''}
           \${layer.description ? \`<div class="layer-desc">\${escapeHtml(layer.description)}</div>\` : ''}
           <div class="grid grid-2" id="layer_\${layer.id}"></div>
         \`;
@@ -479,19 +483,17 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
       if (remainingQuestions.length > 0) {
         const questionsCard = document.createElement('div');
         questionsCard.className = 'card';
-        remainingQuestions.forEach((f, idx) => {
-          questionsCard.appendChild(createFieldElement(f, idx + 1));
+        remainingQuestions.forEach((f) => {
+          questionsCard.appendChild(createFieldElement(f));
         });
         container.appendChild(questionsCard);
       }
     }
 
-    function createFieldElement(field, qIndex) {
+    function createFieldElement(field) {
       const wrap = document.createElement('div');
       wrap.className = 'field-group';
       wrap.id = 'group_' + field.id;
-
-      const qNumText = qIndex ? \`\${qIndex}. \` : '';
       const reqStar = field.required ? '<span class="req-star">*</span>' : '';
       const descHtml = field.description ? \`<div class="field-desc">\${escapeHtml(field.description)}</div>\` : '';
 
@@ -561,7 +563,7 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
 
       wrap.innerHTML = \`
         <label class="field-label" for="\${field.id}">
-          \${qNumText}\${escapeHtml(field.label)} \${reqStar}
+          \${escapeHtml(field.label)} \${reqStar}
         </label>
         \${descHtml}
         \${inputHtml}

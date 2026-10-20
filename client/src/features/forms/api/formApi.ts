@@ -787,8 +787,17 @@ export const submitFormApi = async (
     let currentMax = 0;
 
     for (const field of schema) {
+      // ข้ามกล่องข้อมูลและฟิลด์ย่อยในกล่องข้อมูล (เช่น ข้อมูลเด็ก, ชื่อ-นามสกุล, HN ฯลฯ)
+      if (field.type === 'layer_box' || field.layerId) continue;
+
       const pts = Number(field.points || 0);
-      if (pts > 0 && field.correctAnswer !== undefined) {
+      const hasAnswer =
+        field.correctAnswer !== undefined &&
+        field.correctAnswer !== null &&
+        field.correctAnswer !== '' &&
+        (Array.isArray(field.correctAnswer) ? field.correctAnswer.length > 0 : true);
+
+      if (pts > 0 && hasAnswer) {
         currentMax += pts;
         const userAns = answers[field.id];
         let isCorrect = false;
@@ -809,14 +818,20 @@ export const submitFormApi = async (
       }
     }
 
-    totalScore = currentScore;
-    maxScore = currentMax;
-    percentage = currentMax > 0 ? Math.round((currentScore / currentMax) * 100 * 10) / 10 : 0;
+    if (currentMax > 0) {
+      totalScore = currentScore;
+      maxScore = currentMax;
+      percentage = Math.round((currentScore / currentMax) * 100 * 10) / 10;
+    } else {
+      totalScore = null;
+      maxScore = null;
+      percentage = null;
+    }
 
     const scoreConfig = latestVersion.scoreConfig as ScoreConfig | null;
-    if (scoreConfig) {
+    if (scoreConfig && currentMax > 0) {
       if (scoreConfig.passType === 'percent') {
-        passed = percentage >= (scoreConfig.passScore ?? 0);
+        passed = percentage !== null && percentage >= (scoreConfig.passScore ?? 0);
       } else {
         passed = currentScore >= (scoreConfig.passScore ?? 0);
       }
@@ -824,7 +839,7 @@ export const submitFormApi = async (
       if (scoreConfig.gradeBands && scoreConfig.gradeBands.length > 0) {
         const sortedBands = [...scoreConfig.gradeBands].sort((a, b) => b.minScore - a.minScore);
         const checkScore = scoreConfig.passType === 'percent' ? percentage : currentScore;
-        const band = sortedBands.find((b) => checkScore >= b.minScore);
+        const band = sortedBands.find((b) => checkScore !== null && checkScore >= b.minScore);
         if (band) {
           grade = band.label;
         }

@@ -39,7 +39,9 @@ import {
   DownloadOutlined,
   SafetyCertificateOutlined,
   CheckOutlined,
-  AppstoreOutlined,
+  LockOutlined,
+  GlobalOutlined,
+  LoginOutlined,
 } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -239,12 +241,67 @@ export const FormViewPage: React.FC = () => {
     );
   }
 
+  // กรณีแบบฟอร์มกำหนดให้ต้องเข้าสู่ระบบ แต่ผู้ใช้ยังไม่ได้ล็อกอิน
+  if (form.requireLogin && !isAuthenticated) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#f8fafc',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px 16px',
+        }}
+      >
+        <Card
+          style={{
+            maxWidth: 520,
+            width: '100%',
+            borderRadius: 16,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+            textAlign: 'center',
+          }}
+          styles={{ body: { padding: '36px 28px' } }}
+        >
+          <Result
+            icon={<LockOutlined style={{ color: '#1677ff', fontSize: 52 }} />}
+            title={<Title level={3} style={{ margin: 0 }}>จำเป็นต้องเข้าสู่ระบบ</Title>}
+            subTitle={
+              <Space direction="vertical" size="small" style={{ width: '100%', marginTop: 8 }}>
+                <Text style={{ fontSize: 15 }}>
+                  แบบฟอร์ม <strong>&quot;{form.title}&quot;</strong> กำหนดให้ผู้ตอบต้องเข้าสู่ระบบก่อนทำแบบฟอร์ม
+                </Text>
+                <Text type="secondary" style={{ fontSize: 13 }}>
+                  กรุณาเข้าสู่ระบบด้วยบัญชีผู้ใช้ของคุณเพื่อเปิดอ่านและส่งคำตอบ
+                </Text>
+              </Space>
+            }
+            extra={[
+              <Button
+                key="login"
+                type="primary"
+                size="large"
+                icon={<LoginOutlined />}
+                onClick={() => navigate('/login', { state: { from: window.location.pathname } })}
+                style={{ minWidth: 180, height: 46, borderRadius: 8, fontSize: 15, fontWeight: 500 }}
+              >
+                เข้าสู่ระบบ (Login)
+              </Button>,
+            ]}
+          />
+        </Card>
+      </div>
+    );
+  }
+
   // หน้าจอเมื่อส่งแบบฟอร์มสำเร็จ
   if (submissionResult) {
+    const hasMchatQuestions = form.schema.filter(
+      (f) => f.type === 'single_choice' && (f.id.startsWith('q_') || f.label.includes('ลูกของคุณ'))
+    ).length >= 10;
     const isMchat = Boolean(
-      form.title.toLowerCase().includes('m-chat') ||
-      submissionResult.grade?.includes('ความเสี่ยง') ||
-      form.schema.some((f) => f.id === 'layer_child_info' || f.label.includes('ข้อมูลเด็ก'))
+      hasMchatQuestions && (form.title.toLowerCase().includes('m-chat') || submissionResult.grade?.includes('ความเสี่ยง'))
     );
     const isScore = submissionResult.isScoreTest && submissionResult.showResult;
 
@@ -516,7 +573,9 @@ export const FormViewPage: React.FC = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                       <div style={{ flex: 1 }}>
                         <Text strong style={{ fontSize: 15, color: '#cf1322' }}>
-                          ข้อ {item.qNum}. {item.q.label}
+                          {item.q.label.startsWith('ข้อ') || /^\d+[\.\:]/.test(item.q.label)
+                            ? item.q.label
+                            : `ข้อ ${item.qNum}. ${item.q.label}`}
                         </Text>
                         {item.q.description && (
                           <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 3, color: '#8c8c8c' }}>
@@ -601,14 +660,16 @@ export const FormViewPage: React.FC = () => {
             >
               ทำแบบสอบถามใหม่
             </Button>
-            <Button
-              size="large"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate('/forms')}
-              style={{ minWidth: 150, height: 48, borderRadius: 10 }}
-            >
-              กลับหน้ารายการ
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                size="large"
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate('/forms')}
+                style={{ minWidth: 150, height: 48, borderRadius: 10 }}
+              >
+                กลับหน้ารายการ
+              </Button>
+            ) : null}
           </div>
         </div>
       );
@@ -697,14 +758,16 @@ export const FormViewPage: React.FC = () => {
           )}
 
           <Space size="middle" style={{ marginTop: 12 }}>
-            <Button
-              size="large"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate('/forms')}
-              style={{ minWidth: 140 }}
-            >
-              กลับหน้ารายการ
-            </Button>
+            {isAuthenticated && (
+              <Button
+                size="large"
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate('/forms')}
+                style={{ minWidth: 140 }}
+              >
+                กลับหน้ารายการ
+              </Button>
+            )}
             {form.allowMultiple && (
               <Button
                 type="primary"
@@ -725,16 +788,46 @@ export const FormViewPage: React.FC = () => {
     );
   }
 
+  // ฟิลด์ที่มีการเก็บคะแนนจริง (ต้องไม่ใช่กล่องข้อมูล และมีคะแนน > 0 และมีเฉลยคำตอบ)
+  const isScoredField = (f: FormField): boolean => {
+    if (f.type === 'layer_box' || f.layerId) return false;
+    const pts = Number(f.points || 0);
+    if (pts <= 0) return false;
+    if (f.correctAnswer === undefined || f.correctAnswer === null || f.correctAnswer === '') return false;
+    if (Array.isArray(f.correctAnswer) && f.correctAnswer.length === 0) return false;
+    return true;
+  };
+
   const isScoreTest = form.type === 'SCORE_TEST';
-  const totalPoints = form.schema.reduce((sum, f) => sum + (f.points || 0), 0);
+  // คำนวณคะแนนเต็มเฉพาะข้อสอบที่มีคะแนนและเฉลยคำตอบจริงเท่านั้น ไม่นับการถามชื่อหรือข้อมูลทั่วไป
+  const totalPoints = form.schema.reduce((sum, f) => sum + (isScoredField(f) ? Number(f.points || 0) : 0), 0);
   const isAccepting = form.status === 'PUBLISHED' && form.isAcceptingResponses;
 
-  // คำนวณจำนวนข้อที่ตอบแล้วสำหรับ Progress (ไม่รวมกล่อง layer_box)
-  const realQuestions = form.schema.filter((f) => f.type !== 'layer_box');
-  const answeredCount = realQuestions.filter(
-    (f) => answers[f.id] !== undefined && answers[f.id] !== null && answers[f.id] !== ''
+  // คำนวณคำถามจริงที่จะนำมาแสดงแถบความคืบหน้า (Progress)
+  // - ข้อความทั่วไป (text, textarea, date, file, number) และฟิลด์ในกล่องข้อมูล จะไม่นำมานับความคืบหน้า
+  // - นับเฉพาะคำถามจริง (single_choice, multi_choice, dropdown, rating) หรือข้อสอบที่มีการเก็บคะแนนและเฉลยคำตอบเท่านั้น
+  const progressQuestions = form.schema.filter((f) => {
+    if (f.type === 'layer_box' || f.layerId) return false;
+    if (isScoreTest) {
+      return isScoredField(f);
+    }
+    return ['single_choice', 'multi_choice', 'dropdown', 'rating'].includes(f.type) || isScoredField(f);
+  });
+
+  const showProgressBar = progressQuestions.length > 1;
+
+  const answeredProgressCount = progressQuestions.filter(
+    (f) =>
+      answers[f.id] !== undefined &&
+      answers[f.id] !== null &&
+      answers[f.id] !== '' &&
+      (Array.isArray(answers[f.id]) ? answers[f.id].length > 0 : true)
   ).length;
-  const progressPercent = realQuestions.length > 0 ? Math.round((answeredCount / realQuestions.length) * 100) : 0;
+
+  const progressPercent =
+    progressQuestions.length > 0
+      ? Math.round((answeredProgressCount / progressQuestions.length) * 100)
+      : 0;
 
   // ฟังก์ชันเรนเดอร์ช่อง Input ตามประเภทคำถาม
   const renderFieldInput = (field: FormField) => {
@@ -936,7 +1029,12 @@ export const FormViewPage: React.FC = () => {
             </div>
           </Space>
 
-          <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {!form.requireLogin && (
+              <Tag color="green" icon={<GlobalOutlined />} style={{ borderRadius: 6, margin: 0 }}>
+                แบบฟอร์มทั่วไป (ไม่ต้องเข้าสู่ระบบ)
+              </Tag>
+            )}
             {isAuthenticated ? (
               <Space>
                 <Tag color="blue">{user?.fullName || 'ผู้ใช้งาน'}</Tag>
@@ -949,6 +1047,7 @@ export const FormViewPage: React.FC = () => {
                 size="small"
                 type="primary"
                 ghost
+                icon={<LoginOutlined />}
                 onClick={() => navigate('/login', { state: { from: window.location.pathname } })}
               >
                 เข้าสู่ระบบ (Login)
@@ -1087,33 +1186,37 @@ export const FormViewPage: React.FC = () => {
         </Space>
       </Card>
 
-      {/* แถบแสดงความคืบหน้า (Progress Counter) */}
-      <Card
-        style={{ borderRadius: 12, marginBottom: 16 }}
-        styles={{ body: { padding: '12px 20px' } }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <Text strong style={{ fontSize: 13 }}>
-            ความคืบหน้าในการตอบ:
-          </Text>
-          <Text type="secondary" style={{ fontSize: 13 }}>
-            ตอบแล้ว <strong>{answeredCount}</strong> / {realQuestions.length} ข้อ ({progressPercent}%)
-          </Text>
-        </div>
-        <Progress percent={progressPercent} strokeColor="#1677ff" showInfo={false} />
-      </Card>
+      {/* แถบแสดงความคืบหน้า (Progress Counter) - แสดงเฉพาะเมื่อมีคำถามวัดผล/ตัวเลือกมากกว่า 1 ข้อ */}
+      {showProgressBar && (
+        <Card
+          style={{ borderRadius: 12, marginBottom: 16 }}
+          styles={{ body: { padding: '12px 20px' } }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <Text strong style={{ fontSize: 13 }}>
+              ความคืบหน้าในการตอบ:
+            </Text>
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              ตอบแล้ว <strong>{answeredProgressCount}</strong> / {progressQuestions.length} ข้อ ({progressPercent}%)
+            </Text>
+          </div>
+          <Progress percent={progressPercent} strokeColor="#1677ff" showInfo={false} />
+        </Card>
+      )}
 
       {/* รายการคำถามในแบบฟอร์ม */}
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         {(() => {
-          let questionNumber = 0;
-          let boxNumber = 0;
           const topLevelFields = form.schema.filter((f) => !f.layerId || f.type === 'layer_box');
 
           return topLevelFields.map((field) => {
             if (field.type === 'layer_box') {
-              boxNumber++;
               const childFields = form.schema.filter((f) => f.layerId === field.id);
+              const cleanTitle = (field.label || '')
+                .replace(/\s*\(Layer Box\)/i, '')
+                .replace(/^กล่องที่\s*\d+[:\s]*/i, '')
+                .trim();
+
               return (
                 <Card
                   key={field.id}
@@ -1125,21 +1228,20 @@ export const FormViewPage: React.FC = () => {
                   }}
                   styles={{ body: { padding: '22px 24px' } }}
                 >
-                  <div style={{ marginBottom: 18 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                      <Tag color="blue" icon={<AppstoreOutlined />} style={{ fontSize: 13, padding: '2px 10px', borderRadius: 6, fontWeight: 700 }}>
-                        กล่องที่ {boxNumber}
-                      </Tag>
-                      <Text strong style={{ fontSize: 17, color: '#1f1f1f' }}>
-                        {field.label || `กล่องข้อมูลที่ ${boxNumber}`}
-                      </Text>
+                  {(cleanTitle || field.description) && (
+                    <div style={{ marginBottom: 18 }}>
+                      {cleanTitle && (
+                        <Text strong style={{ fontSize: 17, color: '#1f1f1f' }}>
+                          {cleanTitle}
+                        </Text>
+                      )}
+                      {field.description && (
+                        <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
+                          {field.description}
+                        </Text>
+                      )}
                     </div>
-                    {field.description && (
-                      <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
-                        {field.description}
-                      </Text>
-                    )}
-                  </div>
+                  )}
 
                   <Row gutter={[16, 18]}>
                     {childFields.map((child) => (
@@ -1201,7 +1303,6 @@ export const FormViewPage: React.FC = () => {
             }
 
             // Standalone Question
-            questionNumber++;
             return (
               <Card
                 key={field.id}
@@ -1217,12 +1318,12 @@ export const FormViewPage: React.FC = () => {
                 <div style={{ marginBottom: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <Text strong style={{ fontSize: 16, lineHeight: 1.5 }}>
-                      {questionNumber}. {field.label}
+                      {field.label}
                       {field.required && (
                         <span style={{ color: '#ff4d4f', marginLeft: 4, fontWeight: 'bold' }}>*</span>
                       )}
                     </Text>
-                    {field.points !== undefined && field.points > 0 && (
+                    {isScoredField(field) && (
                       <Tag color="gold" icon={<TrophyOutlined />}>
                         {field.points} คะแนน
                       </Tag>

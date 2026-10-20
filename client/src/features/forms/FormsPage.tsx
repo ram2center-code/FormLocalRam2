@@ -34,6 +34,7 @@ import {
   ApartmentOutlined,
   GlobalOutlined,
   LockOutlined,
+  UnlockOutlined,
   ShareAltOutlined,
   EyeOutlined,
   RestOutlined,
@@ -129,6 +130,23 @@ export const FormsPage: React.FC = () => {
     },
     onError: (err: any) => {
       message.error(err.response?.data?.message || 'ไม่สามารถเปลี่ยนการตั้งค่าสิทธิ์การเข้าถึงได้');
+    },
+  });
+
+  // 5.2 Mutation: สลับการตั้งค่า requireLogin (ต้อง Login / ไม่ต้อง Login)
+  const toggleRequireLoginMutation = useMutation({
+    mutationFn: ({ id, requireLogin }: { id: string; requireLogin: boolean }) =>
+      updateFormSettingsApi(id, { requireLogin }),
+    onSuccess: (res) => {
+      message.success(
+        res.requireLogin
+          ? 'ตั้งค่าแบบฟอร์ม: ผู้ตอบต้องเข้าสู่ระบบก่อนตอบ'
+          : 'ตั้งค่าแบบฟอร์ม: อนุญาตให้ตอบได้โดยไม่ต้องเข้าสู่ระบบ (สาธารณะ)'
+      );
+      queryClient.invalidateQueries({ queryKey: ['forms'] });
+    },
+    onError: (err: any) => {
+      message.error(err.response?.data?.message || 'ไม่สามารถเปลี่ยนการตั้งค่าได้');
     },
   });
 
@@ -426,6 +444,20 @@ export const FormsPage: React.FC = () => {
               },
             ],
           },
+          {
+            key: 'toggle_require_login',
+            icon: item.requireLogin ? <UnlockOutlined style={{ color: '#52c41a' }} /> : <LockOutlined style={{ color: '#fa8c16' }} />,
+            label: (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 200 }}>
+                <span>{item.requireLogin ? 'สิทธิ์: เปลี่ยนเป็นไม่ต้อง Login (Guest)' : 'สิทธิ์: บังคับต้อง Login'}</span>
+              </div>
+            ),
+            onClick: () =>
+              toggleRequireLoginMutation.mutate({
+                id: item.id,
+                requireLogin: !item.requireLogin,
+              }),
+          },
         ]
       : []),
     {
@@ -504,13 +536,24 @@ export const FormsPage: React.FC = () => {
     {
       title: 'ประเภท / สิทธิ์เข้าถึง',
       key: 'type_visibility',
-      width: 200,
+      width: 220,
       render: (_: any, record: FormItem) => (
         <Space direction="vertical" size={4}>
           <Tag color={record.type === 'SCORE_TEST' ? 'gold' : 'blue'} style={{ borderRadius: 6 }}>
             {record.type === 'SCORE_TEST' ? 'แบบทดสอบมีคะแนน' : 'แบบฟอร์มทั่วไป'}
           </Tag>
-          {getVisibilityBadge(record.visibility, record.department?.name, record)}
+          <Space wrap size={[4, 4]}>
+            {getVisibilityBadge(record.visibility, record.department?.name, record)}
+            {record.requireLogin === false ? (
+              <Tag color="cyan" style={{ borderRadius: 6, margin: 0 }}>
+                🔓 ไม่ต้อง Login
+              </Tag>
+            ) : (
+              <Tag color="default" style={{ borderRadius: 6, margin: 0 }}>
+                🔒 ต้อง Login
+              </Tag>
+            )}
+          </Space>
         </Space>
       ),
     },
@@ -910,9 +953,18 @@ export const FormsPage: React.FC = () => {
                       </Paragraph>
 
                       {/* Meta Tags */}
-                      <div style={{ marginBottom: 16 }}>
+                      <Space wrap size={[6, 6]} style={{ marginBottom: 16 }}>
                         {getVisibilityBadge(item.visibility, item.department?.name, item)}
-                      </div>
+                        {item.requireLogin === false ? (
+                          <Tag color="cyan" style={{ borderRadius: 6, margin: 0 }}>
+                            🔓 ไม่ต้อง Login
+                          </Tag>
+                        ) : (
+                          <Tag color="default" style={{ borderRadius: 6, margin: 0 }}>
+                            🔒 ต้อง Login
+                          </Tag>
+                        )}
+                      </Space>
                     </div>
 
                     {/* Card Footer */}

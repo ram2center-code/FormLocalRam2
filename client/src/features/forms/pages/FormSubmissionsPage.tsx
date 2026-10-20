@@ -349,7 +349,7 @@ export const FormSubmissionsPage: React.FC = () => {
       'Username',
       'แผนก',
       ...(isScoreTest ? ['คะแนน', 'คะแนนเต็ม', 'ร้อยละ', 'สถานะ', 'ระดับ/เกรด'] : []),
-      ...exportableQuestions.map((q, idx) => `ข้อ ${idx + 1}: ${q.label.replace(/"/g, '""')}`),
+      ...exportableQuestions.map((q) => q.label.replace(/"/g, '""')),
     ];
 
     const rows = filteredSubmissions.map((s, index) => {
@@ -1298,7 +1298,7 @@ export const FormSubmissionsPage: React.FC = () => {
 
             {form.schema
               .filter((q) => q.type !== 'layer_box')
-              .map((q, idx) => {
+              .map((q) => {
                 const ans = selectedSubmission.answers[q.id];
                 let displayAnswer = 'ไม่ได้ตอบ';
                 let isAnswerCorrect: boolean | null = null;
@@ -1344,7 +1344,7 @@ export const FormSubmissionsPage: React.FC = () => {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <Text strong style={{ display: 'block', marginBottom: 4, flex: 1 }}>
-                        {idx + 1}. {q.label}
+                        {q.label}
                         {q.points ? ` (${q.points} คะแนน)` : ''}
                       </Text>
                       {isAnswerCorrect !== null && (
