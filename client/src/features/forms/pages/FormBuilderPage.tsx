@@ -190,6 +190,9 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
   // กรณีเป็นกล่อง Layer Box
   if (field.type === 'layer_box') {
     const childFields = allFields.filter((f) => f.layerId === field.id);
+    const layerBoxes = allFields.filter((f) => f.type === 'layer_box');
+    const boxIndex = layerBoxes.findIndex((b) => b.id === field.id) + 1;
+
     return (
       <div ref={setNodeRef} style={style}>
         <Card
@@ -230,12 +233,12 @@ const SortableFieldItem: React.FC<SortableFieldItemProps> = ({
                 <HolderOutlined style={{ fontSize: 16 }} />
               </div>
 
-              <Tag color="success" icon={<AppstoreOutlined />} style={{ fontSize: 12, padding: '2px 8px', borderRadius: 4 }}>
-                กล่อง Layer Box
+              <Tag color="success" icon={<AppstoreOutlined />} style={{ fontSize: 13, padding: '3px 10px', borderRadius: 6, fontWeight: 700 }}>
+                กล่องที่ {boxIndex}
               </Tag>
 
               <Text strong style={{ fontSize: 16 }}>
-                {field.label || 'กล่องข้อมูล (Layer Box)'}
+                {field.label || `กล่องข้อมูลที่ ${boxIndex}`}
               </Text>
 
               <Tag color="blue" style={{ borderRadius: 4 }}>
@@ -866,17 +869,18 @@ export const FormBuilderPage: React.FC = () => {
   // Layer Box Operations: Add Layer Box
   const handleAddLayerBox = () => {
     const newId = `layer_${Date.now()}`;
+    const currentBoxCount = fields.filter((f) => f.type === 'layer_box').length + 1;
     const newLayer: FormField = {
       id: newId,
       type: 'layer_box',
-      label: 'กล่องข้อมูล (Layer Box)',
+      label: `กล่องที่ ${currentBoxCount}: กล่องข้อมูล`,
       description: '',
       required: false,
       columns: 2,
     };
     setFields([...fields, newLayer]);
     setActiveFieldId(newId);
-    message.success('เพิ่มกล่อง Layer Box เรียบร้อยแล้ว');
+    message.success(`เพิ่มกล่องที่ ${currentBoxCount} เรียบร้อยแล้ว`);
   };
 
   // Layer Box Operations: Add Child Info Template (ตรงตามตัวอย่างรูปเป๊ะๆ)
@@ -1920,9 +1924,9 @@ export const FormBuilderPage: React.FC = () => {
                             <Option value="__none__">ไม่อยู่ในกล่อง (อยู่นอกกล่อง / ฟอร์มหลัก)</Option>
                             {fields
                               .filter((f) => f.type === 'layer_box')
-                              .map((box) => (
+                              .map((box, idx) => (
                                 <Option key={box.id} value={box.id}>
-                                  📦 {box.label || 'กล่อง Layer Box'}
+                                  📦 กล่องที่ {idx + 1}: {box.label || 'กล่องข้อมูล'}
                                 </Option>
                               ))}
                           </Select>

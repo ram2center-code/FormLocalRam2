@@ -39,6 +39,7 @@ import {
   DownloadOutlined,
   SafetyCertificateOutlined,
   CheckOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -1106,10 +1107,12 @@ export const FormViewPage: React.FC = () => {
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         {(() => {
           let questionNumber = 0;
+          let boxNumber = 0;
           const topLevelFields = form.schema.filter((f) => !f.layerId || f.type === 'layer_box');
 
           return topLevelFields.map((field) => {
             if (field.type === 'layer_box') {
+              boxNumber++;
               const childFields = form.schema.filter((f) => f.layerId === field.id);
               return (
                 <Card
@@ -1123,9 +1126,14 @@ export const FormViewPage: React.FC = () => {
                   styles={{ body: { padding: '22px 24px' } }}
                 >
                   <div style={{ marginBottom: 18 }}>
-                    <Text strong style={{ fontSize: 17, color: '#1f1f1f' }}>
-                      {field.label || 'กล่องข้อมูล (Layer Box)'}
-                    </Text>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                      <Tag color="blue" icon={<AppstoreOutlined />} style={{ fontSize: 13, padding: '2px 10px', borderRadius: 6, fontWeight: 700 }}>
+                        กล่องที่ {boxNumber}
+                      </Tag>
+                      <Text strong style={{ fontSize: 17, color: '#1f1f1f' }}>
+                        {field.label || `กล่องข้อมูลที่ ${boxNumber}`}
+                      </Text>
+                    </div>
                     {field.description && (
                       <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
                         {field.description}

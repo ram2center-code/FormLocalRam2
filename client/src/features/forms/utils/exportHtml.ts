@@ -456,11 +456,11 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
       const handledFieldIds = new Set();
 
       // เรนเดอร์กล่อง Layer Box ก่อน
-      layers.forEach(layer => {
+      layers.forEach((layer, idx) => {
         const boxDiv = document.createElement('div');
         boxDiv.className = 'layer-box';
         boxDiv.innerHTML = \`
-          <div class="layer-title">📌 \${escapeHtml(layer.label)}</div>
+          <div class="layer-title">📦 กล่องที่ \${idx + 1}: \${escapeHtml(layer.label || 'กล่องข้อมูล')}</div>
           \${layer.description ? \`<div class="layer-desc">\${escapeHtml(layer.description)}</div>\` : ''}
           <div class="grid grid-2" id="layer_\${layer.id}"></div>
         \`;

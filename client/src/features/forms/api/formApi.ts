@@ -173,6 +173,11 @@ const mapFormItem = (form: any, currentUserId?: string, currentUserRole?: string
       ? versions.reduce((max: any, v: any) => (v.version > max.version ? v : max), versions[0])
       : null;
 
+  const submissionsCount = versions.reduce(
+    (acc: number, v: any) => acc + (v.submissions?.length || 0),
+    0
+  );
+
   const isOwner = form.ownerId === currentUserId || currentUserRole === 'ADMIN';
 
   return {
@@ -197,7 +202,7 @@ const mapFormItem = (form: any, currentUserId?: string, currentUserRole?: string
     maxAttempts: form.maxAttempts,
     latestVersionNumber: latestVersion ? latestVersion.version : 1,
     latestVersionId: latestVersion ? latestVersion.id : null,
-    submissionsCount: form.submissions?.length || 0,
+    submissionsCount,
     isOwner,
     deletedAt: form.deletedAt,
     createdAt: form.createdAt,
@@ -232,8 +237,7 @@ export const getFormsApi = async (): Promise<FormItem[]> => {
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, submissions:Submission(id))
     `)
     .is('deletedAt', null)
     .order('createdAt', { ascending: false });
@@ -272,9 +276,8 @@ export const getFormByIdApi = async (id: string, _forEditing = false): Promise<F
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version, schema, scoreConfig),
-      shares:FormShare(id, userId, user:User(id, fullName, username)),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, schema, scoreConfig, submissions:Submission(id)),
+      shares:FormShare(id, userId, user:User(id, fullName, username))
     `)
     .eq('id', id)
     .single();
@@ -447,8 +450,7 @@ export const updateFormApi = async (
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, submissions:Submission(id))
     `)
     .single();
 
@@ -546,8 +548,7 @@ export const publishFormApi = async (
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, submissions:Submission(id))
     `)
     .single();
 
@@ -596,8 +597,7 @@ export const updateFormSettingsApi = async (
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, submissions:Submission(id))
     `)
     .single();
 
@@ -673,8 +673,7 @@ export const getTrashFormsApi = async (): Promise<FormItem[]> => {
       updatedAt,
       owner:User!Form_ownerId_fkey(id, fullName, username),
       department:Department(id, name),
-      versions:FormVersion(id, version),
-      submissions:Submission(id)
+      versions:FormVersion(id, version, submissions:Submission(id))
     `)
     .not('deletedAt', 'is', null)
     .order('deletedAt', { ascending: false });
