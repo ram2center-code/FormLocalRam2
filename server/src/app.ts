@@ -55,7 +55,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // 3. Health Check & Network Info
-app.get('/api/health', (_req: Request, res: Response) => {
+app.get(['/api/health', '/health'], (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -63,7 +63,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
   });
 });
 
-app.get('/api/network-info', (_req: Request, res: Response) => {
+app.get(['/api/network-info', '/network-info'], (_req: Request, res: Response) => {
   const interfaces = os.networkInterfaces();
   const addresses: string[] = [];
   for (const name of Object.keys(interfaces)) {
@@ -81,12 +81,12 @@ app.get('/api/network-info', (_req: Request, res: Response) => {
   });
 });
 
-// 4. API Routes
-app.use('/api/auth', authRouter);
-app.use('/api/departments', departmentRouter);
-app.use('/api/users', userRouter);
-app.use('/api/forms', formRouter);
-app.use('/api/settings', settingRouter);
+// 4. API Routes (mount on both /api and root path to support any proxy/rewrite configuration)
+app.use(['/api/auth', '/auth'], authRouter);
+app.use(['/api/departments', '/departments'], departmentRouter);
+app.use(['/api/users', '/users'], userRouter);
+app.use(['/api/forms', '/forms'], formRouter);
+app.use(['/api/settings', '/settings'], settingRouter);
 
 // 5. 404 Not Found Handler
 app.use((_req: Request, res: Response) => {
@@ -105,8 +105,8 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Start Server
-if (process.env.NODE_ENV !== 'test') {
+// Start Server (only when run directly as a standalone Node server, not when wrapped by Vercel serverless runtime)
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 FormLocal Server running on http://localhost:${PORT}`);
     console.log(`📡 CORS allowed for: ${CLIENT_URL}`);
