@@ -82,8 +82,9 @@ export const ChildScreeningPage: React.FC = () => {
   const [iframeLoading, setIframeLoading] = useState(true);
 
   // States สำหรับความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
-  const [pdpaConsentAccepted, setPdpaConsentAccepted] = useState(false);
-  const [pdpaModalOpen, setPdpaModalOpen] = useState(true);
+  // ในหน้าจัดการหลักของเจ้าหน้าที่ จะไม่แสดง Modal อัตโนมัติ (จะแสดงเมื่อกดเปิดแท็บใหม่)
+  const [pdpaConsentAccepted, setPdpaConsentAccepted] = useState(true);
+  const [pdpaModalOpen, setPdpaModalOpen] = useState(false);
 
   // ข้อมูลผลการประเมินปัจจุบันที่ส่งมาจาก iframe
   const [currentScreening, setCurrentScreening] = useState<{
@@ -253,6 +254,8 @@ export const ChildScreeningPage: React.FC = () => {
 
       if (d.type === 'child_screening_update') {
         setCurrentScreening(d);
+      } else if (d.type === 'navigate_back') {
+        navigate('/department-forms');
       } else if (d.type === 'pdpa_request_modal') {
         setPdpaModalOpen(true);
       } else if (d.type === 'pdpa_accepted_from_child') {
@@ -333,15 +336,15 @@ export const ChildScreeningPage: React.FC = () => {
     message.info('ท่านยังไม่ได้ให้ความยินยอม PDPA จึงยังไม่สามารถเริ่มทำแบบคัดกรองได้');
   };
 
-  // รีเซ็ตแบบประเมินทั้งหมดสำหรับเริ่มผู้ป่วยรายใหม่ (บังคับทำ PDPA ใหม่สำหรับผู้ป่วยทุกคน)
+  // รีเซ็ตแบบประเมินทั้งหมดสำหรับเริ่มผู้ป่วยรายใหม่
   const handleReload = () => {
     if (iframeRef.current) {
       setIframeLoading(true);
       setCurrentScreening(null);
-      setPdpaConsentAccepted(false);
-      setPdpaModalOpen(true);
+      setPdpaConsentAccepted(true);
+      setPdpaModalOpen(false);
       iframeRef.current.src = '/tools/child-screening-suite.html';
-      message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว กรุณาให้ความยินยอม PDPA สำหรับผู้ป่วยรายใหม่');
+      message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว');
     }
   };
 
@@ -940,7 +943,7 @@ export const ChildScreeningPage: React.FC = () => {
               }}
               onLoad={() => {
                 setIframeLoading(false);
-                if (pdpaConsentAccepted && iframeRef.current && iframeRef.current.contentWindow) {
+                if (iframeRef.current && iframeRef.current.contentWindow) {
                   iframeRef.current.contentWindow.postMessage({ type: 'pdpa_accepted' }, '*');
                 }
               }}

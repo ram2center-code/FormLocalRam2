@@ -16,8 +16,43 @@
   html,body{height:100%}
   body{margin:0;color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6;
     background:var(--bg) radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
-  h1,h2,.mitr{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
   .wrap{max-width:800px;margin:0 auto;padding:20px 16px 60px}
+
+  /* top navigation */
+  .top-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+  .back-link-btn{
+    font:inherit;
+    font-weight:600;
+    font-size:0.92rem;
+    color:#2c7aa0;
+    background:#ffffff;
+    border:1.5px solid #dcecfb;
+    border-radius:12px;
+    padding:8px 16px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 2px 6px rgba(44,122,160,0.06);
+    transition:all .15s ease;
+    text-decoration:none;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    user-select:none;
+  }
+  .back-link-btn:hover, .back-link-btn:focus{
+    background:#e3f0f6;
+    border-color:#2c7aa0;
+    transform:translateY(-1px);
+    box-shadow:0 4px 10px rgba(44,122,160,0.12);
+    color:#1d5d7c;
+    text-decoration:none;
+  }
+  .back-link-btn:active{
+    transform:translateY(0);
+    background:#d5e7f3;
+  }
+  .top-nav-tag{font-size:0.85rem;color:var(--muted);font-weight:500}
 
   /* hero */
   .hero{position:relative;overflow:hidden;border-radius:26px;padding:24px 22px;display:flex;align-items:center;gap:10px;
@@ -110,38 +145,382 @@
     .card{border:1px solid #ccc;box-shadow:none;break-inside:avoid}
   }
 
-  /* PDPA Modal Styles */
-  .pdpa-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-  .pdpa-modal{background:#ffffff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 48px rgba(0,0,0,0.22);border:1px solid #cbd5e1;animation:pdpaPop .2s ease-out}
-  @keyframes pdpaPop{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
-  .pdpa-h{background:#0047cc;padding:16px 20px;color:#ffffff;display:flex;align-items:center;gap:12px;flex-shrink:0}
-  .pdpa-h-ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .pdpa-h-t{font-family:"Mitr",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2}
-  .pdpa-h-sub{font-size:0.85rem;opacity:0.9}
-  .pdpa-body{padding:20px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:14px;color:#1e293b}
-  .pdpa-main-t{font-family:"Mitr",sans-serif;font-weight:600;font-size:1.15rem;color:#0f172a;line-height:1.35;margin:0}
-  .pdpa-main-sub{color:#64748b;font-size:0.9rem;margin:-6px 0 0}
-  .pdpa-form-badge{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:10px 14px}
-  .pdpa-form-name{font-weight:700;color:#1d4ed8;font-size:0.95rem}
-  .pdpa-form-desc{color:#475569;font-size:0.85rem;margin-top:2px}
-  .pdpa-secs{display:flex;flex-direction:column;gap:12px}
-  .pdpa-sec{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}
-  .pdpa-num{width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:0.82rem;display:flex;align-items:center;justify-content:center}
-  .pdpa-sec-title{font-weight:700;color:#0f172a;font-size:0.95rem;margin-bottom:2px}
-  .pdpa-sec-p{color:#334155;font-size:0.88rem;line-height:1.55}
-  .pdpa-sec-ul{margin:3px 0 0 16px;padding:0;color:#334155;font-size:0.88rem;line-height:1.55}
-  .pdpa-notice-btn{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:border-color .15s}
-  .pdpa-notice-btn:hover{border-color:#3b82f6}
-  .pdpa-full{background:#f1f5f9;border-radius:10px;padding:12px 14px;font-size:0.85rem;color:#334155;white-space:pre-line;line-height:1.6;border:1px solid #cbd5e1;max-height:180px;overflow-y:auto}
-  .pdpa-boxes{display:flex;flex-direction:column;gap:10px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:14px}
-  .pdpa-cb{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.9rem;font-weight:500;color:#1e293b}
-  .pdpa-cb input{margin-top:3px;width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:#0047cc}
-  .pdpa-ft-note{font-size:0.8rem;color:#92400e;line-height:1.4}
-  .pdpa-acts{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
-  .pdpa-acts button{font:inherit;font-weight:700;border-radius:12px;padding:12px 18px;cursor:pointer;border:0}
-  .pdpa-btn-accept{background:#0047cc;color:#fff;flex:2 1 180px;font-size:1rem;transition:opacity .15s,background .15s}
-  .pdpa-btn-accept:disabled{opacity:0.4;cursor:not-allowed;background:#94a3b8}
-  .pdpa-btn-decline{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1!important;flex:1 1 120px}
+  /* PDPA Modal Styles - Replicating PdpaConsentModal Ant Design styling */
+  .pdpa-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .pdpa-modal{
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    animation: pdpaPop .22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes pdpaPop{
+    from{opacity: 0; transform: scale(0.96) translateY(6px);}
+    to{opacity: 1; transform: scale(1) translateY(0);}
+  }
+  .pdpa-h{
+    background: #0047cc;
+    padding: 16px 24px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+  .pdpa-h-left{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pdpa-h-ic{
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+  .pdpa-h-t{
+    font-family: "Mitr", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.2px;
+    color: #ffffff;
+  }
+  .pdpa-h-sub{
+    font-size: 12.5px;
+    color: #e0e7ff;
+    margin-top: 2px;
+    line-height: 1.2;
+  }
+  .pdpa-h-close{
+    background: rgba(255, 255, 255, 0.12);
+    border: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background 0.15s ease;
+  }
+  .pdpa-h-close:hover{
+    background: rgba(255, 255, 255, 0.25);
+  }
+  .pdpa-body{
+    padding: 24px 28px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    max-height: calc(85vh - 75px);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    color: #1f2937;
+  }
+  .pdpa-main-t{
+    font-family: "Mitr", sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.4;
+    margin: 0;
+  }
+  .pdpa-main-sub{
+    font-size: 13.5px;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+  }
+  .pdpa-form-badge{
+    margin: 16px 0 20px;
+    padding: 12px 16px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+  }
+  .pdpa-form-badge-label{
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 2px;
+    display: block;
+  }
+  .pdpa-form-name{
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    font-family: "Mitr", sans-serif;
+    line-height: 1.35;
+  }
+  .pdpa-form-desc{
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+    display: block;
+  }
+  .pdpa-secs{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .pdpa-sec{
+    margin: 0;
+  }
+  .pdpa-sec-title{
+    font-family: "Mitr", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  .pdpa-sec-p{
+    margin: 0;
+    color: #374151;
+    font-size: 13.5px;
+    line-height: 1.65;
+    text-align: justify;
+  }
+  .pdpa-sec-ul{
+    margin: 4px 0 0 0;
+    padding-left: 22px;
+    color: #374151;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .pdpa-sec-ul li{
+    margin-bottom: 3px;
+  }
+  .pdpa-notice-btn{
+    margin: 18px 0 20px;
+    padding: 12px 14px;
+    background-color: #f0f7ff;
+    border: 1px solid #bae0ff;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .pdpa-notice-btn:hover{
+    background-color: #e6f2ff;
+    border-color: #91caff;
+  }
+  .pdpa-boxes{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .pdpa-cb{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    margin: 0;
+  }
+  .pdpa-cb input[type="checkbox"]{
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #0047cc;
+    border-radius: 4px;
+  }
+  .pdpa-cb span{
+    font-size: 13.5px;
+    color: #1f2937;
+    line-height: 1.5;
+    user-select: none;
+    font-weight: 400;
+    transition: font-weight 0.15s ease;
+  }
+  .pdpa-submit-btn{
+    width: 100%;
+    height: 46px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Mitr", sans-serif;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    box-shadow: none;
+    cursor: not-allowed;
+    outline: none;
+  }
+  .pdpa-ft-note{
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+
+  /* Slide-in Drawer from Right (สไลด์จากด้านข้าง) */
+  .pdpa-drawer-backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+  .pdpa-drawer-backdrop.show{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pdpa-drawer{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(540px, 92vw);
+    background: #ffffff;
+    z-index: 10001;
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .pdpa-drawer.show{
+    transform: translateX(0);
+  }
+
+  .pdpa-drawer-header{
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-bottom: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .pdpa-drawer-close{
+    background: #e2e8f0;
+    border: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .pdpa-drawer-close:hover{
+    background: #cbd5e1;
+    color: #0f172a;
+  }
+
+  .pdpa-drawer-body{
+    padding: 22px 24px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    font-size: 0.92rem;
+    color: #334155;
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .pdpa-drawer-intro{
+    background: #eff6ff;
+    border-left: 4px solid #0047cc;
+    padding: 12px 14px;
+    border-radius: 8px;
+    color: #1e3a8a;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .pdpa-drawer-section{
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 14px;
+  }
+  .pdpa-drawer-section:last-child{
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .pdpa-drawer-sec-h{
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .pdpa-drawer-section p{
+    margin: 0 0 6px 0;
+  }
+  .pdpa-drawer-section ul{
+    margin: 4px 0 0 20px;
+    padding: 0;
+  }
+  .pdpa-drawer-section li{
+    margin-bottom: 4px;
+  }
+
+  .pdpa-drawer-footer{
+    padding: 14px 20px;
+    background: #f8fafc;
+    border-top: 1.5px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .pdpa-drawer-ack-btn{
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 0;
+    background: #0047cc;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 71, 204, 0.2);
+  }
+  .pdpa-drawer-ack-btn:hover{
+    background: #0037a3;
+  }
 </style>
 </head>
 <body>
@@ -150,125 +529,177 @@
 <div id="pdpaModal" class="pdpa-overlay" style="display:none;">
   <div class="pdpa-modal" role="dialog" aria-modal="true" aria-labelledby="pdpaMainTitle">
     <div class="pdpa-h">
-      <div class="pdpa-h-ic" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
+      <div class="pdpa-h-left">
+        <div class="pdpa-h-ic" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="pdpa-h-t">RAM2 Preliminary Assessment</div>
+          <div class="pdpa-h-sub">โรงพยาบาลรามคำแหง 2</div>
+        </div>
       </div>
-      <div>
-        <div class="pdpa-h-t">RAM2 Preliminary Assessment</div>
-        <div class="pdpa-h-sub">โรงพยาบาลรามคำแหง 2</div>
-      </div>
+      <button type="button" class="pdpa-h-close" onclick="goBack(event)" title="ปิด / กลับระบบหลัก" aria-label="ปิด">✕</button>
     </div>
 
     <div class="pdpa-body">
-      <div>
+      <div class="pdpa-title-wrap" style="margin-bottom:16px;">
         <h2 id="pdpaMainTitle" class="pdpa-main-t">หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล</h2>
-        <p class="pdpa-main-sub">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</p>
+        <div class="pdpa-main-sub">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</div>
       </div>
 
       <div class="pdpa-form-badge">
+        <span class="pdpa-form-badge-label">หัวข้อแบบประเมินที่เลือก</span>
         <div class="pdpa-form-name">ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น</div>
         <div class="pdpa-form-desc">Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)</div>
       </div>
 
       <div class="pdpa-secs">
         <div class="pdpa-sec">
-          <div class="pdpa-num">1</div>
-          <div>
-            <div class="pdpa-sec-title">วัตถุประสงค์ในการเก็บข้อมูล</div>
-            <div class="pdpa-sec-p">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</div>
-          </div>
+          <div class="pdpa-sec-title">1. วัตถุประสงค์ในการเก็บข้อมูล</div>
+          <p class="pdpa-sec-p">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</p>
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-num">2</div>
-          <div>
-            <div class="pdpa-sec-title">ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
-            <ul class="pdpa-sec-ul">
-              <li>ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ</li>
-              <li>คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก</li>
-              <li>ผลการประเมินที่คำนวณจากคำตอบ</li>
-              <li>ข้อมูลติดต่อ เฉพาะกรณีที่มีการร้องขอและแจ้งวัตถุประสงค์ไว้โดยชัดเจน</li>
-              <li>ข้อมูลทางเทคนิคที่จำเป็นต่อการรักษาความปลอดภัยของระบบ ตามที่ระบุในประกาศความเป็นส่วนตัว</li>
-            </ul>
-          </div>
+          <div class="pdpa-sec-title">2. ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
+          <ul class="pdpa-sec-ul">
+            <li>ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ</li>
+            <li>คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก</li>
+            <li>ผลการประเมินที่คำนวณจากคำตอบ</li>
+            <li>ข้อมูลติดต่อ เฉพาะกรณีที่มีการร้องขอและแจ้งวัตถุประสงค์ไว้โดยชัดเจน</li>
+            <li>ข้อมูลทางเทคนิคที่จำเป็นต่อการรักษาความปลอดภัยของระบบ ตามที่ระบุในประกาศความเป็นส่วนตัว</li>
+          </ul>
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-num">3</div>
-          <div>
-            <div class="pdpa-sec-title">ข้อจำกัดของบริการ</div>
-            <div class="pdpa-sec-p">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</div>
-          </div>
+          <div class="pdpa-sec-title">3. ข้อจำกัดของบริการ</div>
+          <p class="pdpa-sec-p">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</p>
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-num">4</div>
-          <div>
-            <div class="pdpa-sec-title">การรักษาความลับและสิทธิของท่าน</div>
-            <div class="pdpa-sec-p">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน PDPA@ram2-hosp.com เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</div>
-          </div>
+          <div class="pdpa-sec-title">4. การรักษาความลับและสิทธิของท่าน</div>
+          <p class="pdpa-sec-p">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน PDPA@ram2-hosp.com เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</p>
         </div>
       </div>
 
-      <div class="pdpa-notice-btn" id="pdpaNoticeToggle" onclick="togglePrivacyNotice()">
+      <div class="pdpa-notice-btn" id="pdpaNoticeToggle" onclick="openPrivacyDrawer()">
         <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:1.2rem;">📄</span>
-          <div>
-            <div style="font-weight:600;color:#0047cc;font-size:0.9rem;">อ่านประกาศความเป็นส่วนตัวฉบับเต็ม (Privacy Notice)</div>
-            <div style="font-size:0.8rem;color:#64748b;">สิทธิของท่านตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</div>
-          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span style="color:#0052cc;font-weight:600;font-size:13.5px;font-family:'Mitr',sans-serif;">
+            อ่านประกาศความเป็นส่วนตัวฉบับเต็ม
+          </span>
         </div>
-        <span id="privacyArrow" style="font-size:1.2rem;font-weight:700;color:#0047cc;">›</span>
-      </div>
-
-      <div id="pdpaFullNotice" class="pdpa-full" style="display:none;">
-<b>ประกาศความเป็นส่วนตัว (Privacy Notice) — โรงพยาบาลรามคำแหง 2</b>
-
-โรงพยาบาลรามคำแหง 2 ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและข้อมูลสุขภาพของท่าน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
-
-<b>1. การเก็บรวบรวมข้อมูลส่วนบุคคล</b>
-โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน
-
-<b>2. ฐานทางกฎหมายในการประมวลผล</b>
-• ฐานความยินยอม (Consent) สำหรับข้อมูลสุขภาพและข้อมูลอ่อนไหว
-• ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest) และการวินิจฉัยทางการแพทย์
-• ฐานการปฏิบัติตามกฎหมาย (Legal Obligation)
-
-<b>3. ระยะเวลาการเก็บรักษา</b>
-ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด และจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น
-
-<b>4. สิทธิของเจ้าของข้อมูล</b>
-ท่านมีสิทธิในการขอเข้าถึง ขอรับสำเนา ขอแก้ไข คัดค้าน หรือขอให้ระงับ/ลบข้อมูลของท่าน รวมถึงสิทธิในการถอนความยินยอมได้ตลอดเวลา โดยติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) ผ่านอีเมล PDPA@ram2-hosp.com
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
       </div>
 
       <div class="pdpa-boxes">
-        <label class="pdpa-cb">
+        <label class="pdpa-cb" for="pdpaCb1">
           <input type="checkbox" id="pdpaCb1" onchange="updatePdpaSubmitState()">
-          <span>ข้าพเจ้าได้อ่านและรับทราบประกาศความเป็นส่วนตัว รวมถึงวัตถุประสงค์และข้อจำกัดของแบบประเมินแล้ว</span>
+          <span id="pdpaCbLabel1">ข้าพเจ้าได้อ่านและรับทราบประกาศความเป็นส่วนตัว รวมถึงวัตถุประสงค์และข้อจำกัดของแบบประเมินแล้ว</span>
         </label>
-        <label class="pdpa-cb">
+        <label class="pdpa-cb" for="pdpaCb2">
           <input type="checkbox" id="pdpaCb2" onchange="updatePdpaSubmitState()">
-          <span>ข้าพเจ้ายินยอมโดยชัดแจ้งให้โรงพยาบาลรามคำแหง 2 เก็บรวบรวม ใช้ และประมวลผลข้อมูลสุขภาพที่ข้าพเจ้าให้ผ่านแบบประเมินนี้ เพื่อวัตถุประสงค์ที่ระบุไว้ข้างต้นและในประกาศความเป็นส่วนตัว</span>
+          <span id="pdpaCbLabel2">ข้าพเจ้ายินยอมโดยชัดแจ้งให้โรงพยาบาลรามคำแหง 2 เก็บรวบรวม ใช้ และประมวลผลข้อมูลสุขภาพที่ข้าพเจ้าให้ผ่านแบบประเมินนี้ เพื่อวัตถุประสงค์ที่ระบุไว้ข้างต้นและในประกาศความเป็นส่วนตัว</span>
         </label>
       </div>
+
+      <button type="button" class="pdpa-submit-btn" id="pdpaAcceptBtn" disabled onclick="handleAcceptStandalonePdpa()">
+        ยินยอมและเริ่มทำแบบประเมิน
+      </button>
 
       <div class="pdpa-ft-note">
-        * หากไม่ประสงค์ให้ความยินยอมที่จำเป็น ระบบจะไม่เริ่มเก็บคำตอบสุขภาพสำหรับแบบประเมินนี้
-      </div>
-
-      <div class="pdpa-acts">
-        <button type="button" class="pdpa-btn-decline" onclick="handleDeclineStandalonePdpa()">ไม่อนุญาต / ปิด</button>
-        <button type="button" class="pdpa-btn-accept" id="pdpaAcceptBtn" disabled onclick="handleAcceptStandalonePdpa()">
-          ✓ เริ่มต้นทำแบบประเมิน
-        </button>
+        หากไม่ประสงค์ให้ความยินยอมที่จำเป็น ระบบจะไม่เริ่มเก็บคำตอบสุขภาพสำหรับแบบประเมินนี้
       </div>
     </div>
   </div>
 </div>
 
+<!-- Side Drawer: ประกาศความเป็นส่วนตัวฉบับเต็ม (Slide-in from right) -->
+<div id="pdpaDrawerBackdrop" class="pdpa-drawer-backdrop" onclick="closePrivacyDrawer()"></div>
+<div id="pdpaDrawer" class="pdpa-drawer" role="dialog" aria-labelledby="drawerTitle">
+  <div class="pdpa-drawer-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.25rem;">📄</span>
+      <div>
+        <div id="drawerTitle" style="font-weight:700;font-size:1rem;color:#0f172a;line-height:1.3;">
+          ประกาศความเป็นส่วนตัวฉบับเต็ม
+        </div>
+        <div style="font-size:0.8rem;color:#64748b;">
+          โรงพยาบาลรามคำแหง 2 • พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562
+        </div>
+      </div>
+    </div>
+    <button type="button" class="pdpa-drawer-close" onclick="closePrivacyDrawer()" aria-label="ปิด">✕</button>
+  </div>
+  
+  <div class="pdpa-drawer-body">
+    <div class="pdpa-drawer-intro">
+      โรงพยาบาลรามคำแหง 2 ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและข้อมูลสุขภาพของท่าน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
+    </div>
+
+    <div class="pdpa-drawer-section">
+      <div class="pdpa-drawer-sec-h">1. การเก็บรวบรวมข้อมูลส่วนบุคคล</div>
+      <p>โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน</p>
+    </div>
+
+    <div class="pdpa-drawer-section">
+      <div class="pdpa-drawer-sec-h">2. ฐานทางกฎหมายในการประมวลผล</div>
+      <p>การประมวลผลข้อมูลส่วนบุคคลและข้อมูลสุขภาพดำเนินการภายใต้ฐานทางกฎหมายที่เกี่ยวข้อง ดังนี้:</p>
+      <ul>
+        <li><b>ฐานความยินยอม (Consent):</b> สำหรับข้อมูลสุขภาพ ข้อมูลพฤติกรรม และข้อมูลอ่อนไหวที่ท่านให้ผ่านแบบประเมิน</li>
+        <li><b>ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest):</b> การวินิจฉัยทางการแพทย์และการดูแลรักษาพยาบาล</li>
+        <li><b>ฐานการปฏิบัติตามกฎหมาย (Legal Obligation):</b> พระราชบัญญัติสถานพยาบาลและกฎหมายที่เกี่ยวข้อง</li>
+      </ul>
+    </div>
+
+    <div class="pdpa-drawer-section">
+      <div class="pdpa-drawer-sec-h">3. ระยะเวลาการเก็บรักษา</div>
+      <p>ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามมาตรฐานความมั่นคงปลอดภัยสารสนเทศและตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด โดยจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น</p>
+    </div>
+
+    <div class="pdpa-drawer-section">
+      <div class="pdpa-drawer-sec-h">4. สิทธิของเจ้าของข้อมูลส่วนบุคคล</div>
+      <p>ท่านในฐานะเจ้าของข้อมูลส่วนบุคคลมีสิทธิตามกฎหมาย ดังนี้:</p>
+      <ul>
+        <li>สิทธิในการขอเข้าถึงและขอรับสำเนาข้อมูลส่วนบุคคล</li>
+        <li>สิทธิในการขอแก้ไขข้อมูลให้ถูกต้อง เป็นปัจจุบัน และสมบูรณ์</li>
+        <li>สิทธิในการคัดค้าน ขอให้ระงับ หรือขอลบ/ทำลายข้อมูล</li>
+        <li>สิทธิในการถอนความยินยอมได้ตลอดเวลา (ไม่กระทบการประมวลผลที่ได้กระทำไปแล้วโดยชอบ)</li>
+      </ul>
+      <p style="margin-top:8px;">
+        ท่านสามารถติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) ได้ที่อีเมล: <a href="mailto:PDPA@ram2-hosp.com" style="color:#0047cc;font-weight:600;">PDPA@ram2-hosp.com</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="pdpa-drawer-footer">
+    <button type="button" class="pdpa-drawer-ack-btn" onclick="closePrivacyDrawer()">
+      เข้าใจและปิดหน้าต่างนี้
+    </button>
+  </div>
+</div>
+
 <div class="wrap" id="hub">
+  <div class="top-nav noprint">
+    <a href="/department-forms" class="back-link-btn" id="mainBackBtn" onclick="return goBack(event);" title="กลับไปยังคลังฟอร์ม / ระบบหลัก">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      <span>กลับระบบหลัก</span>
+    </a>
+    <div class="top-nav-tag">โรงพยาบาลรามคำแหง 2 • FormLocal</div>
+  </div>
+
   <section class="hero noprint">
     <div class="txt">
       <h1>ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์</h1>
@@ -3399,21 +3830,88 @@ function closeStandalonePdpaModal(){
   if(m) m.style.display = "none";
 }
 
-function togglePrivacyNotice(){
-  const notice = $("pdpaFullNotice");
-  const arrow = $("privacyArrow");
-  if(!notice) return;
-  const isHidden = (notice.style.display === "none");
-  notice.style.display = isHidden ? "block" : "none";
-  if(arrow) arrow.textContent = isHidden ? "▾" : "›";
+function openPrivacyDrawer(){
+  const drawer = $("pdpaDrawer");
+  const backdrop = $("pdpaDrawerBackdrop");
+  if(drawer && backdrop){
+    backdrop.classList.add("show");
+    drawer.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closePrivacyDrawer(){
+  const drawer = $("pdpaDrawer");
+  const backdrop = $("pdpaDrawerBackdrop");
+  if(drawer && backdrop){
+    drawer.classList.remove("show");
+    backdrop.classList.remove("show");
+  }
+}
+
+function goBack(e){
+  if(e){
+    try { if(typeof e.preventDefault === 'function') e.preventDefault(); } catch(_) {}
+    try { if(typeof e.stopPropagation === 'function') e.stopPropagation(); } catch(_) {}
+  }
+
+  // 1. ถ้าฝังอยู่ใน iframe ของระบบ FormLocal (เช่น หน้า ChildScreeningPage)
+  if(window.top && window.top !== window){
+    try {
+      window.top.location.href = "/department-forms";
+      return false;
+    } catch(err){
+      try {
+        window.parent.postMessage({ type: "navigate_back" }, "*");
+      } catch(_) {}
+      return false;
+    }
+  }
+
+  // 2. ถ้าเปิดเป็นหน้าต่างใหม่/แท็บใหม่ด้วย window.open (มี opener)
+  if(window.opener && !window.opener.closed){
+    try {
+      window.opener.focus();
+    } catch(_) {}
+    try {
+      window.close();
+    } catch(_) {}
+    // หาก Browser บล็อก window.close() (เช่น Safari บน iPad) ให้ redirect แท็บนี้ไปยังหน้าหลัก
+    setTimeout(function(){
+      window.location.href = "/department-forms";
+    }, 150);
+    return false;
+  }
+
+  // 3. นำทางโดยตรงกลับไปยังหน้าคลังฟอร์ม (หลีกเลี่ยง window.history.back() ที่ไม่ทำงานในแท็บใหม่)
+  window.location.href = "/department-forms";
+  return false;
 }
 
 function updatePdpaSubmitState(){
   const cb1 = $("pdpaCb1");
   const cb2 = $("pdpaCb2");
   const btn = $("pdpaAcceptBtn");
+  const label1 = $("pdpaCbLabel1");
+  const label2 = $("pdpaCbLabel2");
+  if(cb1 && label1) label1.style.fontWeight = cb1.checked ? "600" : "400";
+  if(cb2 && label2) label2.style.fontWeight = cb2.checked ? "600" : "400";
   if(btn && cb1 && cb2){
-    btn.disabled = !(cb1.checked && cb2.checked);
+    const canSubmit = Boolean(cb1.checked && cb2.checked);
+    btn.disabled = !canSubmit;
+    if(canSubmit){
+      btn.style.backgroundColor = "#0047cc";
+      btn.style.borderColor = "#0047cc";
+      btn.style.color = "#ffffff";
+      btn.style.boxShadow = "0 4px 12px rgba(0, 71, 204, 0.25)";
+      btn.style.cursor = "pointer";
+    } else {
+      btn.style.backgroundColor = "#f3f4f6";
+      btn.style.borderColor = "#e5e7eb";
+      btn.style.color = "#9ca3af";
+      btn.style.boxShadow = "none";
+      btn.style.cursor = "not-allowed";
+    }
   }
 }
 
@@ -3461,7 +3959,24 @@ function openTool(id){
   $("toolView").classList.add("show");
   document.body.style.overflow="hidden";
 }
-$("backBtn").onclick=()=>{ $("toolView").classList.remove("show"); document.body.style.overflow=""; };
+const toolBackBtn = $("backBtn");
+if(toolBackBtn){
+  const closeTool = (e) => {
+    if(e && typeof e.preventDefault === 'function') e.preventDefault();
+    $("toolView").classList.remove("show");
+    document.body.style.overflow = "";
+  };
+  toolBackBtn.onclick = closeTool;
+  toolBackBtn.addEventListener("touchend", closeTool);
+}
+
+const mainBackBtn = $("mainBackBtn");
+if(mainBackBtn){
+  mainBackBtn.addEventListener("click", goBack);
+  mainBackBtn.addEventListener("touchend", (e) => {
+    goBack(e);
+  });
+}
 
 window.addEventListener("message",e=>{
   const d=e.data; if(!d) return;

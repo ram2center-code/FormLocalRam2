@@ -339,7 +339,8 @@ export const PdpaConsentModal: React.FC<PdpaConsentModalProps> = ({
       <Drawer
         title="ประกาศความเป็นส่วนตัวฉบับเต็ม (Full Privacy Notice)"
         placement="right"
-        width={560}
+        width={typeof window !== 'undefined' && window.innerWidth < 640 ? '92%' : 560}
+        zIndex={1150}
         open={privacyPolicyDrawerOpen}
         onClose={() => setPrivacyPolicyDrawerOpen(false)}
       >
