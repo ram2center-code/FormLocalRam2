@@ -328,10 +328,14 @@ export const ChildScreeningPage: React.FC = () => {
         maxWidth: isFullscreen ? '100%' : 1400,
         margin: '0 auto',
         minHeight: '100%',
+        height: isFullscreen ? '100vh' : 'auto',
         position: isFullscreen ? 'fixed' : 'relative',
         inset: isFullscreen ? 0 : 'auto',
         zIndex: isFullscreen ? 1000 : 1,
         background: isFullscreen ? '#f7f5f1' : 'transparent',
+        display: isFullscreen ? 'flex' : 'block',
+        flexDirection: isFullscreen ? 'column' : undefined,
+        overflow: isFullscreen ? 'hidden' : 'visible',
       }}
     >
       {/* ส่วนหัวแสดงผลเฉพาะเมื่อไม่ได้อยู่ในโหมดเต็มหน้าจอ */}
@@ -467,53 +471,89 @@ export const ChildScreeningPage: React.FC = () => {
         </div>
       )}
 
-      {/* แถบเครื่องมือควบคุมแบบลอยตัวเมื่ออยู่ในโหมด Fullscreen */}
+      {/* แถบหัวด้านบนแบบตายตัว (Fixed Top Header Bar) เมื่ออยู่ในโหมด Fullscreen - ไม่ลอยทับ UI ของ Form */}
       {isFullscreen && (
         <div
           style={{
-            position: 'absolute',
-            top: 12,
-            right: 16,
-            zIndex: 100,
+            flex: '0 0 auto',
+            minHeight: 56,
+            background: '#ffffff',
+            borderBottom: '1.5px solid #ebe7e1',
+            padding: '8px 16px',
             display: 'flex',
-            gap: 8,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 2px 8px rgba(60, 50, 40, 0.05)',
+            zIndex: 10,
+            gap: 12,
+            flexWrap: 'wrap',
           }}
         >
-          <Button
-            type="primary"
-            shape="round"
-            icon={<SaveOutlined />}
-            loading={saveMutation.isPending}
-            onClick={handleSaveFromToolbar}
-            style={{
-              background: '#16a34a',
-              borderColor: '#16a34a',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            }}
-          >
-            บันทึกลง Database
-          </Button>
-          <Button
-            shape="round"
-            icon={<PrinterOutlined />}
-            onClick={handlePrint}
-            style={{
-              background: 'rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            }}
-          >
-            พิมพ์สรุปผล
-          </Button>
-          <Button
-            type="primary"
-            shape="round"
-            danger
-            icon={<FullscreenExitOutlined />}
-            onClick={() => setIsFullscreen(false)}
-            style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-          >
-            ออกจากโหมดเต็มจอ
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden' }}>
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, #dcecfb 0%, #fbe7ed 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#2c7aa0',
+                fontSize: 18,
+                flexShrink: 0,
+              }}
+            >
+              <SmileOutlined />
+            </div>
+            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span style={{ fontWeight: 700, color: '#1e293b', fontSize: 14 }}>
+                ชุดแบบคัดกรองเด็กและวัยรุ่น
+              </span>
+              {currentScreening?.patientName ? (
+                <span style={{ color: '#64748b', fontSize: 13, marginLeft: 8 }}>
+                  • {currentScreening.patientName} {currentScreening.hn ? `(HN: ${currentScreening.hn})` : ''}
+                </span>
+              ) : (
+                <span style={{ color: '#94a3b8', fontSize: 12, marginLeft: 8 }}>
+                  (โหมดเต็มหน้าจอ / Kiosk)
+                </span>
+              )}
+            </div>
+          </div>
+
+          <Space size={8} wrap style={{ flexShrink: 0 }}>
+            <Button
+              type="primary"
+              shape="round"
+              icon={<SaveOutlined />}
+              loading={saveMutation.isPending}
+              onClick={handleSaveFromToolbar}
+              style={{
+                background: completedCount > 0 ? '#16a34a' : '#2c7aa0',
+                borderColor: completedCount > 0 ? '#16a34a' : '#2c7aa0',
+                fontWeight: 600,
+              }}
+            >
+              บันทึกลง Database {completedCount > 0 && `(${completedCount})`}
+            </Button>
+            <Button
+              shape="round"
+              icon={<PrinterOutlined />}
+              onClick={handlePrint}
+            >
+              พิมพ์สรุปผล
+            </Button>
+            <Button
+              type="primary"
+              danger
+              shape="round"
+              icon={<FullscreenExitOutlined />}
+              onClick={() => setIsFullscreen(false)}
+            >
+              ออกจากเต็มจอ
+            </Button>
+          </Space>
         </div>
       )}
 
@@ -522,12 +562,13 @@ export const ChildScreeningPage: React.FC = () => {
         <Card
           styles={{ body: { padding: 0, height: '100%' } }}
           style={{
+            flex: isFullscreen ? '1 1 auto' : undefined,
             borderRadius: isFullscreen ? 0 : 20,
             border: isFullscreen ? 'none' : '1px solid #ebe7e1',
             overflow: 'hidden',
             boxShadow: isFullscreen ? 'none' : '0 6px 24px rgba(60, 50, 40, 0.06)',
-            height: isFullscreen ? '100vh' : 'calc(100vh - 210px)',
-            minHeight: 650,
+            height: isFullscreen ? 'calc(100vh - 56px)' : 'calc(100vh - 210px)',
+            minHeight: isFullscreen ? 'calc(100vh - 56px)' : 650,
             background: '#f7f5f1',
             position: 'relative',
           }}
@@ -539,8 +580,8 @@ export const ChildScreeningPage: React.FC = () => {
               title="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"
               style={{
                 width: '100%',
-                height: isFullscreen ? '100vh' : 'calc(100vh - 210px)',
-                minHeight: 650,
+                height: isFullscreen ? 'calc(100vh - 56px)' : 'calc(100vh - 210px)',
+                minHeight: isFullscreen ? 'calc(100vh - 56px)' : 650,
                 border: 'none',
                 display: 'block',
               }}
