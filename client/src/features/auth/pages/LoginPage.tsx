@@ -15,14 +15,15 @@ export const LoginPage: React.FC = () => {
   const [form] = Form.useForm<LoginPayload>();
   const [submitting, setSubmitting] = useState(false);
 
-  // จุดหมายเดิมที่ผู้ใช้พยายามจะเข้าถึงก่อนถูก redirect มาหน้า login
-  const from = (location.state as any)?.from?.pathname || '/dashboard';
-
   const onFinish = async (values: LoginPayload) => {
     try {
       setSubmitting(true);
-      await login(values);
-      navigate(from, { replace: true });
+      const loggedUser = await login(values);
+      // สำหรับ User ทั่วไป (Staff/บุคลากร) จะเปิดเป็นหน้ารวมฟอร์มตามแผนกทันที เพื่อให้คนไข้เลือกฟอร์มที่ต้องการประเมิน
+      const fromPath = (location.state as any)?.from?.pathname;
+      const defaultDest = loggedUser?.role === 'ADMIN' ? '/dashboard' : '/department-forms';
+      const target = fromPath && fromPath !== '/' && fromPath !== '/login' ? fromPath : defaultDest;
+      navigate(target, { replace: true });
     } catch {
       // error ถูกบันทึกใน Zustand แล้ว
     } finally {

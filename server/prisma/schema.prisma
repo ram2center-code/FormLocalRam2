@@ -67,6 +67,7 @@ model User {
   formAssignments FormAssignment[] @relation("AssignedToUser")
   assignedByMe    FormAssignment[] @relation("AssignedByUser")
   auditLogs       AuditLog[]
+  childScreenings ChildScreeningRecord[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }
@@ -169,4 +170,29 @@ model AuditLog {
   ip        String?
   userAgent String?
   createdAt DateTime @default(now())
+}
+
+model ChildScreeningRecord {
+  id              String    @id @default(cuid())
+  hn              String?
+  patientName     String?
+  birthDate       DateTime?
+  assessmentDate  DateTime  @default(now())
+  ageYears        Int?
+  ageMonths       Int?
+  totalAgeMonths  Int?
+  screenings      Json
+  hasAlert        Boolean   @default(false)
+  hasSuicideRisk  Boolean   @default(false)
+  examinerId      String?
+  examinerName    String?
+  examiner        User?     @relation(fields: [examinerId], references: [id], onDelete: SetNull)
+  notes           String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([hn])
+  @@index([assessmentDate])
+  @@index([hasAlert])
+  @@index([hasSuicideRisk])
 }

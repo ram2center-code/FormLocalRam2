@@ -65,6 +65,8 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormShareModal } from '../components/FormShareModal';
+import { PdpaConsentModal } from '../components/PdpaConsentModal';
+import { getDepartmentsApi } from '../../departments/api/departmentApi';
 import { DEFAULT_PDPA_TITLE, DEFAULT_PDPA_CONTENT } from '../constants/pdpa';
 import {
   DndContext,
@@ -739,7 +741,7 @@ export const FormBuilderPage: React.FC = () => {
   const [formType, setFormType] = useState<FormType>('GENERAL');
   const [formVisibility, setFormVisibility] = useState<FormVisibility>('PRIVATE');
   const [requireLogin, setRequireLogin] = useState<boolean>(true);
-  const [pdpaEnabled, setPdpaEnabled] = useState(false);
+  const [pdpaEnabled, setPdpaEnabled] = useState(true);
   const [pdpaTitle, setPdpaTitle] = useState(DEFAULT_PDPA_TITLE);
   const [pdpaContent, setPdpaContent] = useState(DEFAULT_PDPA_CONTENT);
   const [scoreConfig, setScoreConfig] = useState<ScoreConfig>({
@@ -751,6 +753,16 @@ export const FormBuilderPage: React.FC = () => {
   const [showAnswerInPreview, setShowAnswerInPreview] = useState(true);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [pdpaModalVisible, setPdpaModalVisible] = useState(false);
+  const [pdpaPreviewOpen, setPdpaPreviewOpen] = useState(false);
+  const [sidebarTab, setSidebarTab] = useState<'field' | 'form' | 'pdpa'>('field');
+  const [formDepartmentId, setFormDepartmentId] = useState<string | null>(null);
+
+  // ดึงรายการแผนกสำหรับเลือกสังกัดแผนกของแบบฟอร์ม
+  const { data: departments = [] } = useQuery({
+    queryKey: ['departments'],
+    queryFn: getDepartmentsApi,
+  });
 
   // 1. ดึงรายละเอียดฟอร์มจากเซิร์ฟเวอร์ (เฉพาะกรณีฟอร์มที่มีอยู่แล้ว)
   const { data: formDetail, isLoading } = useQuery({
@@ -766,9 +778,10 @@ export const FormBuilderPage: React.FC = () => {
       setFormType('GENERAL');
       setFormVisibility('PRIVATE');
       setRequireLogin(true);
-      setPdpaEnabled(false);
+      setPdpaEnabled(true);
       setPdpaTitle(DEFAULT_PDPA_TITLE);
       setPdpaContent(DEFAULT_PDPA_CONTENT);
+      setFormDepartmentId(currentUser?.departmentId || null);
       setFields([]);
     } else if (formDetail) {
       setFormTitle(formDetail.title);
@@ -776,9 +789,10 @@ export const FormBuilderPage: React.FC = () => {
       setFormType(formDetail.type);
       setFormVisibility(formDetail.visibility || 'PRIVATE');
       setRequireLogin(formDetail.requireLogin !== false);
-      setPdpaEnabled(Boolean(formDetail.pdpaEnabled));
+      setPdpaEnabled(formDetail.pdpaEnabled !== false);
       setPdpaTitle(formDetail.pdpaTitle || DEFAULT_PDPA_TITLE);
       setPdpaContent(formDetail.pdpaContent || DEFAULT_PDPA_CONTENT);
+      setFormDepartmentId(formDetail.departmentId || null);
       setFields(formDetail.schema || []);
       if (formDetail.schema && formDetail.schema.length > 0 && !activeFieldId) {
         setActiveFieldId(formDetail.schema[0].id);
@@ -799,7 +813,9 @@ export const FormBuilderPage: React.FC = () => {
         description: formDescription,
         type: formType,
         visibility: formVisibility,
-        departmentId: formVisibility === 'DEPARTMENT' ? (currentUser?.departmentId || undefined) : undefined,
+        departmentId: formDepartmentId !== null
+          ? (formDepartmentId || undefined)
+          : (formVisibility === 'DEPARTMENT' ? (currentUser?.departmentId || undefined) : undefined),
         requireLogin,
         pdpaEnabled,
         pdpaTitle,
@@ -826,7 +842,9 @@ export const FormBuilderPage: React.FC = () => {
         description: formDescription,
         type: formType,
         visibility: formVisibility,
-        departmentId: formVisibility === 'DEPARTMENT' ? (formDetail?.departmentId || currentUser?.departmentId || undefined) : undefined,
+        departmentId: formDepartmentId !== undefined
+          ? (formDepartmentId || null)
+          : (formVisibility === 'DEPARTMENT' ? (formDetail?.departmentId || currentUser?.departmentId || undefined) : undefined),
         requireLogin,
         pdpaEnabled,
         pdpaTitle,
@@ -1348,6 +1366,15 @@ export const FormBuilderPage: React.FC = () => {
                     {formVisibility === 'PUBLIC' ? 'ทุกคน (Public)' : formVisibility === 'DEPARTMENT' ? 'เฉพาะแผนก' : 'ส่วนบุคคล (Private)'} ▾
                   </Tag>
                 </Dropdown>
+                <Tag
+                  color={pdpaEnabled ? 'green' : 'default'}
+                  icon={<SafetyCertificateOutlined style={{ color: pdpaEnabled ? '#52c41a' : undefined }} />}
+                  style={{ borderRadius: 4, margin: 0, cursor: 'pointer', userSelect: 'none' }}
+                  onClick={() => setPdpaModalVisible(true)}
+                  title="คลิกเพื่อตั้งค่า/แก้ไขข้อตกลง PDPA"
+                >
+                  PDPA: {pdpaEnabled ? 'เปิดใช้งาน' : 'ปิด'} ⚙️
+                </Tag>
                 {isNew ? (
                   <Tag color="orange" style={{ borderRadius: 4, margin: 0 }}>
                     ยังไม่บันทึก (Unsaved)
@@ -1363,6 +1390,14 @@ export const FormBuilderPage: React.FC = () => {
           </Space>
 
           <Space size="middle">
+            <Button
+              icon={<SafetyCertificateOutlined style={{ color: pdpaEnabled ? '#52c41a' : '#8c8c8c' }} />}
+              onClick={() => setPdpaModalVisible(true)}
+              style={{ height: 40, fontWeight: 500 }}
+            >
+              แก้ไข PDPA {pdpaEnabled && <Badge status="success" style={{ marginLeft: 4 }} />}
+            </Button>
+
             {!isNew && (
               <Button
                 icon={<BarChartOutlined style={{ color: '#1677ff' }} />}
@@ -1549,14 +1584,20 @@ export const FormBuilderPage: React.FC = () => {
                       field={field}
                       allFields={fields}
                       activeFieldId={activeFieldId}
-                      onSelectField={(fId) => setActiveFieldId(fId)}
+                      onSelectField={(fId) => {
+                        setActiveFieldId(fId);
+                        setSidebarTab('field');
+                      }}
                       onAddFieldToLayer={(layerId, type) => handleAddFieldToLayer(layerId, type)}
                       onMoveChild={(layerId, cIdx, dir) => handleMoveChildInLayer(layerId, cIdx, dir)}
                       onDeleteChild={(childId) => handleDeleteFieldById(childId)}
                       onChangeFieldType={handleChangeFieldType}
                       index={index}
                       isActive={activeFieldId === field.id}
-                      onSelect={() => setActiveFieldId(field.id)}
+                      onSelect={() => {
+                        setActiveFieldId(field.id);
+                        setSidebarTab('field');
+                      }}
                       onDelete={() => handleDeleteTopLevel(field.id)}
                       onDuplicate={() => handleDuplicateTopLevel(field.id)}
                       onMoveUp={() => handleMoveTopLevel(index, 'up')}
@@ -1578,7 +1619,8 @@ export const FormBuilderPage: React.FC = () => {
             styles={{ body: { padding: 18 } }}
           >
             <Tabs
-              defaultActiveKey="field"
+              activeKey={sidebarTab}
+              onChange={(k) => setSidebarTab(k as 'field' | 'form' | 'pdpa')}
               items={[
                 {
                   key: 'field',
@@ -2248,6 +2290,30 @@ export const FormBuilderPage: React.FC = () => {
 
                       <Divider style={{ margin: '12px 0' }} />
 
+                      {/* ส่วนเลือกสังกัดแผนกของแบบฟอร์ม */}
+                      <div>
+                        <Text strong style={{ display: 'block', marginBottom: 6 }}>
+                          สังกัดแผนกของแบบฟอร์ม (Department Ownership)
+                        </Text>
+                        <Select
+                          value={formDepartmentId || 'NONE'}
+                          onChange={(val) => setFormDepartmentId(val === 'NONE' ? null : val)}
+                          style={{ width: '100%' }}
+                          size="large"
+                          placeholder="เลือกแผนกที่ฟอร์มนี้สังกัด"
+                        >
+                          <Option value="NONE">🌐 ส่วนกลาง / ไม่ระบุแผนก</Option>
+                          {departments.map((dept) => (
+                            <Option key={dept.id} value={dept.id}>
+                              🏢 {dept.name}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Text type="secondary" style={{ fontSize: 11, display: 'block', marginTop: 4 }}>
+                          * ใช้จัดหมวดหมู่ใน &quot;คลังแบบฟอร์มตามแผนก&quot; เพื่อให้บุคลากรค้นหาและเลือกใช้ฟอร์มได้สะดวก
+                        </Text>
+                      </div>
+
                       {/* ส่วนตั้งค่าการเข้าสู่ระบบก่อนตอบ (Require Login Settings) */}
                       <Card
                         title={
@@ -2347,14 +2413,8 @@ export const FormBuilderPage: React.FC = () => {
 
                       <Divider style={{ margin: '12px 0' }} />
 
-                      {/* ส่วนตั้งค่าข้อตกลง PDPA (PDPA Consent Settings) */}
+                      {/* ส่วนเชื่อมต่อการตั้งค่า PDPA */}
                       <Card
-                        title={
-                          <Space size="middle">
-                            <SafetyCertificateOutlined style={{ color: pdpaEnabled ? '#52c41a' : '#8c8c8c', fontSize: 18 }} />
-                            <span>ข้อตกลงความยินยอมข้อมูลส่วนบุคคล (PDPA)</span>
-                          </Space>
-                        }
                         size="small"
                         style={{
                           backgroundColor: pdpaEnabled ? '#f6ffed' : '#fafafa',
@@ -2363,13 +2423,65 @@ export const FormBuilderPage: React.FC = () => {
                         }}
                         styles={{ body: { padding: 14 } }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: pdpaEnabled ? 12 : 0 }}>
-                          <div style={{ paddingRight: 12 }}>
-                            <Text strong style={{ display: 'block', fontSize: 13 }}>
-                              เปิดใช้ Modal ข้อตกลง PDPA ก่อนเริ่มทำฟอร์ม
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Space>
+                            <SafetyCertificateOutlined style={{ color: pdpaEnabled ? '#52c41a' : '#8c8c8c', fontSize: 20 }} />
+                            <div>
+                              <Text strong style={{ fontSize: 13, display: 'block' }}>
+                                ข้อตกลง PDPA ก่อนเริ่มทำฟอร์ม
+                              </Text>
+                              <Text type="secondary" style={{ fontSize: 11 }}>
+                                สถานะ: {pdpaEnabled ? 'เปิดใช้งาน (ต้องยินยอมก่อน)' : 'ปิดใช้งาน'}
+                              </Text>
+                            </div>
+                          </Space>
+                          <Button
+                            size="small"
+                            icon={<EditOutlined />}
+                            onClick={() => setSidebarTab('pdpa')}
+                          >
+                            ตั้งค่า PDPA
+                          </Button>
+                        </div>
+                      </Card>
+                    </Space>
+                  ),
+                },
+                {
+                  key: 'pdpa',
+                  label: (
+                    <Space size={4}>
+                      <SafetyCertificateOutlined style={{ color: pdpaEnabled ? '#52c41a' : undefined }} />
+                      <span>ข้อตกลง PDPA</span>
+                      {pdpaEnabled && <Badge status="success" />}
+                    </Space>
+                  ),
+                  children: (
+                    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                      <Alert
+                        type="info"
+                        showIcon
+                        icon={<SafetyCertificateOutlined />}
+                        message="การคุ้มครองข้อมูลส่วนบุคคล (PDPA)"
+                        description="กำหนดข้อตกลงให้ผู้ตอบฟอร์มยินยอมใน Modal ก่อนเริ่มทำแบบฟอร์ม"
+                      />
+
+                      <Card
+                        size="small"
+                        style={{
+                          backgroundColor: pdpaEnabled ? '#f6ffed' : '#fafafa',
+                          border: `1px solid ${pdpaEnabled ? '#b7eb8f' : '#e2e8f0'}`,
+                          borderRadius: 10,
+                        }}
+                        styles={{ body: { padding: 14 } }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <Text strong style={{ fontSize: 13, display: 'block' }}>
+                              เปิดใช้งาน Modal ข้อตกลง PDPA
                             </Text>
-                            <Text type="secondary" style={{ fontSize: 12 }}>
-                              แสดงหน้าต่างขอความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล ก่อนผู้ตอบจะเริ่มกรอกแบบฟอร์ม
+                            <Text type="secondary" style={{ fontSize: 11 }}>
+                              ผู้ตอบต้องยอมรับก่อนจึงจะเข้าทำฟอร์มได้
                             </Text>
                           </div>
                           <Switch
@@ -2381,57 +2493,92 @@ export const FormBuilderPage: React.FC = () => {
                             }}
                           />
                         </div>
+                      </Card>
 
-                        {pdpaEnabled && (
-                          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed #d9d9d9' }}>
-                            <div style={{ marginBottom: 10 }}>
-                              <Text strong style={{ fontSize: 12, display: 'block', marginBottom: 4 }}>
-                                หัวข้อข้อตกลง (PDPA Title):
-                              </Text>
-                              <Input
-                                value={pdpaTitle}
-                                onChange={(e) => setPdpaTitle(e.target.value)}
-                                placeholder="ระบุหัวข้อ เช่น ข้อตกลงและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคล..."
-                                style={{ borderRadius: 6 }}
-                              />
-                            </div>
-
-                            <div style={{ marginBottom: 10 }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                                <Text strong style={{ fontSize: 12 }}>
-                                  ข้อความและเงื่อนไขความยินยอม (Consent Terms):
-                                </Text>
-                                <Button
-                                  type="link"
-                                  size="small"
-                                  onClick={() => {
-                                    setPdpaTitle(DEFAULT_PDPA_TITLE);
-                                    setPdpaContent(DEFAULT_PDPA_CONTENT);
-                                    message.info('โหลดข้อความ PDPA มาตรฐานเรียบร้อย');
-                                  }}
-                                  style={{ padding: 0, fontSize: 11, height: 'auto' }}
-                                >
-                                  📋 ใช้ข้อความมาตรฐาน
-                                </Button>
-                              </div>
-                              <Input.TextArea
-                                rows={6}
-                                value={pdpaContent}
-                                onChange={(e) => setPdpaContent(e.target.value)}
-                                placeholder="พิมพ์เงื่อนไขและข้อตกลงการเก็บรวบรวมข้อมูลส่วนบุคคลที่นี่..."
-                                style={{ borderRadius: 6, fontSize: 12 }}
-                              />
-                            </div>
-
-                            <Alert
-                              type="info"
-                              showIcon
-                              style={{ fontSize: 11, padding: '6px 10px', borderRadius: 6 }}
-                              message="เมื่อเปิดใช้งาน ผู้ตอบฟอร์ม (ทั้งในระบบ, ผ่าน iPad, หรือบุคคลภายนอก) จะต้องกดยินยอมใน Modal ก่อน จึงจะสามารถกรอกฟอร์มได้"
+                      {pdpaEnabled ? (
+                        <>
+                          <div>
+                            <Text strong style={{ fontSize: 12, display: 'block', marginBottom: 6 }}>
+                              หัวข้อข้อตกลง (PDPA Title):
+                            </Text>
+                            <Input
+                              value={pdpaTitle}
+                              onChange={(e) => setPdpaTitle(e.target.value)}
+                              placeholder="ระบุหัวข้อ เช่น ข้อตกลง PDPA..."
+                              style={{ borderRadius: 6 }}
                             />
                           </div>
-                        )}
-                      </Card>
+
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                              <Text strong style={{ fontSize: 12 }}>
+                                เนื้อหาข้อตกลง (Consent Terms):
+                              </Text>
+                              <Button
+                                type="link"
+                                size="small"
+                                onClick={() => {
+                                  setPdpaTitle(DEFAULT_PDPA_TITLE);
+                                  setPdpaContent(DEFAULT_PDPA_CONTENT);
+                                  message.info('โหลดข้อความ PDPA มาตรฐานเรียบร้อย');
+                                }}
+                                style={{ padding: 0, fontSize: 11, height: 'auto' }}
+                              >
+                                📋 ใช้ข้อความมาตรฐาน
+                              </Button>
+                            </div>
+                            <Input.TextArea
+                              rows={8}
+                              value={pdpaContent}
+                              onChange={(e) => setPdpaContent(e.target.value)}
+                              placeholder="ระบุข้อตกลงและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคล..."
+                              style={{ borderRadius: 6, fontSize: 12 }}
+                            />
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                            <Button
+                              icon={<EyeOutlined />}
+                              onClick={() => setPdpaPreviewOpen(true)}
+                              style={{ flex: 1 }}
+                            >
+                              จำลอง Modal
+                            </Button>
+                            <Button
+                              type="primary"
+                              ghost
+                              icon={<EditOutlined />}
+                              onClick={() => setPdpaModalVisible(true)}
+                              style={{ flex: 1 }}
+                            >
+                              แก้ไขเต็มจอ
+                            </Button>
+                          </div>
+
+                          <Alert
+                            type="info"
+                            showIcon
+                            style={{ fontSize: 11, padding: '6px 10px', borderRadius: 6 }}
+                            message="เมื่อเปิดใช้งาน ผู้ตอบฟอร์ม (ทั้งในระบบ, ผ่าน iPad, หรือบุคคลภายนอก) จะต้องกดยินยอมใน Modal ก่อน จึงจะสามารถกรอกฟอร์มได้"
+                          />
+                        </>
+                      ) : (
+                        <Card style={{ borderRadius: 8, textAlign: 'center', padding: '20px 10px', backgroundColor: '#fafafa' }}>
+                          <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 12 }}>
+                            ข้อตกลง PDPA ถูกปิดอยู่ ผู้ตอบจะสามารถเข้าทำแบบฟอร์มได้ทันทีโดยไม่ต้องกดยินยอม
+                          </Text>
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              setPdpaEnabled(true);
+                              if (!pdpaTitle) setPdpaTitle(DEFAULT_PDPA_TITLE);
+                              if (!pdpaContent) setPdpaContent(DEFAULT_PDPA_CONTENT);
+                            }}
+                          >
+                            เปิดใช้งาน PDPA
+                          </Button>
+                        </Card>
+                      )}
                     </Space>
                   ),
                 },
@@ -2743,6 +2890,162 @@ export const FormBuilderPage: React.FC = () => {
           </Card>
         </div>
       </Modal>
+
+      {/* PDPA Full Editor Modal */}
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 8,
+                backgroundColor: '#f6ffed',
+                border: '1px solid #b7eb8f',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <SafetyCertificateOutlined style={{ color: '#52c41a', fontSize: 22 }} />
+            </div>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1f2937' }}>
+                แก้ไขและตั้งค่าข้อตกลง PDPA (Personal Data Protection)
+              </div>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                กำหนดข้อตกลงขอความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล ที่ผู้ตอบต้องกดยอมรับก่อนเข้าทำแบบฟอร์ม
+              </Text>
+            </div>
+          </div>
+        }
+        open={pdpaModalVisible}
+        onCancel={() => setPdpaModalVisible(false)}
+        width={780}
+        centered
+        footer={[
+          <Button
+            key="preview"
+            icon={<EyeOutlined />}
+            onClick={() => setPdpaPreviewOpen(true)}
+          >
+            ดูตัวอย่าง Modal จริง (Preview)
+          </Button>,
+          <Button
+            key="done"
+            type="primary"
+            onClick={() => {
+              setPdpaModalVisible(false);
+              message.success('อัปเดตการตั้งค่า PDPA ในฟอร์มแล้ว (กดปุ่มบันทึกเพื่อบันทึกลงระบบ)');
+            }}
+            style={{ minWidth: 120 }}
+          >
+            เรียบร้อย (Done)
+          </Button>,
+        ]}
+      >
+        <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* สวิตช์เปิด/ปิด */}
+          <Card
+            size="small"
+            style={{
+              backgroundColor: pdpaEnabled ? '#f0fdf4' : '#fafafa',
+              border: `1.5px solid ${pdpaEnabled ? '#86efac' : '#e5e7eb'}`,
+              borderRadius: 10,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <Text strong style={{ fontSize: 14, display: 'block', color: pdpaEnabled ? '#166534' : undefined }}>
+                  {pdpaEnabled ? '✅ เปิดใช้งานระบบความยินยอม PDPA' : '⚪ ปิดใช้งานข้อตกลง PDPA'}
+                </Text>
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  {pdpaEnabled
+                    ? 'ผู้ตอบแบบฟอร์มทุกคน (ทั้งในระบบ, นอกระบบ, หรือผ่าน iPad) จะต้องกดยอมรับข้อตกลงนี้ก่อน จึงจะสามารถกรอกฟอร์มได้'
+                    : 'ผู้ตอบแบบฟอร์มจะสามารถกรอกและส่งคำตอบได้ทันทีโดยไม่ต้องผ่านหน้าจอยินยอม'}
+                </Text>
+              </div>
+              <Switch
+                checked={pdpaEnabled}
+                onChange={(checked) => {
+                  setPdpaEnabled(checked);
+                  if (checked && !pdpaTitle) setPdpaTitle(DEFAULT_PDPA_TITLE);
+                  if (checked && !pdpaContent) setPdpaContent(DEFAULT_PDPA_CONTENT);
+                }}
+                checkedChildren="เปิด"
+                unCheckedChildren="ปิด"
+              />
+            </div>
+          </Card>
+
+          {pdpaEnabled && (
+            <>
+              {/* หัวข้อ PDPA */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <Text strong style={{ fontSize: 13 }}>
+                    หัวข้อข้อตกลง (PDPA Title):
+                  </Text>
+                </div>
+                <Input
+                  size="large"
+                  value={pdpaTitle}
+                  onChange={(e) => setPdpaTitle(e.target.value)}
+                  placeholder="เช่น ข้อตกลงและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคล (PDPA)"
+                  style={{ borderRadius: 8 }}
+                />
+              </div>
+
+              {/* ข้อความเนื้อหา PDPA */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <Text strong style={{ fontSize: 13 }}>
+                    รายละเอียดและเงื่อนไขความยินยอม (Consent Content):
+                  </Text>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                      setPdpaTitle(DEFAULT_PDPA_TITLE);
+                      setPdpaContent(DEFAULT_PDPA_CONTENT);
+                      message.info('คืนค่าเป็นข้อความ PDPA มาตรฐานเรียบร้อยแล้ว');
+                    }}
+                    style={{ padding: 0 }}
+                  >
+                    📋 ใช้ข้อความมาตรฐาน (Standard Template)
+                  </Button>
+                </div>
+                <Input.TextArea
+                  rows={10}
+                  value={pdpaContent}
+                  onChange={(e) => setPdpaContent(e.target.value)}
+                  placeholder="พิมพ์เงื่อนไข ข้อกำหนด วัตถุประสงค์ในการจัดเก็บข้อมูล และสิทธิของเจ้าของข้อมูล..."
+                  style={{ borderRadius: 8, fontSize: 13, lineHeight: 1.6 }}
+                />
+                <Text type="secondary" style={{ fontSize: 11, display: 'block', marginTop: 4 }}>
+                  * สามารถจัดรูปแบบขึ้นบรรทัดใหม่ หรือใส่หัวข้อย่อยได้ตามต้องการ เนื้อหานี้จะแสดงในกล่องแบบเลื่อนอ่านได้ของผู้ตอบ
+                </Text>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
+
+      {/* Simulated PDPA Live Preview Modal (RAM2 Preliminary Assessment Standard) */}
+      <PdpaConsentModal
+        open={pdpaPreviewOpen}
+        formTitle={formTitle || 'แบบประเมินความเสี่ยงสุขภาพเบื้องต้น'}
+        formDescription={formDescription || 'ตัวอย่าง: ระบบจะแสดงชื่อหัวข้อจริงที่ผู้ตอบเลือก'}
+        pdpaTitle={pdpaTitle}
+        pdpaContent={pdpaContent}
+        isSimulatedPreview={true}
+        onAccept={() => {
+          message.success('ตัวอย่าง: ผู้ตอบกดยินยอมสำเร็จ และจะเข้าสู่แบบฟอร์มทันที');
+          setPdpaPreviewOpen(false);
+        }}
+        onDecline={() => setPdpaPreviewOpen(false)}
+      />
+
     </div>
   );
 };

@@ -9,6 +9,7 @@ import departmentRouter from './modules/department/department.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import formRouter from './modules/form/form.routes.js';
 import settingRouter from './modules/setting/setting.routes.js';
+import screeningRouter from './modules/screening/screening.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -91,6 +92,7 @@ app.use(['/api/departments', '/departments'], departmentRouter);
 app.use(['/api/users', '/users'], userRouter);
 app.use(['/api/forms', '/forms'], formRouter);
 app.use(['/api/settings', '/settings'], settingRouter);
+app.use(['/api/screening', '/screening'], screeningRouter);
 
 // 5. 404 Not Found Handler
 app.use((_req: Request, res: Response) => {

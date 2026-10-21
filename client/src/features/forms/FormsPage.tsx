@@ -780,17 +780,34 @@ export const FormsPage: React.FC = () => {
           </Text>
         </div>
 
-        {activeTab === 'active' && (
+        <Space wrap size="small">
           <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleCreateNewForm}
+            icon={<ApartmentOutlined style={{ color: '#722ed1' }} />}
+            onClick={() => navigate('/department-forms')}
             size="large"
-            style={{ height: 44, fontWeight: 600, borderRadius: 8 }}
+            style={{
+              height: 44,
+              fontWeight: 500,
+              borderRadius: 8,
+              borderColor: '#d3adf7',
+              color: '#722ed1',
+              backgroundColor: '#f9f0ff',
+            }}
           >
-            สร้างแบบฟอร์มใหม่
+            คลังฟอร์มตามแผนก
           </Button>
-        )}
+          {activeTab === 'active' && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleCreateNewForm}
+              size="large"
+              style={{ height: 44, fontWeight: 600, borderRadius: 8 }}
+            >
+              สร้างแบบฟอร์มใหม่
+            </Button>
+          )}
+        </Space>
       </div>
 
       {/* Tabs: แบบฟอร์มทั้งหมด vs ถังขยะ */}

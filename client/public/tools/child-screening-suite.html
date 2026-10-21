@@ -1,0 +1,3281 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น - FormLocal</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f5f1; --card:#ffffff; --ink:#28303a; --muted:#6b7480; --line:#ebe7e1;
+    --accent:#2c7aa0; --accent-soft:#e3f0f6;
+    --low:#2e7d4f; --high:#c0392b; --high-bg:#fbe9e7; --purple:#6b2c91;
+    --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6;
+    background:var(--bg) radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2,.mitr{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  .wrap{max-width:800px;margin:0 auto;padding:20px 16px 60px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;border-radius:26px;padding:24px 22px;display:flex;align-items:center;gap:10px;
+    background:linear-gradient(120deg,#dcecfb 0%,#f3e8fb 55%,#fde6ec 100%);box-shadow:0 6px 20px rgba(60,50,40,.06)}
+  .hero h1{font-size:1.6rem;line-height:1.3;margin:0 0 6px;color:#2a3b55}
+  .hero p{margin:0;color:#5a6577}
+  .hero .art{flex:0 0 250px}
+  .hero .art svg{width:100%;height:auto;display:block}
+  .hero .txt{flex:1 1 auto;position:relative;z-index:1}
+  .hero::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.35);right:-50px;top:-70px}
+  @media (max-width:620px){.hero{flex-direction:column-reverse;text-align:center}.hero .art{flex-basis:auto;width:min(260px,80%)}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-top:18px;box-shadow:0 4px 14px rgba(60,50,40,.04)}
+  .card h2{font-size:1.2rem;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  .card h2 .ic{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--accent-soft)}
+  label.f{display:block;font-weight:600;margin:12px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fffdfa}
+  input:focus{outline:none;border-color:#9cc3d6;box-shadow:0 0 0 3px #e3f0f6}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .agebox{margin-top:14px;padding:12px 16px;border-radius:14px;background:#fff8e6;border:1.5px dashed #f2cf7a;display:flex;gap:10px;align-items:flex-start}
+  .agebox .em{font-size:1.4rem;line-height:1.2}
+  .agebox b{font-family:"Mitr",sans-serif;font-weight:500}
+  .agebox.err{background:var(--high-bg);border-color:#f0a8a0;color:var(--high)}
+
+  /* protocol timeline */
+  .proto{position:relative;margin-top:14px;padding-left:22px}
+  .proto::before{content:"";position:absolute;left:7px;top:14px;bottom:14px;width:3px;border-radius:3px;
+    background:linear-gradient(#3b82c4,#1f8a84,#cc4f70,#5a63c9,#8a5cc2,#2c7aa0)}
+  .item{position:relative;display:grid;grid-template-columns:76px 1fr 40px;gap:14px;align-items:center;width:100%;margin:0 0 12px;
+    background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);
+    transition:transform .15s,box-shadow .15s,border-color .15s}
+  .item::before{content:"";position:absolute;left:-22px;top:50%;width:13px;height:13px;margin-top:-6.5px;border-radius:50%;background:#fff;border:3px solid var(--c)}
+  .item:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(60,50,40,.08);border-color:var(--c)}
+  .item:focus-visible{outline:3px solid #9cc3d6}
+  .item .m svg{width:76px;height:76px;display:block}
+  .pill{display:inline-block;background:var(--c);color:#fff;border-radius:99px;padding:1px 12px;font-family:"Mitr",sans-serif;font-size:.88rem}
+  .item .who{color:var(--muted);font-size:.85rem;margin-left:6px}
+  .item .t b{display:block;font-family:"Mitr",sans-serif;font-weight:500;font-size:1.08rem;margin-top:3px}
+  .item .t .sh{color:var(--c);font-weight:700;font-size:.92rem}
+  .item .t .res{display:block;color:var(--ink);font-size:.9rem;margin-top:2px}
+  .item .go{width:36px;height:36px;border-radius:50%;background:var(--cs);color:var(--c);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700}
+  .item.due{border-color:var(--c);background:linear-gradient(100deg,var(--cs) 0%,#fff 65%)}
+  .item.due::before{background:var(--c)}
+  .item.off{opacity:.5;filter:saturate(.5)}
+  .item.off:hover{opacity:.85;filter:none}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .bdg{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:1px 10px;font-size:.8rem;font-weight:700;color:#fff}
+  .bdg.due{background:var(--c)} .bdg.done{background:var(--low)} .bdg.alert{background:var(--high)} .bdg.sui{background:var(--purple)}
+  @media (max-width:520px){
+    .item{grid-template-columns:58px 1fr 32px;gap:10px;padding:10px 12px}
+    .item .m svg{width:58px;height:58px}
+    .item .who{display:block;margin-left:0}
+  }
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-top:4px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+  /* summary */
+  .sumrow{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .sumrow:last-child{border-bottom:0}
+  .sumrow svg{width:48px;height:48px;display:block}
+  .sumrow .n{font-family:"Mitr",sans-serif;font-weight:500}
+  .sumrow .r{font-weight:600;font-size:.95rem}
+  .sumrow .r.alert{color:var(--high)} .sumrow .r.sui{color:var(--purple)}
+
+  button.ghost{font:inherit;font-weight:700;border-radius:14px;padding:12px 18px;cursor:pointer;background:#fff;border:2px solid var(--line);color:var(--ink)}
+  button.ghost:hover{border-color:#c9c2b6}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .row button{flex:1 1 200px}
+
+  /* tool view */
+  #toolView{display:none;position:fixed;inset:0;flex-direction:column;background:var(--bg);z-index:10}
+  #toolView.show{display:flex}
+  .topbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--card);border-bottom:3px solid var(--tc,#2c7aa0)}
+  .topbar button{font:inherit;font-weight:700;background:var(--tcs,#e3f0f6);color:var(--tc,#2c7aa0);border:0;border-radius:12px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+  .topbar .tm svg{width:36px;height:36px;display:block}
+  .topbar .tt{font-family:"Mitr",sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #frames{flex:1 1 auto;position:relative}
+  #frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
+  #frames iframe.show{display:block}
+
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted);text-align:center}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.hero,#protoCard,#patientCard{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;box-shadow:none;break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="hub">
+  <section class="hero noprint">
+    <div class="txt">
+      <h1>ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์</h1>
+      <p>สำหรับเด็กและวัยรุ่น ตาม milestone protocol ของโรงพยาบาล</p>
+    </div>
+    <div class="art"><svg viewBox="0 0 240 130" aria-hidden="true"><ellipse cx="120" cy="122" rx="105" ry="8" fill="#000" opacity=".06"/><path d="M196 18 l3.5 8 l8.5 1 l-6 6 l1.8 8.5 l-7.8 -4.3 l-7.8 4.3 l1.8 -8.5 l-6 -6 l8.5 -1z" fill="#f6b73c"/><circle cx="34" cy="26" r="4" fill="#ef6f6c"/><circle cx="218" cy="70" r="3" fill="#6cc3a0"/><circle cx="20" cy="84" r="3" fill="#5a63c9"/><path d="M44 102 q4 -18 22 -18 q18 0 22 18z" fill="#6cc3a0"/><path d="M96 108 q6 -26 28 -26 q22 0 28 26z" fill="#5a9bd8"/><path d="M156 104 q4 -18 22 -18 q18 0 22 18z" fill="#e2637f"/><circle cx="66" cy="66" r="21" fill="#ffdcbc"/><circle cx="43.95" cy="54.45" r="7.35" fill="#4a3426"/><circle cx="88.05" cy="54.45" r="7.35" fill="#4a3426"/><path d="M45 63.9 C45 39.75 87 39.75 87 63.9 C74.4 51.3 57.6 51.3 45 63.9Z" fill="#4a3426"/><circle cx="58.65" cy="66" r="2.52" fill="#3a2e2a"/><circle cx="73.35" cy="66" r="2.52" fill="#3a2e2a"/><circle cx="54.45" cy="72.3" r="3.36" fill="#f7a1a1" opacity=".75"/><circle cx="77.55" cy="72.3" r="3.36" fill="#f7a1a1" opacity=".75"/><path d="M60.75 72.3 q5.25 6.3 10.5 0" stroke="#3a2e2a" stroke-width="1.89" fill="none" stroke-linecap="round"/><circle cx="124" cy="56" r="26" fill="#f2c49b"/><path d="M99.3 49.5 C100.6 24.8 147.4 24.8 148.7 49.5 C131.8 36.5 124 44.3 99.3 49.5Z" fill="#2f2420"/><circle cx="114.9" cy="56" r="3.12" fill="#3a2e2a"/><circle cx="133.1" cy="56" r="3.12" fill="#3a2e2a"/><circle cx="109.7" cy="63.8" r="4.16" fill="#f7a1a1" opacity=".75"/><circle cx="138.3" cy="63.8" r="4.16" fill="#f7a1a1" opacity=".75"/><path d="M117.5 63.8 q6.5 7.8 13.0 0" stroke="#3a2e2a" stroke-width="2.34" fill="none" stroke-linecap="round"/><circle cx="178" cy="68" r="20" fill="#ffe2c8"/><path d="M156.4 72.0 C155.0 42.0 201.0 42.0 199.6 72.0 L194.0 62.0 C184.0 56.0 172.0 56.0 162.0 62.0Z" fill="#8a5a36"/><circle cx="171.0" cy="68" r="2.4" fill="#3a2e2a"/><circle cx="185.0" cy="68" r="2.4" fill="#3a2e2a"/><circle cx="167.0" cy="74.0" r="3.2" fill="#f7a1a1" opacity=".75"/><circle cx="189.0" cy="74.0" r="3.2" fill="#f7a1a1" opacity=".75"/><path d="M173.0 74.0 q5.0 6.0 10.0 0" stroke="#3a2e2a" stroke-width="1.7999999999999998" fill="none" stroke-linecap="round"/></svg></div>
+  </section>
+
+  <div class="card" id="patientCard">
+    <h2><span class="ic">📝</span>ข้อมูลผู้ป่วย</h2>
+    <div class="grid2">
+      <div><label class="f" for="pName">ชื่อ–นามสกุล</label><input type="text" id="pName" autocomplete="off"></div>
+      <div><label class="f" for="pHn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="pHn" autocomplete="off"></div>
+      <div><label class="f" for="pDob">วันเกิด</label><input type="date" id="pDob"></div>
+      <div><label class="f" for="pDate">วันที่ทำแบบสอบถาม</label><input type="date" id="pDate"></div>
+    </div>
+    <div class="agebox" id="ageBox"></div>
+    <p class="hint" style="margin:8px 0 0">ข้อมูลนี้จะถูกกรอกให้อัตโนมัติในทุกแบบสอบถาม</p>
+  </div>
+
+  <div class="card" id="protoCard">
+    <h2><span class="ic">🧭</span>แบบคัดกรองตามช่วงอายุ</h2>
+    <div class="hint">เลือกแบบสอบถามที่ต้องการทำ — แบบที่ตรงกับอายุผู้ป่วยจะถูกเน้นไว้</div>
+    <div class="proto" id="proto"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>ตรงช่วงอายุ</span>
+      <span><i style="background:var(--low)"></i>ทำแล้ว</span>
+      <span><i style="background:var(--high)"></i>HIGH ALERT</span>
+      <span><i style="background:var(--purple)"></i>เสี่ยงทำร้ายตนเอง</span>
+    </div>
+  </div>
+
+  <div class="card" id="sumCard" hidden>
+    <h2><span class="ic">📋</span>สรุปผลการคัดกรอง</h2>
+    <div class="hint" id="sumInfo" style="margin-bottom:6px"></div>
+    <div id="sumList"></div>
+    <div class="printonly" style="margin-top:18px">ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................</div>
+  </div>
+
+  <div class="row noprint">
+    <button class="ghost" id="saveDbBtn" hidden style="background:#2c7aa0;color:#fff;border-color:#2c7aa0;font-weight:700;">💾 บันทึกผลลงฐานข้อมูล</button>
+    <button class="ghost" id="printSum" hidden onclick="window.print()">🖨️ พิมพ์สรุปผลทั้งหมด</button>
+    <button class="ghost" id="resetAll">🔄 เริ่มผู้ป่วยรายใหม่</button>
+  </div>
+
+  <footer>ระบบบันทึกและประมวลผลข้อมูลการคัดกรองเด็กและวัยรุ่น • โรงพยาบาลรามคำแหง 2 • FormLocal</footer>
+</div>
+
+<div id="toolView" class="noprint">
+  <div class="topbar">
+    <button id="backBtn">← หน้าหลัก</button>
+    <div class="tm" id="toolMascot"></div>
+    <div class="tt" id="toolTitle"></div>
+  </div>
+  <div id="frames"></div>
+</div>
+
+<script type="text/plain" id="tpl-mchat">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบคัดกรอง M-CHAT-R</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --low:#2e7d4f; --low-bg:#e7f5ec;
+    --mid:#b7791f; --mid-bg:#fdf4e1;
+    --high:#c0392b; --high-bg:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date],input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--high);font-size:.92rem;margin-top:6px}
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .ex{color:var(--muted);font-size:.93rem;margin:2px 0 0 2em}
+  .opts{display:flex;gap:10px;margin:10px 0 0 2em}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{flex:1;max-width:160px;text-align:center;padding:10px 0;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+  #result{display:none}
+  .verdict{border-radius:14px;padding:18px;border:2px solid}
+  .verdict.low{background:var(--low-bg);border-color:var(--low)}
+  .verdict.mid{background:var(--mid-bg);border-color:var(--mid)}
+  .verdict.high{background:var(--high-bg);border-color:var(--high)}
+  .verdict .tag{display:inline-block;color:#fff;font-weight:700;padding:3px 12px;border-radius:99px;font-size:.92rem}
+  .low .tag{background:var(--low)} .mid .tag{background:var(--mid)} .high .tag{background:var(--high)}
+  .score{font-size:2.6rem;font-weight:700;line-height:1;margin:10px 0 2px}
+  .score small{font-size:1rem;color:var(--muted);font-weight:500}
+  .scale{display:grid;grid-template-columns:3fr 5fr 13fr;gap:4px;margin-top:14px;font-size:.82rem;text-align:center}
+  .scale div{padding:6px 2px;border-radius:6px;color:#fff;opacity:.4}
+  .scale .on{opacity:1;font-weight:700}
+  .s1{background:var(--low)} .s2{background:var(--mid)} .s3{background:var(--high)}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .flag{color:var(--high);font-weight:700}
+  .muted{color:var(--muted)}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;break-inside:avoid}
+    .scale div{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .verdict,.tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#3b82c4;--accent-soft:#e3effa}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#e3effa 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#dcecfb"/>
+<rect x="10" y="64" width="20" height="20" rx="4" fill="#f6b73c"/><text x="20" y="79" font-size="13" text-anchor="middle" fill="#fff" font-weight="700" font-family="sans-serif">A</text>
+<rect x="70" y="66" width="18" height="18" rx="4" fill="#ef6f6c"/><text x="79" y="80" font-size="12" text-anchor="middle" fill="#fff" font-weight="700" font-family="sans-serif">B</text>
+<rect x="73" y="50" width="13" height="13" rx="3" fill="#6cc3a0"/>
+<circle cx="27" cy="50" r="5.5" fill="#ffd2ad"/><circle cx="73" cy="44" r="5.5" fill="#ffd2ad"/>
+<circle cx="50" cy="48" r="24" fill="#ffdcbc"/>
+<path d="M41 27 q9 -12 16 -1" stroke="#8a5a36" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+<circle cx="41" cy="47" r="3.2" fill="#3a2e2a"/><circle cx="59" cy="47" r="3.2" fill="#3a2e2a"/>
+<circle cx="42.2" cy="45.8" r="1" fill="#fff"/><circle cx="60.2" cy="45.8" r="1" fill="#fff"/>
+<circle cx="35" cy="56" r="4.5" fill="#f7a1a1" opacity=".75"/><circle cx="65" cy="56" r="4.5" fill="#f7a1a1" opacity=".75"/>
+<path d="M44 57 q6 7 12 0" stroke="#3a2e2a" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div><div class="mh-txt">
+  <h1>แบบสอบถาม M-CHAT-R ฉบับภาษาไทย</h1>
+  <p>แบบคัดกรองภาวะออทิซึมสเปกตรัมในเด็กเล็ก (อายุ 16–30 เดือน) สำหรับผู้ปกครอง</p>
+</div></header>
+
+<!-- ============ FORM ============ -->
+<form id="form" novalidate>
+  <div class="card">
+    <h2>ข้อมูลเด็ก</h2>
+    <div class="grid2">
+      <div>
+        <label class="f" for="cname">ชื่อ–นามสกุลเด็ก</label>
+        <input type="text" id="cname" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label>
+        <input type="text" id="hn" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="dob">วันเกิดเด็ก</label>
+        <input type="date" id="dob">
+      </div>
+      <div>
+        <label class="f" for="age">อายุ (เดือน) <span class="hint">(คำนวณอัตโนมัติ)</span></label>
+        <input type="number" id="age" readonly tabindex="-1" placeholder="คำนวณจากวันเกิดอัตโนมัติ" style="background:var(--bg)">
+      </div>
+      <div>
+        <label class="f" for="resp">ผู้ตอบแบบสอบถาม</label>
+        <input type="text" id="resp" placeholder="เช่น มารดา บิดา ผู้ดูแล" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="date">วันที่ทำแบบสอบถาม</label>
+        <input type="date" id="date">
+      </div>
+    </div>
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr">
+    โปรดตอบแบบสอบถามเกี่ยวกับพฤติกรรมที่ลูกของท่าน<b>มักทำ</b> โดยพยายามตอบคำถามทุกข้อ
+    ถ้าพฤติกรรมนั้นไม่ค่อยเกิดขึ้น (เช่น ท่านเห็นพฤติกรรมดังกล่าวเพียง 1 หรือ 2 ครั้ง)
+    โปรดตอบว่าลูกของท่าน<b>ไม่ได้ทำ</b>พฤติกรรมในข้อนั้นๆ
+  </div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 20 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<!-- ============ RESULT ============ -->
+<section id="result">
+  <div class="card">
+    <h2>สรุปผลการคัดกรอง</h2>
+    <div id="infoLine" class="muted" style="margin-bottom:12px"></div>
+    <div id="verdict" class="verdict">
+      <span class="tag" id="vTag"></span>
+      <div class="score"><span id="vScore"></span> <small>/ 20 คะแนน</small></div>
+      <div id="vTitle" style="font-weight:700;font-size:1.1rem"></div>
+      <div id="vText" style="margin-top:6px"></div>
+      <div class="scale">
+        <div class="s1" id="sc1">0–2 ต่ำ</div>
+        <div class="s2" id="sc2">3–7 ปานกลาง</div>
+        <div class="s3" id="sc3">8–20 สูง</div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:12px">
+      ผลนี้เป็นเพียงการ<b>คัดกรอง</b> ไม่ใช่การวินิจฉัย กรุณานำผลนี้ไปปรึกษาแพทย์ทุกครั้ง
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>ข้อที่ตอบแล้วมีความเสี่ยง <span class="muted" id="flagCount"></span></h2>
+    <p class="hint" style="margin-top:0">สำหรับแพทย์ใช้ทำ M-CHAT-R Follow-Up เฉพาะข้อเหล่านี้</p>
+    <div id="flagList"></div>
+  </div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>คำถาม</th><th style="width:4.5em">คำตอบ</th><th style="width:3.5em">คะแนน</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+    <p class="hint">* ข้อ 2, 5, 12 ให้คะแนนแบบย้อนกลับ (ตอบ “ใช่” = 1 คะแนน)</p>
+  </div>
+
+  <div class="printonly card">
+    ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................
+  </div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  M-CHAT-R/F™ © 2009 Diana Robins, Deborah Fein, &amp; Marianne Barton.
+  ฉบับภาษาไทยแปลโดยโครงการวิจัย “การเพิ่มความสามารถของผู้ปกครองในการคัดกรองบุตรที่มีภาวะออทิซึมสเปกตรัมโดยใช้เทคโนโลยี”
+  (ผศ.พญ.กุศลาภรณ์ ชัยอุดมสม และคณะ). ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+// ---------- Questions (M-CHAT-R Thai) ----------
+// reverse: true  => "ใช่" = 1 คะแนน (ข้อ 2, 5, 12)
+const QUESTIONS = [
+  {t:"ถ้าคุณชี้ไปที่สิ่งใดสิ่งหนึ่งในห้อง ลูกของคุณมองไปที่สิ่งนั้นหรือไม่", ex:"ตัวอย่างเช่น เมื่อคุณชี้ไปที่ของเล่นหรือสัตว์เลี้ยง ลูกของคุณมองไปที่ของเล่นหรือสัตว์เลี้ยงนั้นหรือไม่"},
+  {t:"คุณเคยรู้สึกสงสัยหรือไม่ว่าลูกของคุณหูหนวก", reverse:true},
+  {t:"ลูกของคุณรู้จักเล่นสมมติหรือไม่", ex:"ตัวอย่างเช่น เล่นสมมติดื่มน้ำจากถ้วยเปล่า เล่นสมมติว่าพูดโทรศัพท์ เล่นสมมติว่าป้อนอาหารให้ตุ๊กตาหรือตุ๊กตาสัตว์"},
+  {t:"ลูกของคุณชอบปีนป่ายสิ่งของหรือไม่", ex:"ตัวอย่างเช่น โต๊ะ เก้าอี้ ของเล่นในสนามเด็กเล่น หรือบันได"},
+  {t:"ลูกของคุณเคลื่อนไหวนิ้วมือแบบแปลกๆ อยู่ใกล้ๆ กับลูกตาของเขาหรือไม่", ex:"ตัวอย่างเช่น ลูกของคุณกระดิกนิ้วไปมาใกล้ลูกตาของเขา", reverse:true},
+  {t:"ลูกของคุณใช้นิ้วหนึ่งนิ้วชี้ไปเพื่อเป็นการขอบางสิ่งบางอย่างหรือเพื่อขอความช่วยเหลือหรือไม่", ex:"ตัวอย่างเช่น ชี้ไปที่ขนม หรือของเล่นที่เขาหยิบไม่ถึง"},
+  {t:"ลูกของคุณใช้นิ้วหนึ่งนิ้วชี้ไปเพื่อบอกคุณว่าสิ่งนั้นน่าสนใจหรือไม่", ex:"ตัวอย่างเช่น ชี้ไปที่เครื่องบินบนท้องฟ้า หรือรถบรรทุกบนถนน"},
+  {t:"ลูกของคุณสนใจเด็กคนอื่นบ้างหรือไม่", ex:"ตัวอย่างเช่น ลูกของคุณมองไปที่เด็กคนอื่น ยิ้มให้ หรือเดินไปหาเด็กคนอื่นบ้างหรือไม่"},
+  {t:"ลูกของคุณอวดสิ่งของโดยนำมาให้คุณดู หรือชูสิ่งของที่อยากอวดให้คุณได้เห็น ใช่หรือไม่ (ข้อนี้ไม่ได้หมายความว่าเป็นการขอความช่วยเหลือ แต่เป็นการอยากให้คุณมีส่วนร่วมเท่านั้น)", ex:"ตัวอย่างเช่น อวดคุณว่ามีดอกไม้ มีตุ๊กตาสัตว์ หรืออวดรถยนต์ของเล่น"},
+  {t:"ลูกของคุณตอบสนองเวลาที่คุณเรียกชื่อเขาหรือไม่", ex:"ตัวอย่างเช่น เมื่อคุณเรียกชื่อเขา เขาก็จะเงยหน้ามองคุณ พูดกับคุณหรือทำเสียงอ้อแอ้ หรือถ้าเขาทำอะไรอยู่เขาก็จะหยุด"},
+  {t:"เมื่อคุณยิ้มให้กับลูกของคุณ เขายิ้มตอบหรือไม่"},
+  {t:"ลูกของคุณอารมณ์เสียเมื่อได้ยินเสียงที่เกิดขึ้นประจำวันหรือไม่", ex:"ตัวอย่างเช่น ลูกของคุณจะกรีดร้องหรือร้องไห้เมื่อได้ยินเสียง เช่น เสียงเครื่องดูดฝุ่น หรือเสียงดนตรีดังๆ", reverse:true},
+  {t:"ลูกของคุณเดินหรือไม่"},
+  {t:"ลูกของคุณสบตาคุณเวลาที่คุณคุยกับเขา เล่นกับเขา หรือแต่งตัวให้เขาหรือไม่"},
+  {t:"ลูกของคุณพยายามเลียนแบบสิ่งที่คุณทำหรือไม่", ex:"ตัวอย่างเช่น โบกมือบ๊ายบาย ปรบมือ หรือทำเสียงขบขันตามที่คุณทำ"},
+  {t:"ถ้าคุณหันไปมองบางสิ่งบางอย่าง ลูกของคุณหันไปมองหาว่าคุณกำลังมองอะไรหรือไม่"},
+  {t:"ลูกของคุณพยายามทำให้คุณมองดูเขาหรือไม่", ex:"ตัวอย่างเช่น ลูกของคุณจะมองมาที่คุณเพื่อขอคำชม หรือพูดว่า “ดูนี่” หรือ “ดูหนูซิ”"},
+  {t:"ลูกของคุณเข้าใจคุณเมื่อคุณบอกให้เขาทำบางสิ่งบางอย่างหรือไม่", ex:"ตัวอย่างเช่น ลูกของคุณเข้าใจคำพูดที่ว่า “วางหนังสือไว้บนโต๊ะ” หรือ “เอาผ้าขนหนูมาให้หน่อยนะ” ได้โดยคุณไม่ต้องชี้"},
+  {t:"ถ้ามีอะไรใหม่ๆ เกิดขึ้น ลูกของคุณจะมองดูหน้าคุณเพื่อดูว่าคุณรู้สึกอย่างไร", ex:"ตัวอย่างเช่น ถ้าลูกของคุณได้ยินเสียงแปลกๆ หรือเสียงขบขัน หรือเห็นของเล่นใหม่ๆ เขามองหน้าคุณหรือไม่"},
+  {t:"ลูกของคุณชอบกิจกรรมเคลื่อนไหวใช่หรือไม่", ex:"ตัวอย่างเช่น ชอบถูกจับแกว่ง หรือจับเด้งขึ้นลงไปมาบนเข่าของคุณ"}
+];
+
+// ---------- Interpretation (3 categories) ----------
+const CATEGORIES = {
+  low: {
+    tag:"ความเสี่ยงต่ำ", title:"คะแนน 0–2 : มีโอกาสเป็นออทิสติกต่ำ",
+    text:"ผลการคัดกรองเป็นลบ ไม่จำเป็นต้องติดตามผลเพิ่มเติม เว้นแต่การเฝ้าระวังพัฒนาการหรือเครื่องมืออื่นบ่งชี้ว่ามีโอกาสสูงขึ้นจึงควรส่งต่อ ทั้งนี้หากเด็กอายุน้อยกว่า 24 เดือน ให้ตรวจคัดกรองซ้ำเมื่ออายุ 24 เดือน"
+  },
+  mid: {
+    tag:"ความเสี่ยงปานกลาง", title:"คะแนน 3–7 : มีความเป็นไปได้ปานกลางที่จะเป็นออทิสติก",
+    text:"ให้แพทย์ทำแบบประเมิน M-CHAT-R Follow-Up (สัมภาษณ์ผู้ปกครอง) เฉพาะข้อที่ตอบแล้วมีความเสี่ยงด้านล่าง หากหลังสัมภาษณ์ยังมีตั้งแต่ 2 ข้อขึ้นไปที่มีความเสี่ยง ถือว่าผลคัดกรองเป็นบวก ให้ส่งต่อเพื่อ (ก) การช่วยเหลือระยะแรกเริ่ม (early intervention) และ (ข) การประเมินเพื่อวินิจฉัยทันที หากเหลือ 0–1 ข้อ ถือว่าผลคัดกรองเป็นลบ"
+  },
+  high: {
+    tag:"ความเสี่ยงสูง", title:"คะแนน 8–20 : มีความเป็นไปได้สูงที่จะเป็นออทิสติก",
+    text:"ผลการคัดกรองเป็นบวก ไม่จำเป็นต้องทำ M-CHAT-R Follow-Up ให้ข้ามขั้นตอนติดตามผล และส่งต่อทันทีเพื่อ (ก) การช่วยเหลือระยะแรกเริ่ม (early intervention) และ (ข) การประเมินเพื่อวินิจฉัย"
+  }
+};
+
+function categorize(score){
+  if (score <= 2) return "low";
+  if (score <= 7) return "mid";
+  return "high";
+}
+
+// item scoring: normal items -> "ไม่ใช่" = 1 ; reverse items -> "ใช่" = 1
+function itemScore(q, ans){ return q.reverse ? (ans === "yes" ? 1 : 0) : (ans === "no" ? 1 : 0); }
+
+// ---------- Render questions ----------
+const qBox = document.getElementById("questions");
+QUESTIONS.forEach((q,i)=>{
+  const n = i+1;
+  const div = document.createElement("div");
+  div.className = "q"; div.id = "q"+n;
+  div.innerHTML = `
+    <div class="qt"><span class="n">${n}.</span>${q.t}</div>
+    ${q.ex ? `<div class="ex">(${q.ex})</div>` : ""}
+    <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+      <input type="radio" name="q${n}" id="q${n}y" value="yes"><label for="q${n}y">ใช่</label>
+      <input type="radio" name="q${n}" id="q${n}n" value="no"><label for="q${n}n">ไม่ใช่</label>
+    </div>`;
+  qBox.appendChild(div);
+});
+
+// ---------- Helpers ----------
+const $ = id => document.getElementById(id);
+const today = new Date();
+const pad = n => String(n).padStart(2,"0");
+const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+$("date").value = todayStr;
+
+function getAnswers(){
+  return QUESTIONS.map((_,i)=>{
+    const c = document.querySelector(`input[name=q${i+1}]:checked`);
+    return c ? c.value : null;
+  });
+}
+function updateProgress(){
+  const done = getAnswers().filter(Boolean).length;
+  $("barFill").style.width = (done/20*100)+"%";
+  $("ptext").textContent = `ตอบแล้ว ${done} / 20 ข้อ`;
+}
+qBox.addEventListener("change", e=>{
+  updateProgress();
+  const q = e.target.closest(".q"); if (q) q.classList.remove("missing");
+});
+
+function monthsBetween(d1, d2){
+  let m = (d2.getFullYear()-d1.getFullYear())*12 + (d2.getMonth()-d1.getMonth());
+  if (d2.getDate() < d1.getDate()) m--;
+  return m;
+}
+function checkAge(){
+  const a = parseInt($("age").value,10);
+  const w = $("ageWarn");
+  if (!isNaN(a) && (a < 16 || a > 30)){
+    w.hidden = false;
+    w.textContent = `อายุ ${a} เดือน อยู่นอกช่วงที่แบบคัดกรองนี้ออกแบบไว้ (16–30 เดือน) ผลที่ได้อาจไม่แม่นยำ กรุณาปรึกษาแพทย์`;
+  } else w.hidden = true;
+}
+function calcAge(){
+  if (!$("dob").value) return;
+  const P = v => { const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); };
+  const ref = $("date").value ? P($("date").value) : today;
+  const m = monthsBetween(P($("dob").value), ref);
+  if (m >= 0) $("age").value = m;
+  checkAge();
+}
+$("dob").addEventListener("change", calcAge);
+$("date").addEventListener("change", calcAge);
+$("age").addEventListener("input", checkAge);
+
+function fmtDate(v){
+  if (!v) return "";
+  return new Date(v+"T00:00:00").toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"});
+}
+
+// ---------- Submit ----------
+$("form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const ans = getAnswers();
+  const missing = ans.map((a,i)=>a?null:i+1).filter(Boolean);
+  document.querySelectorAll(".q").forEach(el=>el.classList.remove("missing"));
+  if (missing.length){
+    missing.forEach(n=>$("q"+n).classList.add("missing"));
+    $("formErr").hidden = false;
+    $("formErr").textContent = `ยังไม่ได้ตอบข้อ ${missing.join(", ")} กรุณาตอบให้ครบทุกข้อ`;
+    $("q"+missing[0]).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden = true;
+  showResult(ans);
+});
+
+function showResult(ans){
+  const scores = ans.map((a,i)=>itemScore(QUESTIONS[i], a));
+  const total = scores.reduce((s,x)=>s+x,0);
+  const cat = categorize(total);
+  const C = CATEGORIES[cat];
+
+  // info line
+  const bits = [];
+  if ($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if ($("hn").value) bits.push("HN: "+$("hn").value);
+  if ($("age").value) bits.push("อายุ: "+$("age").value+" เดือน");
+  if ($("resp").value) bits.push("ผู้ตอบ: "+$("resp").value);
+  if ($("date").value) bits.push("วันที่: "+fmtDate($("date").value));
+  $("infoLine").textContent = bits.join("  •  ");
+
+  const v = $("verdict");
+  v.className = "verdict "+cat;
+  $("vTag").textContent = C.tag;
+  $("vScore").textContent = total;
+  $("vTitle").textContent = C.title;
+  $("vText").textContent = C.text;
+  ["sc1","sc2","sc3"].forEach((id,i)=>$(id).classList.toggle("on", ["low","mid","high"][i]===cat));
+
+  // flagged items
+  const flagged = scores.map((s,i)=>s?i:null).filter(x=>x!==null);
+  $("flagCount").textContent = `(${flagged.length} ข้อ)`;
+  $("flagList").innerHTML = flagged.length
+    ? "<table><tbody>"+flagged.map(i=>`<tr><td style="width:2.5em"><b>${i+1}</b></td><td>${QUESTIONS[i].t}</td><td style="width:4.5em" class="flag">${ans[i]==="yes"?"ใช่":"ไม่ใช่"}</td></tr>`).join("")+"</tbody></table>"
+    : '<p class="muted">ไม่มี</p>';
+
+  // all answers
+  $("allAns").innerHTML = QUESTIONS.map((q,i)=>`
+    <tr><td>${i+1}${q.reverse?"*":""}</td><td>${q.t}</td>
+    <td>${ans[i]==="yes"?"ใช่":"ไม่ใช่"}</td>
+    <td class="${scores[i]?"flag":"muted"}">${scores[i]}</td></tr>`).join("");
+
+  $("form").style.display = "none";
+  $("result").style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick = ()=>{
+  $("result").style.display = "none";
+  $("form").style.display = "block";
+  window.scrollTo({top:0});
+};
+$("newBtn").onclick = ()=>{
+  $("form").reset();
+  $("date").value = todayStr;
+  $("ageWarn").hidden = true;
+  updateProgress();
+  $("result").style.display = "none";
+  $("form").style.display = "block";
+  window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "mchat";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="tpl-pddsq">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบคัดกรอง PDDSQ 4-18</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --low:#2e7d4f; --low-bg:#e7f5ec;
+    --high:#c0392b; --high-bg:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date],input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--high);font-size:.92rem;margin-top:6px}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{padding:8px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600}
+  .seg input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .opts{display:flex;gap:10px;margin:10px 0 0 2em}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{flex:1;max-width:190px;text-align:center;padding:10px 4px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none;font-size:.95rem}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+  #result{display:none}
+
+  /* ---- verdict ---- */
+  .verdict{border-radius:14px;padding:18px;border:2px solid}
+  .verdict.low{background:var(--low-bg);border-color:var(--low)}
+  .verdict.high{background:var(--high-bg);border-color:var(--high);border-width:3px}
+  .verdict .tag{display:inline-block;color:#fff;font-weight:700;padding:3px 12px;border-radius:99px;font-size:.92rem}
+  .low .tag{background:var(--low)} .high .tag{background:var(--high)}
+  .score{font-size:2.6rem;font-weight:700;line-height:1;margin:10px 0 2px}
+  .score small{font-size:1rem;color:var(--muted);font-weight:500}
+  .high .score{color:var(--high)}
+  .meter{position:relative;height:12px;border-radius:99px;margin-top:16px;
+    background:linear-gradient(90deg,var(--low) 0 42.5%,var(--high) 42.5% 100%)}
+  .meter .pin{position:absolute;top:-6px;width:4px;height:24px;background:var(--ink);border-radius:2px;transform:translateX(-50%)}
+  .meter-l{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:4px}
+  .meter-l span:nth-child(2){position:relative;left:-8%}
+
+  /* ---- HIGH ALERT banner ---- */
+  .alert{display:none;background:var(--high);color:#fff;border-radius:14px;padding:16px 18px;margin-top:16px;
+    box-shadow:0 0 0 0 rgba(192,57,43,.55);animation:pulse 1.8s ease-out infinite}
+  .alert.show{display:flex;gap:14px;align-items:center}
+  .alert .ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fff;color:var(--high);
+    display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800}
+  .alert b{display:block;font-size:1.25rem;letter-spacing:.5px}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.55)}70%{box-shadow:0 0 0 14px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  @media (prefers-reduced-motion:reduce){.alert{animation:none}}
+
+  h2{font-size:1.15rem;margin:0 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .flag{color:var(--high);font-weight:700}
+  .muted{color:var(--muted)}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;break-inside:avoid}
+    .alert{animation:none;box-shadow:none}
+    .verdict,.tag,.meter,.alert{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#1f8a84;--accent-soft:#e0f3f1}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#e0f3f1 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#dcf2ef"/>
+<path d="M60 18 h10 a5 5 0 1 1 10 0 h8 v20 h-28z" fill="#f6b73c" opacity=".9"/>
+<path d="M24 34 h13 a7 7 0 1 1 14 0 h13 v13 a7 7 0 1 1 0 14 v13 h-13 a7 7 0 1 0 -14 0 h-13 z" fill="#2aa198"/>
+<circle cx="37" cy="52" r="3.2" fill="#fff"/><circle cx="53" cy="52" r="3.2" fill="#fff"/>
+<circle cx="37.6" cy="52.6" r="1.6" fill="#3a2e2a"/><circle cx="53.6" cy="52.6" r="1.6" fill="#3a2e2a"/>
+<circle cx="32" cy="60" r="3.6" fill="#f7a1a1" opacity=".8"/><circle cx="58" cy="60" r="3.6" fill="#f7a1a1" opacity=".8"/>
+<path d="M40 60 q5 6 10 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+<path d="M14 80 l3 -6 l3 6 l-6 -3 h6z" fill="#f6b73c"/></svg></div><div class="mh-txt">
+  <h1>แบบสำรวจพัฒนาการเด็ก ช่วงอายุ 4–18 ปี</h1>
+  <p>Pervasive Developmental Disorder Screening Questionnaire (PDDSQ 4–18)</p>
+</div></header>
+
+<!-- ============ FORM ============ -->
+<form id="form" novalidate>
+  <div class="card">
+    <h2>ข้อมูลเด็ก</h2>
+    <div class="grid2">
+      <div>
+        <label class="f" for="cname">ชื่อ–นามสกุลเด็ก</label>
+        <input type="text" id="cname" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label>
+        <input type="text" id="hn" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="dob">วันเกิดเด็ก</label>
+        <input type="date" id="dob">
+      </div>
+      <div>
+        <label class="f" for="date">วันที่ประเมิน</label>
+        <input type="date" id="date">
+      </div>
+      <div>
+        <label class="f" for="age">อายุ <span class="hint">(คำนวณอัตโนมัติ)</span></label>
+        <input type="text" id="age" readonly tabindex="-1" placeholder="กรอกวันเกิดเพื่อคำนวณ" style="background:var(--bg)">
+      </div>
+    </div>
+    <label class="f">ผู้ตอบ</label>
+    <div class="seg" role="radiogroup" aria-label="ผู้ตอบ">
+      <input type="radio" name="resp" id="r1" value="มารดา"><label for="r1">มารดา</label>
+      <input type="radio" name="resp" id="r2" value="บิดา"><label for="r2">บิดา</label>
+      <input type="radio" name="resp" id="r3" value="ญาติ/ผู้ดูแลเด็ก"><label for="r3">ญาติ/ผู้ดูแลเด็ก</label>
+    </div>
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr">
+    โปรดเลือกคำตอบในแต่ละข้อ โดยเลือกคำตอบที่<b>ใกล้เคียงกับพฤติกรรมของลูกท่านมากที่สุด</b>
+    <br>คำตอบมี 2 ตัวเลือก คือ <b>ใช่/ทำบ่อยๆ</b> และ <b>ไม่ใช่/ไม่ค่อยทำ</b>
+  </div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 40 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<!-- ============ RESULT ============ -->
+<section id="result">
+  <div class="alert" id="alert" role="alert">
+    <div class="ic">!</div>
+    <div><b>HIGH ALERT</b>คะแนนถึงเกณฑ์ เสี่ยงต่อภาวะ PDDs ควรส่งต่อเพื่อประเมินวินิจฉัย</div>
+  </div>
+
+  <div class="card">
+    <h2>สรุปผลการคัดกรอง</h2>
+    <div id="infoLine" class="muted" style="margin-bottom:12px"></div>
+    <div id="verdict" class="verdict">
+      <span class="tag" id="vTag"></span>
+      <div class="score"><span id="vScore"></span> <small>/ 40 คะแนน</small></div>
+      <div id="vTitle" style="font-weight:700;font-size:1.1rem"></div>
+      <div id="vText" style="margin-top:6px"></div>
+      <div class="meter"><div class="pin" id="pin"></div></div>
+      <div class="meter-l"><span>0</span><span>จุดตัด 18</span><span>40</span></div>
+    </div>
+    <p class="hint" style="margin-top:12px">
+      ผลนี้เป็นเพียงการ<b>คัดกรองเบื้องต้น</b> ไม่ใช่การวินิจฉัย กรุณานำผลนี้ไปปรึกษาแพทย์ทุกครั้ง
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>ข้อที่ได้คะแนน <span class="muted" id="flagCount"></span></h2>
+    <div id="flagList"></div>
+  </div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>ข้อคำถาม</th><th style="width:6.5em">คำตอบ</th><th style="width:3.5em">คะแนน</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+    <p class="hint">* ข้อ 1, 3, 4, 10, 14, 15, 20, 30, 33, 36 กลับค่าคะแนน (ตอบ “ไม่ใช่/ไม่ค่อยทำ” = 1 คะแนน)</p>
+  </div>
+
+  <div class="printonly card">
+    ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................
+  </div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  PDDSQ 4–18 พัฒนาโดย โรงพยาบาลยุวประสาทไวทโยปถัมภ์ กรมสุขภาพจิต ร่วมกับ ศ.นพ.ชาญวิทย์ พรนภดล
+  ภาควิชาจิตเวชศาสตร์ คณะแพทยศาสตร์ศิริราชพยาบาล.
+  ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+// ---------- Questions (PDDSQ 4-18) ----------
+const QUESTIONS = [
+  "เลียนแบบกิริยาท่าทางของคนอื่นได้",
+  "ชอบเก็บตัว หรืออยู่คนเดียวตามลำพัง",
+  "มีเพื่อนสนิท หรือเพื่อนที่เล่นด้วยกันบ่อยๆ",
+  "รู้จักปลอบเด็กคนอื่น เวลาเด็กคนอื่นไม่สบายใจ หรือได้รับบาดเจ็บ",
+  "ใช้ภาษาหรือคำพูดที่ฟังแล้วแปลกๆ",
+  "ใช้คำพูดที่มีแต่ตัวเขาเองเท่านั้น ที่เข้าใจความหมาย",
+  "เป็นเด็กหน้าเฉย ไม่ค่อยแสดงอารมณ์",
+  "ชอบจำแต่สิ่งไร้สาระ หรือสิ่งที่มีประโยชน์",
+  "ใช้ภาษาที่ไม่ค่อยเหมาะสมกับกาลเทศะหรือผู้ฟัง",
+  "รู้จักสงสารหรือเห็นอกเห็นใจผู้อื่น",
+  "ชอบวิจารณ์หรือแซวคนอื่นแรงๆ ให้อับอาย",
+  "ต้องการเข้าสังคม หรือเล่นกับเด็กคนอื่น แต่ไม่รู้จะเริ่มอย่างไร",
+  "เล่นกับเด็กคนอื่นได้ แต่ต้องเล่นเฉพาะสิ่งที่ตัวเขาเองอยากเล่นเท่านั้น",
+  "มีอารมณ์ขัน สามารถเข้าใจเรื่องตลกได้",
+  "รู้ว่าอะไรสมควร อะไรไม่สมควรทำ",
+  "เล่นกีฬาที่ต้องเล่นเป็นทีม เช่น ฟุตบอล บาสเกตบอลได้ไม่ดี",
+  "งุ่มง่าม เงอะงะ ซุ่มซ่าม มากกว่าเด็กคนอื่นในวัยเดียวกัน",
+  "ชอบคิดอะไรซ้ำซาก วนเวียน หรือทำอะไรซ้ำๆ หลายๆ ครั้ง",
+  "ไม่ยอมให้มีการเปลี่ยนแปลงของสิ่งที่คุ้นเคย",
+  "ผูกพันกับสิ่งของบางอย่างมากเป็นพิเศษ",
+  "ถูกเด็กอื่นแกล้ง หรือถูกล้อเลียนบ่อยๆ",
+  "ชอบถามคำถามเดิมซ้ำๆ",
+  "คุณเคยรู้สึกว่าลูกพูดช้า หรือเคยกังวลว่าทำไมลูกยังไม่พูดเสียที",
+  "ดูเป็นเด็ก “เจ้าระเบียบ” มากกว่าเด็กคนอื่นในวัยเดียวกัน",
+  "ไม่ค่อยรับรู้ว่าคนอื่นกำลังคิดหรือรู้สึกอย่างไร",
+  "สีหน้ามักไม่ไปด้วยกันกับสิ่งที่เขาพูด",
+  "มีความสุขเวลาที่ได้อยู่คนเดียว มากกว่าอยู่เป็นกลุ่มกับคนอื่น",
+  "ไม่ค่อยรู้ตัวว่ากำลังถูกเด็กคนอื่นหลอกหรือเอาเปรียบ",
+  "สามารถบอกอารมณ์หรือความรู้สึกของตัวเองให้คนอื่นรู้ได้",
+  "สามารถสังเกต เข้าใจสีหน้า และอารมณ์ของคนรอบข้าง",
+  "ชอบพูดเฉพาะเรื่องที่ตนเองสนใจ โดยไม่สังเกตว่าเพื่อนเริ่มเบื่อไม่อยากฟัง",
+  "ไม่ค่อยฟังเพื่อน ถ้าเพื่อนไม่ได้พูดในสิ่งที่เขาสนใจ",
+  "มองหน้า สบตาผู้ฟังทุกครั้งเวลาพูดคุย",
+  "เข้ากับเพื่อนได้ยาก แม้ว่าเขาจะพยายามเต็มที่",
+  "มักถูกเด็กคนอื่นมาว่าเป็น “ตัวตลก” หรือ “ตัวประหลาด”",
+  "ชอบเล่นเป็นกลุ่มกับเพื่อน",
+  "ต่อต้าน ปรับตัวไม่ได้เวลาที่ต้องมีการเปลี่ยนแปลงของสิ่งที่ทำอยู่ประจำ",
+  "สนใจในสิ่งต่างๆ เพียงไม่กี่อย่าง",
+  "เดินผ่าตรงกลาง ที่คนสองคนกำลังคุยกัน",
+  "ตรงไปตรงมา ไม่รู้จักยืดหยุ่น"
+];
+// ข้อที่กลับค่าคะแนน (ไม่ใช่/ไม่ค่อยทำ = 1)
+const REVERSE = new Set([1,3,4,10,14,15,20,30,33,36]);
+const CUTOFF = 18;
+
+const CATEGORIES = {
+  low: {
+    tag:"ไม่ถึงเกณฑ์", title:`คะแนนต่ำกว่า ${CUTOFF} : ยังไม่พบความเสี่ยงต่อภาวะ PDDs จากแบบคัดกรองนี้`,
+    text:"ให้เฝ้าระวังพัฒนาการตามปกติ หากผู้ปกครอง ครู หรือแพทย์ยังมีข้อกังวลด้านพัฒนาการหรือพฤติกรรม ควรปรึกษาแพทย์เพื่อประเมินเพิ่มเติม"
+  },
+  high: {
+    tag:"HIGH ALERT", title:`คะแนน ${CUTOFF} ขึ้นไป : เสี่ยงที่จะเป็น PDDs`,
+    text:"ควรส่งต่อเพื่อรับการประเมินวินิจฉัยโดยกุมารแพทย์พัฒนาการและพฤติกรรม หรือจิตแพทย์เด็กและวัยรุ่น และวางแผนให้การช่วยเหลือต่อไป"
+  }
+};
+
+function itemScore(n, ans){ return REVERSE.has(n) ? (ans==="no"?1:0) : (ans==="yes"?1:0); }
+const label = a => a==="yes" ? "ใช่/ทำบ่อยๆ" : "ไม่ใช่/ไม่ค่อยทำ";
+
+// ---------- Render ----------
+const $ = id => document.getElementById(id);
+const qBox = $("questions");
+QUESTIONS.forEach((t,i)=>{
+  const n=i+1, d=document.createElement("div");
+  d.className="q"; d.id="q"+n;
+  d.innerHTML=`<div class="qt"><span class="n">${n}.</span>${t}</div>
+    <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+      <input type="radio" name="q${n}" id="q${n}y" value="yes"><label for="q${n}y">ใช่/ทำบ่อยๆ</label>
+      <input type="radio" name="q${n}" id="q${n}n" value="no"><label for="q${n}n">ไม่ใช่/ไม่ค่อยทำ</label>
+    </div>`;
+  qBox.appendChild(d);
+});
+
+const today = new Date();
+const pad = n => String(n).padStart(2,"0");
+const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+$("date").value = todayStr;
+
+function getAnswers(){
+  return QUESTIONS.map((_,i)=>{ const c=document.querySelector(`input[name=q${i+1}]:checked`); return c?c.value:null; });
+}
+function updateProgress(){
+  const done=getAnswers().filter(Boolean).length;
+  $("barFill").style.width=(done/40*100)+"%";
+  $("ptext").textContent=`ตอบแล้ว ${done} / 40 ข้อ`;
+}
+qBox.addEventListener("change",e=>{ updateProgress(); const q=e.target.closest(".q"); if(q) q.classList.remove("missing"); });
+
+// ---------- Age from DOB + assessment date ----------
+function parseISO(v){ const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+function calcAge(){
+  const w=$("ageWarn"); w.hidden=true; $("age").value="";
+  if(!$("dob").value || !$("date").value) return;
+  const b=parseISO($("dob").value), r=parseISO($("date").value);
+  if(b>r){ w.hidden=false; w.textContent="วันเกิดต้องไม่อยู่หลังวันที่ประเมิน"; return; }
+  let months=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth());
+  if(r.getDate()<b.getDate()) months--;
+  const y=Math.floor(months/12), m=months%12;
+  $("age").value = `${y} ปี ${m} เดือน`;
+  if(y<4 || months>18*12+11){
+    w.hidden=false;
+    w.textContent=`อายุ ${y} ปี ${m} เดือน อยู่นอกช่วงที่แบบคัดกรองนี้ออกแบบไว้ (4–18 ปี) ผลที่ได้อาจไม่แม่นยำ`;
+  }
+}
+$("dob").addEventListener("change",calcAge);
+$("date").addEventListener("change",calcAge);
+
+function fmtDate(v){ return v ? new Date(v).toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}) : ""; }
+
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ans=getAnswers();
+  const missing=ans.map((a,i)=>a?null:i+1).filter(Boolean);
+  document.querySelectorAll(".q").forEach(el=>el.classList.remove("missing"));
+  if(missing.length){
+    missing.forEach(n=>$("q"+n).classList.add("missing"));
+    $("formErr").hidden=false;
+    $("formErr").textContent=`ยังไม่ได้ตอบข้อ ${missing.join(", ")} กรุณาตอบให้ครบทุกข้อ`;
+    $("q"+missing[0]).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden=true;
+  showResult(ans);
+});
+
+function showResult(ans){
+  const scores=ans.map((a,i)=>itemScore(i+1,a));
+  const total=scores.reduce((s,x)=>s+x,0);
+  const cat= total>=CUTOFF ? "high" : "low";
+  const C=CATEGORIES[cat];
+
+  const resp=document.querySelector("input[name=resp]:checked");
+  const bits=[];
+  if($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if($("hn").value) bits.push("HN: "+$("hn").value);
+  if($("dob").value) bits.push("วันเกิด: "+fmtDate($("dob").value));
+  if($("age").value) bits.push("อายุ: "+$("age").value);
+  if(resp) bits.push("ผู้ตอบ: "+resp.value);
+  if($("date").value) bits.push("วันที่ประเมิน: "+fmtDate($("date").value));
+  $("infoLine").textContent=bits.join("  •  ");
+
+  $("alert").classList.toggle("show", cat==="high");
+  $("verdict").className="verdict "+cat;
+  $("vTag").textContent=C.tag;
+  $("vScore").textContent=total;
+  $("vTitle").textContent=C.title;
+  $("vText").textContent=C.text;
+  $("pin").style.left=(total/40*100)+"%";
+
+  const flagged=scores.map((s,i)=>s?i:null).filter(x=>x!==null);
+  $("flagCount").textContent=`(${flagged.length} ข้อ)`;
+  $("flagList").innerHTML = flagged.length
+    ? "<table><tbody>"+flagged.map(i=>`<tr><td style="width:2.5em"><b>${i+1}</b></td><td>${QUESTIONS[i]}</td><td style="width:6.5em" class="flag">${label(ans[i])}</td></tr>`).join("")+"</tbody></table>"
+    : '<p class="muted">ไม่มี</p>';
+
+  $("allAns").innerHTML=QUESTIONS.map((t,i)=>`<tr><td>${i+1}${REVERSE.has(i+1)?"*":""}</td><td>${t}</td>
+    <td>${label(ans[i])}</td><td class="${scores[i]?"flag":"muted"}">${scores[i]}</td></tr>`).join("");
+
+  $("form").style.display="none";
+  $("result").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick=()=>{ $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0}); };
+$("newBtn").onclick=()=>{
+  $("form").reset(); $("date").value=todayStr; $("ageWarn").hidden=true; updateProgress();
+  $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "pddsq";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="tpl-sdq">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน SDQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --low:#2e7d4f; --low-bg:#e7f5ec;
+    --mid:#b7791f; --mid-bg:#fdf4e1;
+    --high:#c0392b; --high-bg:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  input[readonly]{background:var(--bg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--high);font-size:.92rem;margin-top:6px}
+  .muted{color:var(--muted)}
+
+  /* respondent picker */
+  .pick{display:grid;gap:12px;margin-top:16px}
+  .pick button{display:flex;gap:14px;align-items:center;text-align:left;background:var(--card);border:1.5px solid var(--line);
+    border-radius:14px;padding:18px;font:inherit;cursor:pointer;color:var(--ink)}
+  .pick button:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .pick .ic{flex:0 0 52px;height:52px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+  .pick b{display:block;font-size:1.12rem}
+  .pick span.d{color:var(--muted);font-size:.93rem}
+  .chip{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;padding:2px 12px;font-size:.9rem;font-weight:600}
+  .linkbtn{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{padding:8px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;font-size:.95rem}
+  .seg input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .seg input:focus-visible+label{outline:3px solid #9cc3d6}
+
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .opts{display:flex;gap:8px;margin:10px 0 0 2em}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{flex:1;max-width:150px;text-align:center;padding:10px 2px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none;font-size:.95rem}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  @media (max-width:420px){.opts{margin-left:0}}
+
+  .sub{margin-top:14px}
+  .sub .lbl{font-weight:600;margin-bottom:6px}
+  .intf{display:grid;grid-template-columns:1fr;gap:10px}
+
+  button.primary,button.ghost{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line)!important;color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+
+  #formView,#result{display:none}
+
+  /* result */
+  .alert{display:none;background:var(--high);color:#fff;border-radius:14px;padding:16px 18px;margin-top:16px;animation:pulse 1.8s ease-out infinite}
+  .alert.show{display:flex;gap:14px;align-items:center}
+  .alert .ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fff;color:var(--high);display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800}
+  .alert b{display:block;font-size:1.25rem;letter-spacing:.5px}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.55)}70%{box-shadow:0 0 0 14px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  @media (prefers-reduced-motion:reduce){.alert{animation:none}}
+
+  .verdict{border-radius:14px;padding:18px;border:2px solid}
+  .verdict.low{background:var(--low-bg);border-color:var(--low)}
+  .verdict.mid{background:var(--mid-bg);border-color:var(--mid)}
+  .verdict.high{background:var(--high-bg);border-color:var(--high);border-width:3px}
+  .tag{display:inline-block;color:#fff;font-weight:700;padding:2px 12px;border-radius:99px;font-size:.9rem;white-space:nowrap}
+  .tag.low{background:var(--low)} .tag.mid{background:var(--mid)} .tag.high{background:var(--high)}
+  .score{font-size:2.6rem;font-weight:700;line-height:1;margin:10px 0 2px}
+  .score small{font-size:1rem;color:var(--muted);font-weight:500}
+  .verdict.high .score{color:var(--high)}
+  .bands{display:flex;gap:4px;margin-top:14px;font-size:.8rem;text-align:center}
+  .bands div{padding:6px 2px;border-radius:6px;color:#fff;opacity:.35}
+  .bands .on{opacity:1;font-weight:700}
+
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--muted);font-weight:600}
+  .mini{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:4px;max-width:140px}
+  .mini>div{height:100%}
+  .flag{color:var(--high);font-weight:700}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;break-inside:avoid}
+    .alert{animation:none}
+    .verdict,.tag,.bands div,.alert,.mini>div{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#cc4f70;--accent-soft:#fbe7ed}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#fbe7ed 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#fce4ec"/>
+<path d="M50 82 C20 62 16 36 33 30 C43 27 50 35 50 39 C50 35 57 27 67 30 C84 36 80 62 50 82Z" fill="#e2637f"/>
+<path d="M30 38 q4 -6 10 -5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+<path d="M39 49 q4 -4 8 0" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+<path d="M53 49 q4 -4 8 0" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+<circle cx="37" cy="58" r="4" fill="#ffb3c1"/><circle cx="63" cy="58" r="4" fill="#ffb3c1"/>
+<path d="M43 58 q7 8 14 0" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+<path d="M80 16 l3 7 l7 1 l-5 5 l1.5 7 l-6.5 -3.5 l-6.5 3.5 l1.5 -7 l-5 -5 l7 -1z" fill="#f6b73c"/>
+<circle cx="18" cy="26" r="3" fill="#f6b73c"/></svg></div><div class="mh-txt">
+  <h1>แบบประเมินพฤติกรรมเด็ก (SDQ)</h1>
+  <p>The Strengths and Difficulties Questionnaire ฉบับภาษาไทย</p>
+</div></header>
+
+<!-- ============ STEP 1 : choose respondent ============ -->
+<section id="pickView">
+  <div class="card instr">กรุณาเลือกผู้ตอบแบบสอบถาม</div>
+  <div class="pick">
+    <button data-form="parent"><div class="ic">👪</div><div><b>ผู้ปกครอง</b><span class="d">พ่อ แม่ หรือผู้ดูแล ประเมินเด็กอายุ 4–16 ปี</span></div></button>
+    <button data-form="teacher"><div class="ic">🏫</div><div><b>ครู</b><span class="d">ครูผู้สอนหรือครูประจำชั้น ประเมินเด็กอายุ 4–16 ปี</span></div></button>
+    <button data-form="self"><div class="ic">🧒</div><div><b>เด็กประเมินตนเอง</b><span class="d">สำหรับเด็กอายุ 11–16 ปี ตอบเกี่ยวกับตัวเอง</span></div></button>
+  </div>
+</section>
+
+<!-- ============ STEP 2 : form ============ -->
+<form id="formView" novalidate>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <div>ผู้ตอบ: <span class="chip" id="formChip"></span></div>
+    <button type="button" class="linkbtn noprint" id="changeForm">เปลี่ยนผู้ตอบ</button>
+  </div>
+
+  <div class="card">
+    <h2 id="infoTitle">ข้อมูลเด็ก</h2>
+    <div class="grid2">
+      <div>
+        <label class="f" for="cname" id="nameLbl">ชื่อ–นามสกุลเด็ก</label>
+        <input type="text" id="cname" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label>
+        <input type="text" id="hn" autocomplete="off">
+      </div>
+      <div>
+        <label class="f" for="dob" id="dobLbl">วันเกิดเด็ก</label>
+        <input type="date" id="dob">
+      </div>
+      <div>
+        <label class="f" for="date">วันที่ทำแบบสอบถาม</label>
+        <input type="date" id="date">
+      </div>
+      <div>
+        <label class="f" for="age">อายุ <span class="hint">(คำนวณอัตโนมัติ)</span></label>
+        <input type="text" id="age" readonly tabindex="-1" placeholder="กรอกวันเกิดเพื่อคำนวณ">
+      </div>
+      <div>
+        <label class="f">เพศ<span id="sexSuffix"> (ของเด็ก)</span></label>
+        <div class="seg">
+          <input type="radio" name="sex" id="sxM" value="ชาย"><label for="sxM">ชาย</label>
+          <input type="radio" name="sex" id="sxF" value="หญิง"><label for="sxF">หญิง</label>
+        </div>
+      </div>
+    </div>
+    <div id="relBox">
+      <label class="f" for="rel" id="relLbl">ความสัมพันธ์กับเด็ก</label>
+      <input type="text" id="rel" autocomplete="off">
+    </div>
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr" id="instr"></div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 25 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <!-- impact supplement -->
+  <div class="card" id="impactCard">
+    <h2>ผลกระทบ</h2>
+    <div class="lbl" style="font-weight:600" id="ovQ"></div>
+    <div class="hint" style="margin-bottom:8px">ด้านอารมณ์ ด้านสมาธิ ด้านพฤติกรรม หรือความสามารถเข้ากับผู้อื่น</div>
+    <div class="seg" id="ovSeg"></div>
+    <div id="impactMore" hidden>
+      <div class="sub"><div class="lbl">ปัญหานี้เกิดขึ้นมานานเท่าไรแล้ว</div><div class="seg" id="durSeg"></div></div>
+      <div class="sub"><div class="lbl" id="distQ"></div><div class="seg" id="distSeg"></div></div>
+      <div class="sub"><div class="lbl" id="intfQ"></div><div class="intf" id="intfBox"></div></div>
+      <div class="sub"><div class="lbl" id="burdQ"></div><div class="seg" id="burdSeg"></div></div>
+    </div>
+  </div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<!-- ============ STEP 3 : result ============ -->
+<section id="result">
+  <div class="alert" id="alert" role="alert">
+    <div class="ic">!</div>
+    <div><b>HIGH ALERT</b>คะแนนรวมปัญหาพฤติกรรมอยู่ในกลุ่ม “มีปัญหา” ควรส่งต่อเพื่อประเมินโดยละเอียด</div>
+  </div>
+
+  <div class="card">
+    <h2>สรุปผลการประเมิน</h2>
+    <div id="infoLine" class="muted" style="margin-bottom:12px"></div>
+    <div id="verdict" class="verdict">
+      <span class="tag" id="vTag"></span>
+      <div class="score"><span id="vScore"></span> <small>/ 40 คะแนน</small></div>
+      <div style="font-weight:700;font-size:1.1rem">คะแนนรวมปัญหาพฤติกรรม (Total Difficulties)</div>
+      <div id="vText" style="margin-top:6px"></div>
+      <div class="bands" id="bands"></div>
+    </div>
+    <p class="hint" style="margin-top:12px">ผลนี้เป็นเพียงการ<b>คัดกรอง</b> ไม่ใช่การวินิจฉัย กรุณานำผลนี้ไปปรึกษาแพทย์</p>
+  </div>
+
+  <div class="card">
+    <h2>ผลรายด้าน</h2>
+    <table>
+      <thead><tr><th>ด้าน</th><th style="width:5.5em">คะแนน</th><th style="width:7.5em">ผล</th></tr></thead>
+      <tbody id="subTbl"></tbody>
+    </table>
+    <p class="hint" id="cutNote"></p>
+  </div>
+
+  <div class="card" id="impactRes"></div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>ข้อคำถาม</th><th style="width:6.5em">คำตอบ</th><th style="width:3.5em">คะแนน</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+    <p class="hint">* ข้อ 7, 11, 14, 21, 25 ให้คะแนนกลับกัน (ไม่จริง = 2, ค่อนข้างจริง = 1, จริง = 0)</p>
+  </div>
+
+  <div class="printonly card">
+    ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................
+  </div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  SDQ © Robert Goodman (www.sdqinfo.org) ฉบับภาษาไทย กรมสุขภาพจิต กระทรวงสาธารณสุข.
+  เกณฑ์แปลผล: Woerner W, Nuanmanee S, Becker A, Wongpiromsarn Y, Mongkol A. Normative data and psychometric
+  properties of the Thai version of the SDQ. J Ment Health Thai 2011;19(1).
+  ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+// ===================== DATA =====================
+const ITEMS_OTHER = [ // parent & teacher (same wording)
+  "ห่วงใยความรู้สึกคนอื่น",
+  "อยู่ไม่นิ่ง นั่งนิ่งๆ ไม่ได้",
+  "มักจะบ่นว่าปวดศีรษะ ปวดท้อง หรือไม่สบาย",
+  "เต็มใจแบ่งปันสิ่งของให้เพื่อน (ขนม ของเล่น ดินสอ เป็นต้น)",
+  "มักจะอาละวาด หรือโมโหร้าย",
+  "ค่อนข้างแยกตัว ชอบเล่นคนเดียว",
+  "เชื่อฟัง มักจะทำตามที่ผู้ใหญ่ต้องการ",
+  "กังวลใจหลายเรื่อง ดูวิตกกังวลเสมอ",
+  "เป็นที่พึ่งได้เวลาที่คนอื่นเสียใจ อารมณ์ไม่ดี หรือไม่สบายใจ",
+  "อยู่ไม่สุข วุ่นวายอย่างมาก",
+  "มีเพื่อนสนิท",
+  "มักมีเรื่องทะเลาะวิวาทกับเด็กอื่น หรือรังแกเด็กอื่น",
+  "ดูไม่มีความสุข ท้อแท้ ร้องไห้บ่อย",
+  "เป็นที่ชื่นชอบของเพื่อน",
+  "วอกแวกง่าย สมาธิสั้น",
+  "เครียด ไม่ยอมห่างเวลาอยู่ในสถานการณ์ที่ไม่คุ้น และขาดความเชื่อมั่นในตนเอง",
+  "ใจดีกับเด็กที่เล็กกว่า",
+  "ชอบโกหก หรือขี้โกง",
+  "ถูกเด็กคนอื่นล้อเลียน หรือรังแก",
+  "ชอบอาสาช่วยเหลือคนอื่น (พ่อแม่ ครู เด็กคนอื่น)",
+  "คิดก่อนทำ",
+  "ขโมยของที่บ้าน ที่โรงเรียน หรือที่อื่น",
+  "เข้ากับผู้ใหญ่ได้ดีกว่าเข้ากับเด็กวัยเดียวกัน",
+  "ขี้กลัว รู้สึกหวาดกลัวได้ง่าย",
+  "ทำงานได้เสร็จ มีสมาธิในการทำงาน มีความตั้งอกตั้งใจในการทำงาน"
+];
+const ITEMS_SELF = [
+  "ฉันพยายามจะทำตัวดีกับคนอื่น ฉันใส่ใจความรู้สึกคนอื่น",
+  "ฉันอยู่ไม่นิ่ง ฉันนั่งนานๆ ไม่ได้",
+  "ฉันปวดศีรษะ ปวดท้อง หรือไม่สบายบ่อยๆ",
+  "ฉันเต็มใจแบ่งปันสิ่งของให้คนอื่น (ของกิน เกม ปากกา เป็นต้น)",
+  "ฉันโกรธรุนแรง และมักอารมณ์เสีย",
+  "ฉันชอบอยู่กับตัวเอง ชอบเล่นคนเดียว หรืออยู่ตามลำพัง",
+  "ฉันมักทำตามที่คนอื่นบอก",
+  "ฉันขี้กังวล",
+  "ใครๆ ก็พึ่งฉันได้ถ้าเขาเสียใจ อารมณ์ไม่ดี หรือไม่สบายใจ",
+  "ฉันอยู่ไม่สุข วุ่นวาย",
+  "ฉันมีเพื่อนสนิท",
+  "ฉันมีเรื่องทะเลาะวิวาทบ่อย ฉันทำให้คนอื่นทำอย่างที่ฉันต้องการได้",
+  "ฉันไม่มีความสุข ท้อแท้ ร้องไห้บ่อย",
+  "เพื่อนๆ ส่วนมากชอบฉัน",
+  "ฉันวอกแวกง่าย ฉันรู้สึกไม่มีสมาธิ",
+  "ฉันกังวลเวลาอยู่ในสถานการณ์ที่ไม่คุ้น และเสียความเชื่อมั่นในตนเองง่าย",
+  "ฉันใจดีกับเด็กที่เล็กกว่า",
+  "มีคนว่าฉันโกหก หรือขี้โกงบ่อยๆ",
+  "เด็กคนอื่นล้อเลียน หรือรังแกฉัน",
+  "ฉันมักอาสาช่วยเหลือคนอื่น (พ่อแม่ ครู เด็กคนอื่น)",
+  "ฉันคิดก่อนทำ",
+  "ฉันเอาของคนอื่นในบ้าน ที่โรงเรียน หรือที่อื่น",
+  "ฉันเข้ากับผู้ใหญ่ได้ดีกว่าเข้ากับเด็กวัยเดียวกัน",
+  "ฉันขี้กลัว รู้สึกหวาดกลัวได้ง่าย",
+  "ฉันทำงานได้เสร็จ มีสมาธิในการทำงาน มีความตั้งอกตั้งใจในการทำงาน"
+];
+
+const REVERSE = new Set([7,11,14,21,25]);
+const SCALES = [
+  {key:"emo",     name:"ด้านอารมณ์ (Emotional)",                    items:[3,8,13,16,24]},
+  {key:"conduct", name:"ด้านพฤติกรรมเกเร (Conduct)",                items:[5,7,12,18,22]},
+  {key:"hyper",   name:"ด้านพฤติกรรมอยู่ไม่นิ่ง/สมาธิสั้น (Hyperactivity)", items:[2,10,15,21,25]},
+  {key:"peer",    name:"ด้านความสัมพันธ์กับเพื่อน (Peer)",           items:[6,11,14,19,23]},
+  {key:"pro",     name:"ด้านสัมพันธภาพทางสังคม (Prosocial) – จุดแข็ง", items:[1,4,9,17,20]}
+];
+
+// Thai SDQ bandings (Woerner et al., 2011): [normal max, borderline max]; above = มีปัญหา
+const CUT = {
+  parent:  {total:[15,18], emo:[4,5], conduct:[3,4], hyper:[5,6], peer:[4,5]},
+  teacher: {total:[13,16], emo:[3,4], conduct:[3,4], hyper:[5,6], peer:[4,5]},
+  self:    {total:[15,18], emo:[4,5], conduct:[4,5], hyper:[5,6], peer:[4,5]}
+};
+const PRO_STRENGTH_MIN = 5; // 5–10 = มีจุดแข็ง, 0–4 = ไม่มีจุดแข็ง
+
+const FORMS = {
+  parent:{
+    label:"ผู้ปกครอง", items:ITEMS_OTHER, minAge:4, maxAge:16,
+    relLbl:"ผู้ตอบเป็น (พ่อ/แม่/อื่นๆ)", relPh:"เช่น มารดา บิดา ยาย",
+    instr:"ทำเครื่องหมายในช่องท้ายหัวข้อให้ครบทุกข้อ กรุณาตอบให้ตรงกับลักษณะของเด็ก<b>ในช่วง 6 เดือนที่ผ่านมา</b>",
+    ovQ:"โดยรวมคุณคิดว่าเด็กมีปัญหาในด้านใดด้านหนึ่งต่อไปนี้หรือไม่",
+    distQ:"ปัญหานี้ทำให้เด็กรู้สึกไม่สบายใจหรือไม่",
+    intfQ:"ปัญหานี้รบกวนชีวิตประจำวันของเด็กในด้านต่างๆ ต่อไปนี้หรือไม่",
+    areas:["ความเป็นอยู่ที่บ้าน","การคบเพื่อน","การเรียนในห้องเรียน","กิจกรรมยามว่าง"],
+    burdQ:"ปัญหาของเด็กทำให้คุณหรือครอบครัวเกิดความยุ่งยากหรือไม่"
+  },
+  teacher:{
+    label:"ครู", items:ITEMS_OTHER, minAge:4, maxAge:16,
+    relLbl:"ตำแหน่ง (ครูผู้สอน/ครูประจำชั้น/อื่นๆ)", relPh:"เช่น ครูประจำชั้น ป.3/2",
+    instr:"ทำเครื่องหมายในช่องท้ายหัวข้อให้ครบทุกข้อ กรุณาตอบให้ตรงกับลักษณะของเด็ก<b>ในช่วง 6 เดือนที่ผ่านมา</b>",
+    ovQ:"โดยรวมคุณคิดว่าเด็กมีปัญหาในด้านใดด้านหนึ่งต่อไปนี้หรือไม่",
+    distQ:"ปัญหานี้ทำให้เด็กรู้สึกไม่สบายใจหรือไม่",
+    intfQ:"ปัญหานี้รบกวนชีวิตประจำวันของเด็กในด้านต่างๆ ต่อไปนี้หรือไม่",
+    areas:["การคบเพื่อน","การเรียนในห้องเรียน"],
+    burdQ:"ปัญหาของเด็กทำให้คุณหรือชั้นเรียนเกิดความยุ่งยากหรือไม่"
+  },
+  self:{
+    label:"เด็กประเมินตนเอง", items:ITEMS_SELF, minAge:11, maxAge:16,
+    instr:"ทำเครื่องหมายในช่องท้ายหัวข้อให้ครบทุกข้อ กรุณาตอบให้ตรงกับตัวเอง<b>ในช่วง 6 เดือนที่ผ่านมา</b>",
+    ovQ:"โดยรวมคุณคิดว่าตัวคุณมีปัญหาในด้านใดด้านหนึ่งต่อไปนี้หรือไม่",
+    distQ:"ปัญหานี้ทำให้คุณรู้สึกไม่สบายใจหรือไม่",
+    intfQ:"ปัญหานี้รบกวนชีวิตประจำวันของคุณในด้านต่างๆ ต่อไปนี้หรือไม่",
+    areas:["ความเป็นอยู่ที่บ้าน","การคบเพื่อน","การเรียนในห้องเรียน","กิจกรรมยามว่าง"],
+    burdQ:"ปัญหาของคุณทำให้คนอื่น (ครอบครัว เพื่อน ครู เป็นต้น) เกิดความยุ่งยากหรือไม่"
+  }
+};
+
+const ANS = [{v:0,t:"ไม่จริง"},{v:1,t:"ค่อนข้างจริง"},{v:2,t:"จริง"}];
+const OVERALL = ["ไม่","ใช่ มีปัญหาเล็กน้อย","ใช่ มีปัญหาชัดเจน","ใช่ มีปัญหาอย่างมาก"];
+const DURATION = ["น้อยกว่า 1 เดือน","1–5 เดือน","6–12 เดือน","มากกว่า 1 ปี"];
+const LEVEL = ["ไม่เลย","เล็กน้อย","ค่อนข้างมาก","มาก"]; // impact: 0,0,1,2
+const impactPts = i => i<=1 ? 0 : i-1;
+
+const BAND_TXT = {low:"ปกติ", mid:"เสี่ยง", high:"มีปัญหา"};
+const TOTAL_TXT = {
+  low:"คะแนนรวมอยู่ในเกณฑ์ปกติ ให้ส่งเสริมพัฒนาการและเฝ้าระวังตามปกติ",
+  mid:"คะแนนรวมอยู่ในกลุ่มเสี่ยง ควรติดตามพฤติกรรมอย่างใกล้ชิด ให้คำแนะนำผู้ปกครอง/ครู และประเมินซ้ำ โดยดูผลรายด้านประกอบ",
+  high:"คะแนนรวมอยู่ในกลุ่มมีปัญหา ควรส่งต่อเพื่อประเมินโดยละเอียดจากกุมารแพทย์พัฒนาการและพฤติกรรม หรือจิตแพทย์เด็กและวัยรุ่น"
+};
+
+// ===================== HELPERS =====================
+const $ = id => document.getElementById(id);
+let FORM = null;
+const pad = n => String(n).padStart(2,"0");
+const now = new Date();
+const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const band = (s,[a,b]) => s<=a ? "low" : s<=b ? "mid" : "high";
+const itemScore = (n,v) => REVERSE.has(n) ? 2-v : v;
+function segHTML(name, opts){
+  return opts.map((t,i)=>`<input type="radio" name="${name}" id="${name}_${i}" value="${i}"><label for="${name}_${i}">${t}</label>`).join("");
+}
+const val = name => { const c=document.querySelector(`input[name="${name}"]:checked`); return c ? +c.value : null; };
+function fmtDate(v){ return v ? new Date(v+"T00:00:00").toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}) : ""; }
+
+// ===================== BUILD FORM =====================
+function openForm(key){
+  FORM = key; const F = FORMS[key];
+  $("formChip").textContent = F.label;
+  $("instr").innerHTML = F.instr;
+  const self = key==="self";
+  $("infoTitle").textContent = self ? "ข้อมูลของคุณ" : "ข้อมูลเด็ก";
+  $("nameLbl").textContent = self ? "ชื่อ–นามสกุล" : "ชื่อ–นามสกุลเด็ก";
+  $("dobLbl").textContent = self ? "วันเกิดของคุณ" : "วันเกิดเด็ก";
+  $("sexSuffix").textContent = self ? "" : " (ของเด็ก)";
+  $("relBox").hidden = self;
+  if(!self){ $("relLbl").textContent = F.relLbl; $("rel").placeholder = F.relPh; }
+
+  // questions
+  $("questions").innerHTML = F.items.map((t,i)=>{
+    const n=i+1;
+    return `<div class="q" id="q${n}"><div class="qt"><span class="n">${n}.</span>${t}</div>
+      <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+        ${ANS.map(a=>`<input type="radio" name="q${n}" id="q${n}_${a.v}" value="${a.v}"><label for="q${n}_${a.v}">${a.t}</label>`).join("")}
+      </div></div>`;
+  }).join("");
+
+  // impact
+  $("ovQ").textContent = F.ovQ;
+  $("ovSeg").innerHTML = segHTML("ov", OVERALL);
+  $("durSeg").innerHTML = segHTML("dur", DURATION);
+  $("distQ").textContent = F.distQ;
+  $("distSeg").innerHTML = segHTML("dist", LEVEL);
+  $("intfQ").textContent = F.intfQ;
+  $("intfBox").innerHTML = F.areas.map((a,i)=>`<div><div class="hint" style="color:var(--ink)">• ${a}</div><div class="seg">${segHTML("intf"+i, LEVEL)}</div></div>`).join("");
+  $("burdQ").textContent = F.burdQ;
+  $("burdSeg").innerHTML = segHTML("burd", LEVEL);
+  $("impactMore").hidden = true;
+
+  $("formErr").hidden = true;
+  updateProgress(); calcAge();
+  $("pickView").style.display="none"; $("result").style.display="none"; $("formView").style.display="block";
+  window.scrollTo({top:0});
+}
+document.querySelectorAll(".pick button").forEach(b=>b.onclick=()=>openForm(b.dataset.form));
+$("changeForm").onclick=()=>{ $("formView").style.display="none"; $("pickView").style.display="block"; window.scrollTo({top:0}); };
+
+function updateProgress(){
+  let done=0; for(let n=1;n<=25;n++) if(val("q"+n)!==null) done++;
+  $("barFill").style.width=(done/25*100)+"%";
+  $("ptext").textContent=`ตอบแล้ว ${done} / 25 ข้อ`;
+}
+$("formView").addEventListener("change",e=>{
+  if(e.target.name==="ov") $("impactMore").hidden = (+e.target.value===0);
+  const q=e.target.closest(".q"); if(q) q.classList.remove("missing");
+  updateProgress();
+});
+
+// ===================== AGE =====================
+function parseISO(v){ const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+function calcAge(){
+  const w=$("ageWarn"); w.hidden=true; $("age").value="";
+  if(!$("dob").value || !$("date").value || !FORM) return;
+  const b=parseISO($("dob").value), r=parseISO($("date").value);
+  if(b>r){ w.hidden=false; w.textContent="วันเกิดต้องไม่อยู่หลังวันที่ทำแบบสอบถาม"; return; }
+  let months=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth());
+  if(r.getDate()<b.getDate()) months--;
+  const y=Math.floor(months/12), m=months%12;
+  $("age").value=`${y} ปี ${m} เดือน`;
+  const F=FORMS[FORM];
+  if(y<F.minAge || y>F.maxAge){
+    w.hidden=false;
+    w.textContent = FORM==="self"
+      ? `อายุ ${y} ปี ${m} เดือน — แบบประเมินตนเองใช้สำหรับเด็กอายุ 11–16 ปี${y<11?" กรุณาให้ผู้ปกครองหรือครูเป็นผู้ตอบแทน":""}`
+      : `อายุ ${y} ปี ${m} เดือน อยู่นอกช่วงที่แบบประเมินนี้ออกแบบไว้ (4–16 ปี) ผลที่ได้อาจไม่แม่นยำ`;
+  }
+}
+$("date").value = todayStr;
+$("dob").addEventListener("change",calcAge);
+$("date").addEventListener("change",calcAge);
+
+// ===================== SUBMIT =====================
+$("formView").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ans=[]; const missing=[];
+  for(let n=1;n<=25;n++){ const v=val("q"+n); ans.push(v); if(v===null) missing.push(n); }
+  document.querySelectorAll(".q").forEach(el=>el.classList.remove("missing"));
+  const errs=[];
+  if(missing.length){ missing.forEach(n=>$("q"+n).classList.add("missing")); errs.push(`ยังไม่ได้ตอบข้อ ${missing.join(", ")}`); }
+  if(val("ov")===null) errs.push("ยังไม่ได้ตอบคำถามเรื่องผลกระทบ");
+  if(errs.length){
+    $("formErr").hidden=false; $("formErr").textContent=errs.join(" • ")+" กรุณาตอบให้ครบ";
+    (missing.length ? $("q"+missing[0]) : $("impactCard")).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden=true;
+  showResult(ans);
+});
+
+function showResult(ans){
+  const F=FORMS[FORM], C=CUT[FORM];
+  const pts = ans.map((v,i)=>itemScore(i+1,v));
+  const sub = {}; SCALES.forEach(s=>sub[s.key]=s.items.reduce((t,n)=>t+pts[n-1],0));
+  const total = sub.emo+sub.conduct+sub.hyper+sub.peer;
+  const tb = band(total, C.total);
+
+  // info line
+  const bits=[`ผู้ตอบ: ${F.label}${FORM!=="self"&&$("rel").value?" ("+$("rel").value+")":""}`];
+  if($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if($("hn").value) bits.push("HN: "+$("hn").value);
+  const sx=document.querySelector("input[name=sex]:checked"); if(sx) bits.push("เพศ: "+sx.value);
+  if($("dob").value) bits.push("วันเกิด: "+fmtDate($("dob").value));
+  if($("age").value) bits.push("อายุ: "+$("age").value);
+  if($("date").value) bits.push("วันที่ทำ: "+fmtDate($("date").value));
+  $("infoLine").textContent=bits.join("  •  ");
+
+  // total
+  $("alert").classList.toggle("show", tb==="high");
+  $("verdict").className="verdict "+tb;
+  $("vTag").className="tag "+tb; $("vTag").textContent=BAND_TXT[tb];
+  $("vScore").textContent=total;
+  $("vText").textContent=TOTAL_TXT[tb];
+  const [a,b]=C.total;
+  $("bands").innerHTML=[
+    ["low",`0–${a} ปกติ`,a+1],["mid",`${a+1}–${b} เสี่ยง`,b-a],["high",`${b+1}–40 มีปัญหา`,40-b]
+  ].map(([k,t,w])=>`<div style="flex:${Math.max(w,6)};background:var(--${k})" class="${k===tb?"on":""}">${t}</div>`).join("");
+
+  // subscales
+  const color = {low:"var(--low)",mid:"var(--mid)",high:"var(--high)"};
+  $("subTbl").innerHTML = SCALES.map(s=>{
+    const sc=sub[s.key];
+    let k, txt, range;
+    if(s.key==="pro"){ k = sc>=PRO_STRENGTH_MIN ? "low":"high"; txt = sc>=PRO_STRENGTH_MIN ? "มีจุดแข็ง":"ไม่มีจุดแข็ง"; range=`มีจุดแข็ง ${PRO_STRENGTH_MIN}–10`; }
+    else { const c=C[s.key]; k=band(sc,c); txt=BAND_TXT[k]; range=`ปกติ 0–${c[0]} • เสี่ยง ${c[0]===c[1]-1?c[1]:(c[0]+1)+"–"+c[1]} • มีปัญหา ${c[1]+1}–10`; }
+    return `<tr><td>${s.name}<div class="hint">${range}</div></td>
+      <td><b>${sc}</b> <span class="muted">/10</span><div class="mini"><div style="width:${sc*10}%;background:${color[k]}"></div></div></td>
+      <td><span class="tag ${k}">${txt}</span></td></tr>`;
+  }).join("");
+  $("cutNote").textContent = `เกณฑ์ที่ใช้: SDQ ฉบับภาษาไทย ชุด${F.label} (Woerner และคณะ, 2554)`;
+
+  // impact
+  const ov=val("ov");
+  let impactHTML = `<h2>ผลกระทบ</h2><p style="margin:0">${F.ovQ}: <b>${OVERALL[ov]}</b></p>`;
+  if(ov>0){
+    const dist=val("dist"), burd=val("burd"), dur=val("dur");
+    const intf=F.areas.map((_,i)=>val("intf"+i));
+    const parts=[dist,...intf];
+    const answered=parts.filter(x=>x!==null).length;
+    const imp=parts.reduce((t,x)=>t+(x===null?0:impactPts(x)),0);
+    const ik = imp===0?"low":imp===1?"mid":"high";
+    impactHTML += `<table style="margin-top:8px"><tbody>
+      <tr><td>ระยะเวลาที่มีปัญหา</td><td>${dur===null?"–":DURATION[dur]}</td></tr>
+      <tr><td>${F.distQ}</td><td>${dist===null?"–":LEVEL[dist]}</td></tr>
+      ${F.areas.map((a,i)=>`<tr><td>รบกวน: ${a}</td><td>${intf[i]===null?"–":LEVEL[intf[i]]}</td></tr>`).join("")}
+      <tr><td>${F.burdQ}</td><td>${burd===null?"–":LEVEL[burd]}</td></tr>
+      <tr><td><b>คะแนนผลกระทบ (Impact score)</b></td><td><b>${imp}</b> / ${parts.length*2} &nbsp;<span class="tag ${ik}">${BAND_TXT[ik]}</span></td></tr>
+    </tbody></table>
+    <p class="hint">${answered<parts.length?"บางข้อยังไม่ได้ตอบ คะแนนอาจต่ำกว่าความจริง • ":""}คะแนนผลกระทบ = ความไม่สบายใจ + การรบกวนชีวิตประจำวัน (ไม่เลย/เล็กน้อย = 0, ค่อนข้างมาก = 1, มาก = 2) แปลผลตามเกณฑ์ต้นฉบับของ Goodman: 0 ปกติ, 1 เสี่ยง, ตั้งแต่ 2 มีปัญหา (ฉบับไทยยังไม่มีเกณฑ์ส่วนนี้)</p>`;
+  }
+  $("impactRes").innerHTML = impactHTML;
+
+  // all answers
+  $("allAns").innerHTML = F.items.map((t,i)=>`<tr><td>${i+1}${REVERSE.has(i+1)?"*":""}</td><td>${t}</td>
+    <td>${ANS[ans[i]].t}</td><td class="${pts[i]?"flag":"muted"}">${pts[i]}</td></tr>`).join("");
+
+  $("formView").style.display="none"; $("result").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick=()=>{ $("result").style.display="none"; $("formView").style.display="block"; window.scrollTo({top:0}); };
+$("newBtn").onclick=()=>{
+  $("formView").reset(); $("date").value=todayStr; $("ageWarn").hidden=true; $("age").value="";
+  $("result").style.display="none"; $("formView").style.display="none"; $("pickView").style.display="block";
+  window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "sdq";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="tpl-snap">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน SNAP-IV</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --low:#2e7d4f; --low-bg:#e7f5ec;
+    --high:#c0392b; --high-bg:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  h3{font-size:1.02rem;margin:4px 0 2px;color:var(--accent)}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  input[readonly]{background:var(--bg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--high);font-size:.92rem;margin-top:6px}
+  .muted{color:var(--muted)}
+
+  .pick{display:grid;gap:12px;margin-top:16px}
+  .pick button{display:flex;gap:14px;align-items:center;text-align:left;background:var(--card);border:1.5px solid var(--line);
+    border-radius:14px;padding:18px;font:inherit;cursor:pointer;color:var(--ink)}
+  .pick button:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .pick .ic{flex:0 0 52px;height:52px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+  .pick b{display:block;font-size:1.12rem}
+  .pick span.d{color:var(--muted);font-size:.93rem}
+  .chip{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;padding:2px 12px;font-size:.9rem;font-weight:600}
+  .linkbtn{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{padding:8px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;font-size:.95rem}
+  .seg input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+
+  .sec{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:18px}
+  .sec:first-child{margin-top:0}
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 2em;max-width:560px}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{text-align:center;padding:8px 2px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none;font-size:.92rem;line-height:1.3}
+  .opts label small{display:block;font-weight:500;opacity:.7;font-size:.78rem}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  @media (max-width:420px){.opts{margin-left:0}}
+
+  button.primary,button.ghost{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line)!important;color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+
+  #formView,#result{display:none}
+
+  .alert{display:none;background:var(--high);color:#fff;border-radius:14px;padding:16px 18px;margin-top:16px;animation:pulse 1.8s ease-out infinite}
+  .alert.show{display:flex;gap:14px;align-items:center}
+  .alert .ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fff;color:var(--high);display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800}
+  .alert b{display:block;font-size:1.25rem;letter-spacing:.5px}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.55)}70%{box-shadow:0 0 0 14px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  @media (prefers-reduced-motion:reduce){.alert{animation:none}}
+
+  .dom{border-radius:14px;padding:16px;border:2px solid;margin-top:12px}
+  .dom.low{background:var(--low-bg);border-color:var(--low)}
+  .dom.high{background:var(--high-bg);border-color:var(--high);border-width:3px}
+  .dom .top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:6px 10px}
+  .dom .name{flex:1 1 180px;min-width:0}
+  .dom .name{font-weight:700;font-size:1.05rem}
+  .dom .score{font-size:2.1rem;font-weight:700;line-height:1;margin-top:6px}
+  .dom .score small{font-size:.95rem;color:var(--muted);font-weight:500}
+  .dom.high .score{color:var(--high)}
+  .tag{display:inline-block;color:#fff;font-weight:700;padding:2px 12px;border-radius:99px;font-size:.9rem;white-space:nowrap}
+  .tag.low{background:var(--low)} .tag.high{background:var(--high)}
+  .meter{position:relative;height:10px;border-radius:99px;margin-top:12px;background:var(--line);overflow:visible}
+  .meter .fill{height:100%;border-radius:99px}
+  .meter .cut{position:absolute;top:-5px;width:3px;height:20px;background:var(--ink);border-radius:2px;transform:translateX(-50%)}
+  .meter-l{position:relative;height:1.3em;font-size:.8rem;color:var(--muted);margin-top:2px}
+  .meter-l span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  td.grp{background:var(--bg);font-weight:700;color:var(--accent)}
+  .flag{color:var(--high);font-weight:700}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card,.dom{break-inside:avoid}
+    .card{border:1px solid #ccc}
+    .alert{animation:none}
+    .dom,.tag,.alert,.meter,.meter .fill,td.grp{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#5a63c9;--accent-soft:#e9ebfb}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#e9ebfb 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#e6e8fb"/>
+<circle cx="20" cy="24" r="2.5" fill="#f6b73c"/><circle cx="80" cy="78" r="2" fill="#f6b73c"/><circle cx="84" cy="22" r="3" fill="#fff"/>
+<g transform="rotate(35 50 50)">
+<path d="M44 70 Q50 92 56 70Z" fill="#f6b73c"/><path d="M46.5 70 Q50 83 53.5 70Z" fill="#ef6f6c"/>
+<path d="M41 54 L30 70 L42 67Z" fill="#ef6f6c"/><path d="M59 54 L70 70 L58 67Z" fill="#ef6f6c"/>
+<path d="M50 14 C64 28 64 58 59 70 H41 C36 58 36 28 50 14Z" fill="#fff" stroke="#5a63c9" stroke-width="3"/>
+<circle cx="50" cy="40" r="10" fill="#a9b4f5" stroke="#5a63c9" stroke-width="3"/>
+<circle cx="46.5" cy="39" r="1.8" fill="#3a2e2a"/><circle cx="53.5" cy="39" r="1.8" fill="#3a2e2a"/>
+<path d="M46.5 43.5 q3.5 3 7 0" stroke="#3a2e2a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+</g></svg></div><div class="mh-txt">
+  <h1>แบบประเมินพฤติกรรม SNAP-IV (Short Form)</h1>
+  <p>Swanson, Nolan, and Pelham Rating Scale ฉบับภาษาไทย</p>
+</div></header>
+
+<!-- STEP 1 -->
+<section id="pickView">
+  <div class="card instr">กรุณาเลือกผู้ตอบแบบสอบถาม</div>
+  <div class="pick">
+    <button data-form="parent"><div class="ic">👪</div><div><b>ผู้ปกครอง</b><span class="d">พ่อ แม่ หรือผู้ดูแลที่ใกล้ชิดเด็ก</span></div></button>
+    <button data-form="teacher"><div class="ic">🏫</div><div><b>ครู</b><span class="d">ครูผู้สอนหรือครูประจำชั้น</span></div></button>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<form id="formView" novalidate>
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <div>ผู้ตอบ: <span class="chip" id="formChip"></span></div>
+    <button type="button" class="linkbtn noprint" id="changeForm">เปลี่ยนผู้ตอบ</button>
+  </div>
+
+  <div class="card">
+    <h2>ข้อมูลเด็ก</h2>
+    <div class="grid2">
+      <div><label class="f" for="cname">ชื่อ–นามสกุลเด็ก</label><input type="text" id="cname" autocomplete="off"></div>
+      <div><label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="hn" autocomplete="off"></div>
+      <div><label class="f" for="dob">วันเกิดเด็ก</label><input type="date" id="dob"></div>
+      <div><label class="f" for="date">วันที่ประเมิน</label><input type="date" id="date"></div>
+      <div><label class="f" for="age">อายุ <span class="hint">(คำนวณอัตโนมัติ)</span></label><input type="text" id="age" readonly tabindex="-1" placeholder="กรอกวันเกิดเพื่อคำนวณ"></div>
+      <div>
+        <label class="f">เพศ (ของเด็ก)</label>
+        <div class="seg">
+          <input type="radio" name="sex" id="sxM" value="ชาย"><label for="sxM">ชาย</label>
+          <input type="radio" name="sex" id="sxF" value="หญิง"><label for="sxF">หญิง</label>
+        </div>
+      </div>
+    </div>
+    <label class="f" for="rel">ผู้ตอบแบบสอบถามมีความสัมพันธ์กับเด็กเป็น</label>
+    <input type="text" id="rel" autocomplete="off">
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr">
+    กรุณาเลือกว่าอาการในแต่ละข้อนั้น<b>ตรงกับลักษณะของเด็กที่ท่านประเมินเพียงใด</b>
+    <div class="hint" style="margin-top:4px;color:var(--ink)">0 = ไม่เลย &nbsp;•&nbsp; 1 = เล็กน้อย &nbsp;•&nbsp; 2 = ค่อนข้างมาก &nbsp;•&nbsp; 3 = มาก</div>
+  </div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 26 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<!-- STEP 3 -->
+<section id="result">
+  <div class="alert" id="alert" role="alert">
+    <div class="ic">!</div>
+    <div><b>HIGH ALERT</b><span id="alertText"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>สรุปผลการประเมิน</h2>
+    <div id="infoLine" class="muted"></div>
+    <div id="domains"></div>
+    <div id="summary" style="margin-top:14px"></div>
+    <p class="hint" style="margin-top:12px">
+      SNAP-IV เป็นเพียง<b>เครื่องมือคัดกรอง</b> ไม่ใช่การวินิจฉัยโรค การวินิจฉัยโรคสมาธิสั้นต้องพบกุมารแพทย์พัฒนาการและพฤติกรรม
+      หรือจิตแพทย์เด็กและวัยรุ่น เพื่อประเมินร่วมกับประวัติ ตามเกณฑ์ DSM-5 อาการต้องเริ่มก่อนอายุ 12 ปี
+      และส่งผลกระทบตั้งแต่ 2 สถานการณ์ขึ้นไป เช่น ที่บ้านและที่โรงเรียน
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>อาการ</th><th style="width:7em">คำตอบ</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+  </div>
+
+  <div class="printonly card">ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................</div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  SNAP-IV ฉบับภาษาไทย พัฒนาโดย ผศ.นพ.ณัทธร พิทยรัตน์เสถียร และคณะ สาขาวิชาจิตเวชศาสตร์เด็กและวัยรุ่น
+  ภาควิชากุมารเวชศาสตร์ โรงพยาบาลศิริราช. ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+// ===================== DATA =====================
+const ITEMS = [
+  "มักไม่ละเอียดรอบคอบหรือสะเพร่าในการทำงานต่างๆ เช่น การบ้าน",
+  "ทำอะไรนานๆ ไม่ได้",
+  "ดูเหมือนไม่ค่อยฟังเวลามีคนพูดด้วย",
+  "มักทำการบ้านไม่เสร็จ หรือทำงานที่ได้รับมอบหมายไม่สำเร็จ",
+  "จัดระเบียบงานและกิจกรรมต่างๆ ไม่เป็น",
+  "มักหลีกเลี่ยงกิจกรรมที่ต้องใช้ความอดทนในการทำให้สำเร็จ",
+  "ทำของหายบ่อยๆ (เช่น ของเล่น สมุดจดงาน เครื่องเขียน ฯลฯ)",
+  "วอกแวกง่าย",
+  "ขี้ลืม",
+  "มือเท้ายุกยิก นั่งบิดไปบิดมา",
+  "นั่งไม่ติดที่ ชอบลุกจากที่นั่งในชั้นเรียนหรือจากที่ที่ควรจะนั่งเรียบร้อย",
+  "วิ่งหรือปีนป่ายมากเกินควรอย่างไม่รู้กาลเทศะ",
+  "เล่นหรือทำกิจกรรมเงียบๆ ไม่เป็น",
+  "พร้อมจะเคลื่อนไหวอยู่เสมอ เหมือน “ติดเครื่อง” อยู่ตลอดเวลา",
+  "พูดมาก",
+  "มักโพล่งคำตอบออกมาก่อนจะฟังคำถามจบ",
+  "ไม่ชอบรอคิว",
+  "ชอบสอดแทรกผู้อื่น (เช่น พูดแทรกขณะผู้ใหญ่กำลังสนทนากัน)",
+  "อารมณ์เสียง่าย",
+  "ชอบโต้เถียงกับผู้ใหญ่",
+  "ไม่ยอมทำตามสิ่งที่ผู้ใหญ่สั่งหรือวางกฎเกณฑ์ไว้",
+  "จงใจก่อกวนผู้อื่น",
+  "มักตำหนิผู้อื่นในสิ่งที่ตนเองทำผิด",
+  "ขี้รำคาญ",
+  "โกรธขึ้งบึ้งตึงเป็นประจำ",
+  "เจ้าคิดเจ้าแค้น"
+];
+const SCALE = ["ไม่เลย","เล็กน้อย","ค่อนข้างมาก","มาก"];
+
+const DOMAINS = [
+  {key:"ia",  name:"ด้านขาดสมาธิ (Inattention)",                       from:1,  to:9},
+  {key:"hi",  name:"ด้านซน/อยู่ไม่นิ่ง/หุนหันพลันแล่น (Hyperactivity/Impulsivity)", from:10, to:18},
+  {key:"odd", name:"ด้านดื้อต่อต้าน (Oppositional Defiant, ODD)",      from:19, to:26}
+];
+// Cut-off (คะแนนรวม ≥ จุดตัด = ผ่านเกณฑ์/มีความเสี่ยง) — ตามไฟล์เกณฑ์ที่ได้รับ
+const CUT = {
+  parent:  {ia:16, hi:14, odd:12},
+  teacher: {ia:18, hi:11, odd:8}
+};
+const FORMS = {
+  parent:{label:"ผู้ปกครอง", relPh:"เช่น มารดา บิดา ยาย"},
+  teacher:{label:"ครู", relPh:"เช่น ครูประจำชั้น ป.3/2"}
+};
+
+// ===================== HELPERS =====================
+const $ = id => document.getElementById(id);
+let FORM=null;
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const val = name => { const c=document.querySelector(`input[name="${name}"]:checked`); return c ? +c.value : null; };
+function fmtDate(v){ return v ? new Date(v+"T00:00:00").toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}) : ""; }
+
+// ===================== BUILD =====================
+function buildQuestions(){
+  $("questions").innerHTML = DOMAINS.map(d=>{
+    let h=`<div class="sec"><h3>${d.name}</h3><div class="hint">ข้อ ${d.from}–${d.to}</div></div>`;
+    for(let n=d.from;n<=d.to;n++){
+      h+=`<div class="q" id="q${n}"><div class="qt"><span class="n">${n}.</span>${ITEMS[n-1]}</div>
+        <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+          ${SCALE.map((t,v)=>`<input type="radio" name="q${n}" id="q${n}_${v}" value="${v}"><label for="q${n}_${v}">${t}<small>${v}</small></label>`).join("")}
+        </div></div>`;
+    }
+    return h;
+  }).join("");
+}
+buildQuestions();
+
+function openForm(key){
+  FORM=key;
+  $("formChip").textContent=FORMS[key].label;
+  $("rel").placeholder=FORMS[key].relPh;
+  $("pickView").style.display="none"; $("result").style.display="none"; $("formView").style.display="block";
+  calcAge(); window.scrollTo({top:0});
+}
+document.querySelectorAll(".pick button").forEach(b=>b.onclick=()=>openForm(b.dataset.form));
+$("changeForm").onclick=()=>{ $("formView").style.display="none"; $("pickView").style.display="block"; window.scrollTo({top:0}); };
+
+function updateProgress(){
+  let done=0; for(let n=1;n<=26;n++) if(val("q"+n)!==null) done++;
+  $("barFill").style.width=(done/26*100)+"%";
+  $("ptext").textContent=`ตอบแล้ว ${done} / 26 ข้อ`;
+}
+$("formView").addEventListener("change",e=>{ const q=e.target.closest(".q"); if(q) q.classList.remove("missing"); updateProgress(); });
+
+// ===================== AGE =====================
+function parseISO(v){ const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+function calcAge(){
+  const w=$("ageWarn"); w.hidden=true; $("age").value="";
+  if(!$("dob").value||!$("date").value) return;
+  const b=parseISO($("dob").value), r=parseISO($("date").value);
+  if(b>r){ w.hidden=false; w.textContent="วันเกิดต้องไม่อยู่หลังวันที่ประเมิน"; return; }
+  let months=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth());
+  if(r.getDate()<b.getDate()) months--;
+  $("age").value=`${Math.floor(months/12)} ปี ${months%12} เดือน`;
+}
+$("date").value=todayStr;
+$("dob").addEventListener("change",calcAge);
+$("date").addEventListener("change",calcAge);
+
+// ===================== SUBMIT =====================
+$("formView").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ans=[], missing=[];
+  for(let n=1;n<=26;n++){ const v=val("q"+n); ans.push(v); if(v===null) missing.push(n); }
+  document.querySelectorAll(".q").forEach(el=>el.classList.remove("missing"));
+  if(missing.length){
+    missing.forEach(n=>$("q"+n).classList.add("missing"));
+    $("formErr").hidden=false; $("formErr").textContent=`ยังไม่ได้ตอบข้อ ${missing.join(", ")} กรุณาตอบให้ครบทุกข้อ`;
+    $("q"+missing[0]).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden=true;
+  showResult(ans);
+});
+
+function showResult(ans){
+  const C=CUT[FORM], F=FORMS[FORM];
+  const bits=[`ผู้ตอบ: ${F.label}${$("rel").value?" ("+$("rel").value+")":""}`];
+  if($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if($("hn").value) bits.push("HN: "+$("hn").value);
+  const sx=document.querySelector("input[name=sex]:checked"); if(sx) bits.push("เพศ: "+sx.value);
+  if($("dob").value) bits.push("วันเกิด: "+fmtDate($("dob").value));
+  if($("age").value) bits.push("อายุ: "+$("age").value);
+  if($("date").value) bits.push("วันที่ประเมิน: "+fmtDate($("date").value));
+  $("infoLine").textContent=bits.join("  •  ");
+
+  const res = DOMAINS.map(d=>{
+    const n=d.to-d.from+1, max=n*3;
+    let s=0; for(let i=d.from;i<=d.to;i++) s+=ans[i-1];
+    const cut=C[d.key], pos=s>=cut;
+    return {...d, s, n, max, cut, pos, mean:s/n};
+  });
+
+  $("domains").innerHTML = res.map(r=>{
+    const k=r.pos?"high":"low";
+    const cutPct=r.cut/r.max*100;
+    return `<div class="dom ${k}">
+      <div class="top"><div class="name">${r.name}</div><span class="tag ${k}">${r.pos?"ผ่านเกณฑ์ – เสี่ยง":"ปกติ"}</span></div>
+      <div class="score">${r.s} <small>/ ${r.max} คะแนน • เฉลี่ย ${r.mean.toFixed(2)} ต่อข้อ</small></div>
+      <div class="meter"><div class="fill" style="width:${r.s/r.max*100}%;background:var(--${k})"></div><div class="cut" style="left:${cutPct}%"></div></div>
+      <div class="meter-l"><span style="left:0;transform:none">0</span><span style="left:${cutPct}%">จุดตัด ≥ ${r.cut}</span><span style="right:0;left:auto;transform:none">${r.max}</span></div>
+    </div>`;
+  }).join("");
+
+  const pos=res.filter(r=>r.pos);
+  $("alert").classList.toggle("show", pos.length>0);
+  $("alertText").textContent = pos.length ? `คะแนนผ่านเกณฑ์ ${pos.length} ด้าน: ${pos.map(r=>r.name.split(" (")[0].replace("ด้าน","")).join(", ")} ควรส่งพบแพทย์เพื่อประเมินเพิ่มเติม` : "";
+
+  const [ia,hi,odd]=res;
+  let pattern="";
+  if(ia.pos && hi.pos) pattern="ผ่านเกณฑ์ทั้งด้านขาดสมาธิและด้านซน/อยู่ไม่นิ่ง (ลักษณะแบบผสม)";
+  else if(ia.pos) pattern="ผ่านเกณฑ์ด้านขาดสมาธิเด่น";
+  else if(hi.pos) pattern="ผ่านเกณฑ์ด้านซน/อยู่ไม่นิ่ง/หุนหันพลันแล่นเด่น";
+  $("summary").innerHTML = pos.length
+    ? `<b>สรุป:</b> เด็กมีแนวโน้มหรือมีความเสี่ยงต่อภาวะในด้านที่ผ่านเกณฑ์${pattern?" — "+pattern:""}${odd.pos?" และมีพฤติกรรมดื้อต่อต้านร่วมด้วย":""} แนะนำให้ส่งพบกุมารแพทย์พัฒนาการและพฤติกรรม หรือจิตแพทย์เด็กและวัยรุ่น และควรให้ผู้ประเมินอีกฝ่าย (${FORM==="parent"?"ครู":"ผู้ปกครอง"}) ทำแบบประเมินด้วย เพื่อดูอาการในสถานการณ์ที่ต่างกัน`
+    : `<b>สรุป:</b> พฤติกรรมอยู่ในเกณฑ์ปกติ ยังไม่พบความผิดปกติตามเกณฑ์คัดกรองนี้`;
+
+  $("allAns").innerHTML = DOMAINS.map(d=>{
+    let h=`<tr><td class="grp" colspan="3">${d.name}</td></tr>`;
+    for(let n=d.from;n<=d.to;n++) h+=`<tr><td>${n}</td><td>${ITEMS[n-1]}</td><td class="${ans[n-1]>=2?"flag":""}">${SCALE[ans[n-1]]} (${ans[n-1]})</td></tr>`;
+    return h;
+  }).join("");
+
+  $("formView").style.display="none"; $("result").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick=()=>{ $("result").style.display="none"; $("formView").style.display="block"; window.scrollTo({top:0}); };
+$("newBtn").onclick=()=>{
+  $("formView").reset(); $("date").value=todayStr; $("age").value=""; $("ageWarn").hidden=true; updateProgress();
+  $("result").style.display="none"; $("formView").style.display="none"; $("pickView").style.display="block";
+  window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "snap";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="tpl-gad7">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน GAD-7</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --l0:#2e7d4f; --l0-bg:#e7f5ec;
+    --l1:#8a9a1b; --l1-bg:#f4f6e0;
+    --l2:#c46a12; --l2-bg:#fdf0e1;
+    --l3:#c0392b; --l3-bg:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  input[readonly]{background:var(--bg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--l3);font-size:.92rem;margin-top:6px}
+  .muted{color:var(--muted)}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{padding:8px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;font-size:.95rem}
+  .seg input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 2em;max-width:580px}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{text-align:center;padding:8px 2px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none;font-size:.9rem;line-height:1.3;display:flex;flex-direction:column;justify-content:center}
+  .opts label small{display:block;font-weight:500;opacity:.7;font-size:.78rem}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  @media (max-width:420px){.opts{margin-left:0}}
+
+  button.primary,button.ghost{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line)!important;color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+  #result{display:none}
+
+  .alert{display:none;background:var(--l3);color:#fff;border-radius:14px;padding:16px 18px;margin-top:16px;animation:pulse 1.8s ease-out infinite}
+  .alert.show{display:flex;gap:14px;align-items:center}
+  .alert .ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fff;color:var(--l3);display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800}
+  .alert b{display:block;font-size:1.25rem;letter-spacing:.5px}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.55)}70%{box-shadow:0 0 0 14px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  @media (prefers-reduced-motion:reduce){.alert{animation:none}}
+
+  .verdict{border-radius:14px;padding:18px;border:2px solid}
+  .verdict.l0{background:var(--l0-bg);border-color:var(--l0)}
+  .verdict.l1{background:var(--l1-bg);border-color:var(--l1)}
+  .verdict.l2{background:var(--l2-bg);border-color:var(--l2)}
+  .verdict.l3{background:var(--l3-bg);border-color:var(--l3);border-width:3px}
+  .tag{display:inline-block;color:#fff;font-weight:700;padding:2px 12px;border-radius:99px;font-size:.9rem}
+  .tag.l0{background:var(--l0)} .tag.l1{background:var(--l1)} .tag.l2{background:var(--l2)} .tag.l3{background:var(--l3)}
+  .score{font-size:2.6rem;font-weight:700;line-height:1;margin:10px 0 2px}
+  .score small{font-size:1rem;color:var(--muted);font-weight:500}
+  .verdict.l3 .score{color:var(--l3)}
+  .bands{display:grid;grid-template-columns:5fr 5fr 5fr 7fr;gap:4px;margin-top:14px;font-size:.78rem;text-align:center;line-height:1.3}
+  .bands div{padding:6px 2px;border-radius:6px;color:#fff;opacity:.35}
+  .bands .on{opacity:1;font-weight:700}
+
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .flag{color:var(--l3);font-weight:700}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;break-inside:avoid}
+    .alert{animation:none}
+    .verdict,.tag,.bands div,.alert{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#8a5cc2;--accent-soft:#f1e9fa}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#f1e9fa 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#efe6fa"/>
+<g fill="#fff"><circle cx="34" cy="56" r="15"/><circle cx="52" cy="45" r="19"/><circle cx="69" cy="56" r="14"/><rect x="20" y="56" width="63" height="15" rx="7.5"/></g>
+<path d="M39 54 q4 4 8 0" stroke="#3a2e2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M56 54 q4 4 8 0" stroke="#3a2e2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<circle cx="37" cy="61" r="3.6" fill="#f7a1a1" opacity=".8"/><circle cx="66" cy="61" r="3.6" fill="#f7a1a1" opacity=".8"/>
+<path d="M48 61 q3.5 3 7 0" stroke="#3a2e2a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M16 34 q6 -4 12 0" stroke="#8a5cc2" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>
+<path d="M74 28 q6 -4 12 0" stroke="#8a5cc2" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>
+<path d="M50 84 c-4 -4 -9 -8 -4.5 -11 c2 -1.3 4 0 4.5 1.5 c0.5 -1.5 2.5 -2.8 4.5 -1.5 c4.5 3 -0.5 7 -4.5 11z" fill="#c9a6ef"/></svg></div><div class="mh-txt">
+  <h1>แบบประเมินภาวะวิตกกังวล</h1>
+  <p>Generalized Anxiety Disorder – 7 (GAD-7)</p>
+</div></header>
+
+<form id="form" novalidate>
+  <div class="card">
+    <h2>ข้อมูลผู้ตอบ</h2>
+    <div class="grid2">
+      <div><label class="f" for="cname">ชื่อ–นามสกุล</label><input type="text" id="cname" autocomplete="off"></div>
+      <div><label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="hn" autocomplete="off"></div>
+      <div><label class="f" for="dob">วันเกิด</label><input type="date" id="dob"></div>
+      <div><label class="f" for="date">วันที่ประเมิน</label><input type="date" id="date"></div>
+      <div><label class="f" for="age">อายุ <span class="hint">(คำนวณอัตโนมัติ)</span></label><input type="text" id="age" readonly tabindex="-1" placeholder="กรอกวันเกิดเพื่อคำนวณ"></div>
+      <div>
+        <label class="f">เพศ</label>
+        <div class="seg">
+          <input type="radio" name="sex" id="sxM" value="ชาย"><label for="sxM">ชาย</label>
+          <input type="radio" name="sex" id="sxF" value="หญิง"><label for="sxF">หญิง</label>
+        </div>
+      </div>
+    </div>
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr">
+    <b>ในช่วง 2 อาทิตย์ที่ผ่านมา</b> ท่านถูกรบกวนด้วยปัญหาต่อไปนี้บ่อยเพียงใด
+    กรุณาเลือกคำตอบที่ตรงกับท่านมากที่สุด
+  </div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 7 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card" id="diffCard" hidden>
+    <div style="font-weight:600">ถ้าท่านมีปัญหาข้อใดข้อหนึ่งจากข้อ 1–7 ข้างต้น ปัญหาเหล่านี้ทำให้ท่านลำบากมากน้อยเพียงใดในการทำงาน การดูแลสิ่งต่างๆ ภายในบ้าน หรือการเข้ากับผู้อื่น</div>
+    <div class="seg" style="margin-top:10px" id="diffSeg"></div>
+  </div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<section id="result">
+  <div class="alert" id="alert" role="alert">
+    <div class="ic">!</div>
+    <div><b>HIGH ALERT</b>ความวิตกกังวลระดับรุนแรง ควรพบจิตแพทย์โดยเร็ว</div>
+  </div>
+
+  <div class="card">
+    <h2>สรุปผลการประเมิน</h2>
+    <div id="infoLine" class="muted" style="margin-bottom:12px"></div>
+    <div id="verdict" class="verdict">
+      <span class="tag" id="vTag"></span>
+      <div class="score"><span id="vScore"></span> <small>/ 21 คะแนน</small></div>
+      <div id="vTitle" style="font-weight:700;font-size:1.1rem"></div>
+      <div id="vText" style="margin-top:6px"></div>
+      <div class="bands" id="bands"></div>
+    </div>
+    <div id="diffLine" style="margin-top:12px"></div>
+    <p class="hint" style="margin-top:12px">ผลนี้เป็นเพียงการคัดกรองเบื้องต้น ไม่ใช่การวินิจฉัย กรุณานำผลนี้ไปปรึกษาแพทย์</p>
+  </div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>อาการ</th><th style="width:8em">คำตอบ</th><th style="width:3.5em">คะแนน</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+  </div>
+
+  <div class="printonly card">ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................</div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  GAD-7 © Spitzer, Kroenke, Williams, Löwe. ฉบับภาษาไทยแปลโดย คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี มหาวิทยาลัยมหิดล.
+  ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+const ITEMS = [
+  "รู้สึกตึงเครียด วิตกกังวล หรือกระวนกระวาย",
+  "ไม่สามารถหยุดหรือควบคุมความกังวลได้",
+  "กังวลมากเกินไปในเรื่องต่างๆ",
+  "ทำตัวให้ผ่อนคลายได้ยาก",
+  "รู้สึกกระสับกระส่ายจนไม่สามารถนั่งนิ่งๆ ได้",
+  "กลายเป็นคนขี้รำคาญ หรือหงุดหงิดง่าย",
+  "รู้สึกกลัวเหมือนว่าจะมีอะไรร้ายๆ เกิดขึ้น"
+];
+const SCALE = ["ไม่เลย","บางวัน","เกินกว่า 7 วัน","เกือบทุกวัน"];
+const DIFF = ["ไม่ลำบากเลย","ลำบากบ้าง","ลำบากมาก","ลำบากมากที่สุด"];
+
+const LEVELS = [
+  {k:"l0", min:0,  max:4,  tag:"น้อยที่สุด", title:"ความวิตกกังวลระดับน้อยที่สุด",
+   text:"อยู่ในเกณฑ์ปกติ ไม่พบความวิตกกังวลที่ผิดปกติ"},
+  {k:"l1", min:5,  max:9,  tag:"น้อย", title:"ความวิตกกังวลระดับน้อย",
+   text:"มีความกังวลเล็กน้อย แนะนำให้สังเกตตัวเองว่าเกิดจากคาเฟอีน แอลกอฮอล์ หรือการนอนหลับไม่เพียงพอหรือไม่ หากอาการยังคงอยู่ควรปรึกษาผู้เชี่ยวชาญ"},
+  {k:"l2", min:10, max:14, tag:"ปานกลาง", title:"ความวิตกกังวลระดับปานกลาง",
+   text:"เริ่มส่งผลกระทบต่อชีวิตประจำวัน แนะนำให้พบแพทย์หรือผู้เชี่ยวชาญเพื่อประเมินเพิ่มเติม (สามารถรักษาได้ด้วยจิตบำบัดหรือการใช้ยา)"},
+  {k:"l3", min:15, max:21, tag:"รุนแรง", title:"ความวิตกกังวลระดับรุนแรง",
+   text:"มีความวิตกกังวลสูงมาก แนะนำให้พบจิตแพทย์โดยเร็วเพื่อวางแผนการรักษาอย่างเหมาะสม"}
+];
+
+const $ = id => document.getElementById(id);
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const val = name => { const c=document.querySelector(`input[name="${name}"]:checked`); return c ? +c.value : null; };
+function fmtDate(v){ return v ? new Date(v+"T00:00:00").toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}) : ""; }
+
+$("questions").innerHTML = ITEMS.map((t,i)=>{
+  const n=i+1;
+  return `<div class="q" id="q${n}"><div class="qt"><span class="n">${n}.</span>${t}</div>
+    <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+      ${SCALE.map((s,v)=>`<input type="radio" name="q${n}" id="q${n}_${v}" value="${v}"><label for="q${n}_${v}">${s}<small>${v}</small></label>`).join("")}
+    </div></div>`;
+}).join("");
+$("diffSeg").innerHTML = DIFF.map((t,i)=>`<input type="radio" name="diff" id="d${i}" value="${i}"><label for="d${i}">${t}</label>`).join("");
+
+function update(){
+  let done=0, any=false;
+  for(let n=1;n<=7;n++){ const v=val("q"+n); if(v!==null){done++; if(v>0) any=true;} }
+  $("barFill").style.width=(done/7*100)+"%";
+  $("ptext").textContent=`ตอบแล้ว ${done} / 7 ข้อ`;
+  $("diffCard").hidden=!any;
+}
+$("form").addEventListener("change",e=>{ const q=e.target.closest(".q"); if(q) q.classList.remove("missing"); update(); });
+
+function parseISO(v){ const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+function calcAge(){
+  const w=$("ageWarn"); w.hidden=true; $("age").value="";
+  if(!$("dob").value||!$("date").value) return;
+  const b=parseISO($("dob").value), r=parseISO($("date").value);
+  if(b>r){ w.hidden=false; w.textContent="วันเกิดต้องไม่อยู่หลังวันที่ประเมิน"; return; }
+  let months=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth());
+  if(r.getDate()<b.getDate()) months--;
+  $("age").value=`${Math.floor(months/12)} ปี ${months%12} เดือน`;
+}
+$("date").value=todayStr;
+$("dob").addEventListener("change",calcAge);
+$("date").addEventListener("change",calcAge);
+
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ans=[], missing=[];
+  for(let n=1;n<=7;n++){ const v=val("q"+n); ans.push(v); if(v===null) missing.push(n); }
+  document.querySelectorAll(".q").forEach(el=>el.classList.remove("missing"));
+  if(missing.length){
+    missing.forEach(n=>$("q"+n).classList.add("missing"));
+    $("formErr").hidden=false; $("formErr").textContent=`ยังไม่ได้ตอบข้อ ${missing.join(", ")} กรุณาตอบให้ครบทุกข้อ`;
+    $("q"+missing[0]).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden=true;
+  showResult(ans);
+});
+
+function showResult(ans){
+  const total=ans.reduce((a,b)=>a+b,0);
+  const L=LEVELS.find(l=>total>=l.min && total<=l.max);
+
+  const bits=[];
+  if($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if($("hn").value) bits.push("HN: "+$("hn").value);
+  const sx=document.querySelector("input[name=sex]:checked"); if(sx) bits.push("เพศ: "+sx.value);
+  if($("dob").value) bits.push("วันเกิด: "+fmtDate($("dob").value));
+  if($("age").value) bits.push("อายุ: "+$("age").value);
+  if($("date").value) bits.push("วันที่ประเมิน: "+fmtDate($("date").value));
+  $("infoLine").textContent=bits.join("  •  ");
+
+  $("alert").classList.toggle("show", L.k==="l3");
+  $("verdict").className="verdict "+L.k;
+  $("vTag").className="tag "+L.k; $("vTag").textContent=L.tag;
+  $("vScore").textContent=total;
+  $("vTitle").textContent=`${L.min}–${L.max} คะแนน : ${L.title}`;
+  $("vText").textContent=L.text;
+  $("bands").innerHTML=LEVELS.map(l=>`<div style="background:var(--${l.k})" class="${l.k===L.k?"on":""}">${l.min}–${l.max}<br>${l.tag}</div>`).join("");
+
+  const d=val("diff");
+  $("diffLine").innerHTML = ans.some(v=>v>0)
+    ? `ความลำบากในการทำงาน ดูแลบ้าน หรือเข้ากับผู้อื่น: <b>${d===null?"ไม่ได้ตอบ":DIFF[d]}</b>` : "";
+
+  $("allAns").innerHTML=ITEMS.map((t,i)=>`<tr><td>${i+1}</td><td>${t}</td><td>${SCALE[ans[i]]}</td><td class="${ans[i]>=2?"flag":"muted"}">${ans[i]}</td></tr>`).join("");
+
+  $("form").style.display="none"; $("result").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick=()=>{ $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0}); };
+$("newBtn").onclick=()=>{
+  $("form").reset(); $("date").value=todayStr; $("age").value=""; $("ageWarn").hidden=true; update();
+  $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "gad7";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+<script type="text/plain" id="tpl-phqa">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบประเมิน PHQ-A</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2933; --muted:#616e7c; --line:#e4e7eb;
+    --accent:#2f6f8f; --accent-soft:#e6f0f5;
+    --l0:#2e7d4f; --l0-bg:#e7f5ec;
+    --l1:#8a9a1b; --l1-bg:#f4f6e0;
+    --l2:#c98a0c; --l2-bg:#fdf4e1;
+    --l3:#d0601a; --l3-bg:#fdede2;
+    --l4:#c0392b; --l4-bg:#fbe9e7;
+    --purple:#6b2c91;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  header h1{font-size:1.5rem;margin:0 0 4px}
+  header p{margin:0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+  .instr{background:var(--accent-soft);border-color:#cfe1ea}
+  h2{font-size:1.15rem;margin:0 0 8px}
+  label.f{display:block;font-weight:600;margin:10px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  input[readonly]{background:var(--bg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .hint{font-size:.9rem;color:var(--muted)}
+  .warn{color:var(--l4);font-size:.92rem;margin-top:6px}
+  .muted{color:var(--muted)}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{padding:8px 16px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;font-size:.95rem}
+  .seg input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+
+  .progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .ptext{font-size:.9rem;color:var(--muted);margin-top:4px}
+
+  .q{padding:14px 0;border-bottom:1px solid var(--line)}
+  .q:last-child{border-bottom:0}
+  .q.missing{background:#fff6f5;border-radius:10px;padding:14px 10px}
+  .qt{font-weight:600}
+  .qt .n{display:inline-block;min-width:2em;color:var(--accent)}
+  .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0 2em;max-width:580px}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label{text-align:center;padding:8px 2px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;user-select:none;font-size:.9rem;line-height:1.3;display:flex;flex-direction:column;justify-content:center}
+  .opts label small{display:block;font-weight:500;opacity:.7;font-size:.78rem}
+  .opts input:checked+label{border-color:var(--accent);background:var(--accent);color:#fff}
+  .opts input:focus-visible+label{outline:3px solid #9cc3d6}
+  @media (max-width:420px){.opts{margin-left:0}}
+  .supq{padding:12px 0;border-bottom:1px solid var(--line)}
+  .supq:last-child{border-bottom:0}
+  .supq.missing{background:#fff6f5;border-radius:10px;padding:12px 10px}
+
+  button.primary,button.ghost{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff;width:100%;font-size:1.05rem}
+  .ghost{background:#fff;border:1.5px solid var(--line)!important;color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .row button{flex:1 1 200px}
+  #result{display:none}
+
+  .alert{display:none;color:#fff;border-radius:14px;padding:16px 18px;margin-top:16px;gap:14px;align-items:flex-start}
+  .alert.show{display:flex}
+  .alert.red{background:var(--l4);animation:pulse 1.8s ease-out infinite}
+  .alert.suicide{background:var(--purple);animation:pulseP 1.8s ease-out infinite}
+  .alert .ic{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800}
+  .alert.red .ic{color:var(--l4)} .alert.suicide .ic{color:var(--purple)}
+  .alert b.h{display:block;font-size:1.2rem;letter-spacing:.3px}
+  .alert ul{margin:6px 0 0;padding-left:1.2em}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.55)}70%{box-shadow:0 0 0 14px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  @keyframes pulseP{0%{box-shadow:0 0 0 0 rgba(107,44,145,.55)}70%{box-shadow:0 0 0 14px rgba(107,44,145,0)}100%{box-shadow:0 0 0 0 rgba(107,44,145,0)}}
+  @media (prefers-reduced-motion:reduce){.alert{animation:none!important}}
+
+  .help{border:2px solid var(--purple);background:#f5eefa;border-radius:14px;padding:16px;margin-top:16px}
+  .help a{color:var(--purple);font-weight:700}
+
+  .verdict{border-radius:14px;padding:18px;border:2px solid}
+  .verdict.l0{background:var(--l0-bg);border-color:var(--l0)}
+  .verdict.l1{background:var(--l1-bg);border-color:var(--l1)}
+  .verdict.l2{background:var(--l2-bg);border-color:var(--l2)}
+  .verdict.l3{background:var(--l3-bg);border-color:var(--l3)}
+  .verdict.l4{background:var(--l4-bg);border-color:var(--l4);border-width:3px}
+  .tag{display:inline-block;color:#fff;font-weight:700;padding:2px 12px;border-radius:99px;font-size:.9rem}
+  .tag.l0{background:var(--l0)} .tag.l1{background:var(--l1)} .tag.l2{background:var(--l2)} .tag.l3{background:var(--l3)} .tag.l4{background:var(--l4)}
+  .tag.p{background:var(--purple)}
+  .score{font-size:2.6rem;font-weight:700;line-height:1;margin:10px 0 2px}
+  .score small{font-size:1rem;color:var(--muted);font-weight:500}
+  .verdict.l4 .score{color:var(--l4)}
+  .bands{display:grid;grid-template-columns:5fr 5fr 5fr 5fr 8fr;gap:4px;margin-top:14px;font-size:.76rem;text-align:center;line-height:1.3}
+  .bands div{padding:6px 2px;border-radius:6px;color:#fff;opacity:.35}
+  .bands .on{opacity:1;font-weight:700}
+
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .flag{color:var(--l4);font-weight:700}
+  .flagp{color:var(--purple);font-weight:700}
+  footer{margin-top:24px;font-size:.8rem;color:var(--muted)}
+  .printonly{display:none}
+  @media print{
+    body{background:#fff;font-size:13px}
+    .noprint,.progress{display:none!important}
+    .printonly{display:block}
+    .card{border:1px solid #ccc;break-inside:avoid}
+    .alert{animation:none!important}
+    .verdict,.tag,.bands div,.alert,.help{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#2c7aa0;--accent-soft:#e3f0f6}
+  body{background:#f7f5f1 radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
+  h1,h2{font-family:"Mitr","Sarabun",sans-serif;font-weight:500}
+  header.mh{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#e3f0f6 0%,#ffffff 85%);
+    border:1px solid #ebe7e1;border-radius:22px;padding:14px 18px;box-shadow:0 4px 14px rgba(60,50,40,.05)}
+  header.mh h1{font-size:1.35rem;line-height:1.35}
+  .mh-art{flex:0 0 auto}
+  .mh-art svg{width:88px;height:88px;display:block}
+  @media (max-width:480px){.mh-art svg{width:68px;height:68px}}
+  .card{border-radius:18px;box-shadow:0 3px 10px rgba(60,50,40,.035)}
+  .instr{background:var(--accent-soft)!important;border-color:transparent!important}
+  .progress{background:transparent!important;backdrop-filter:blur(6px)}
+  @media print{header.mh{background:none;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mh"><div class="mh-art"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#e3f0f6"/>
+<circle cx="78" cy="24" r="9" fill="#f6c84c"/>
+<g stroke="#f6c84c" stroke-width="2.4" stroke-linecap="round"><path d="M78 9 v3"/><path d="M93 24 h-3"/><path d="M88.6 13.4 l-2 2"/><path d="M88.6 34.6 l-2 -2"/></g>
+<path d="M50 62 V36" stroke="#3f9a5b" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M50 46 C38 46 32 38 32 30 C42 30 50 36 50 46Z" fill="#6cc38a"/>
+<path d="M50 40 C60 40 68 32 68 24 C58 24 50 30 50 40Z" fill="#4fb174"/>
+<path d="M31 60 H69 L65 86 H35Z" fill="#e8915b"/><rect x="28" y="56" width="44" height="9" rx="3" fill="#d97a43"/>
+<circle cx="43" cy="72" r="2.4" fill="#3a2e2a"/><circle cx="57" cy="72" r="2.4" fill="#3a2e2a"/>
+<circle cx="39" cy="77" r="3" fill="#f7b0a0" opacity=".9"/><circle cx="61" cy="77" r="3" fill="#f7b0a0" opacity=".9"/>
+<path d="M46 77 q4 4 8 0" stroke="#3a2e2a" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></div><div class="mh-txt">
+  <h1>แบบประเมินภาวะซึมเศร้าในวัยรุ่น</h1>
+  <p>Patient Health Questionnaire for Adolescents (PHQ-A)</p>
+</div></header>
+
+<form id="form" novalidate>
+  <div class="card">
+    <h2>ข้อมูลผู้ตอบ</h2>
+    <div class="grid2">
+      <div><label class="f" for="cname">ชื่อ–นามสกุล</label><input type="text" id="cname" autocomplete="off"></div>
+      <div><label class="f" for="hn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="hn" autocomplete="off"></div>
+      <div><label class="f" for="dob">วันเกิด</label><input type="date" id="dob"></div>
+      <div><label class="f" for="date">วันที่ประเมิน</label><input type="date" id="date"></div>
+      <div><label class="f" for="age">อายุ <span class="hint">(คำนวณอัตโนมัติ)</span></label><input type="text" id="age" readonly tabindex="-1" placeholder="กรอกวันเกิดเพื่อคำนวณ"></div>
+      <div>
+        <label class="f">เพศ</label>
+        <div class="seg">
+          <input type="radio" name="sex" id="sxM" value="ชาย"><label for="sxM">ชาย</label>
+          <input type="radio" name="sex" id="sxF" value="หญิง"><label for="sxF">หญิง</label>
+        </div>
+      </div>
+    </div>
+    <div id="ageWarn" class="warn" hidden></div>
+  </div>
+
+  <div class="card instr">
+    <b>ในช่วง 2 สัปดาห์ที่ผ่านมา</b> คุณมีอาการต่อไปนี้บ่อยแค่ไหน
+    โปรดเลือกคำตอบที่ตรงกับความรู้สึกของคุณมากที่สุด
+  </div>
+
+  <div class="progress noprint">
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="ptext" id="ptext">ตอบแล้ว 0 / 11 ข้อ</div>
+  </div>
+
+  <div class="card" id="questions"></div>
+
+  <div class="card" id="supCard">
+    <div class="supq" id="s1">
+      <div style="font-weight:600">ใน 1 เดือนที่ผ่านมา มีช่วงไหนที่คุณมีความคิดอยากตาย หรือไม่อยากมีชีวิตอยู่อย่างจริงจังหรือไม่</div>
+      <div class="seg" style="margin-top:8px">
+        <input type="radio" name="s1" id="s1y" value="1"><label for="s1y">ใช่</label>
+        <input type="radio" name="s1" id="s1n" value="0"><label for="s1n">ไม่ใช่</label>
+      </div>
+    </div>
+    <div class="supq" id="s2">
+      <div style="font-weight:600">ตลอดชีวิตที่ผ่านมา คุณเคยพยายามที่จะทำให้ตัวเองตาย หรือลงมือฆ่าตัวตายหรือไม่</div>
+      <div class="seg" style="margin-top:8px">
+        <input type="radio" name="s2" id="s2y" value="1"><label for="s2y">ใช่</label>
+        <input type="radio" name="s2" id="s2n" value="0"><label for="s2n">ไม่ใช่</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card noprint">
+    <div id="formErr" class="warn" hidden></div>
+    <button type="submit" class="primary">ส่งคำตอบและดูผล</button>
+  </div>
+</form>
+
+<section id="result">
+  <div class="alert suicide" id="alertS" role="alert">
+    <div class="ic">!</div>
+    <div><b class="h">HIGH ALERT – ความเสี่ยงทำร้ายตนเอง/ฆ่าตัวตาย</b>
+      <span>ต้องได้รับการประเมินความเสี่ยงฆ่าตัวตายและเฝ้าระวังอย่างใกล้ชิด<b>ทันที</b> แม้คะแนนรวมจะไม่ถึงเกณฑ์</span>
+      <ul id="alertSList"></ul>
+    </div>
+  </div>
+
+  <div class="alert red" id="alertR" role="alert">
+    <div class="ic">!</div>
+    <div><b class="h">HIGH ALERT</b>มีภาวะซึมเศร้ารุนแรง ควรพบแพทย์เพื่อวินิจฉัยและบำบัดรักษาโดยเร็ว</div>
+  </div>
+
+  <div class="help" id="helpBox">
+    <b>ถ้าตอนนี้คุณรู้สึกแย่ หรือมีความคิดอยากทำร้ายตัวเอง คุณไม่ได้อยู่คนเดียว</b><br>
+    กรุณาบอกพยาบาล แพทย์ หรือผู้ใหญ่ที่คุณไว้ใจ<b>ทันที</b>
+    หรือโทร <a href="tel:1323">สายด่วนสุขภาพจิต 1323</a> (ฟรี ตลอด 24 ชั่วโมง)
+    หากอยู่ในภาวะอันตราย โทร <a href="tel:1669">1669</a>
+  </div>
+
+  <div class="card">
+    <h2>สรุปผลการประเมิน</h2>
+    <div id="infoLine" class="muted" style="margin-bottom:12px"></div>
+    <div id="verdict" class="verdict">
+      <span class="tag" id="vTag"></span>
+      <div class="score"><span id="vScore"></span> <small>/ 27 คะแนน</small></div>
+      <div id="vTitle" style="font-weight:700;font-size:1.1rem"></div>
+      <div id="vText" style="margin-top:6px"></div>
+      <div class="bands" id="bands"></div>
+    </div>
+    <div id="riskBox" style="margin-top:14px"></div>
+    <p class="hint" style="margin-top:12px">
+      แบบประเมินนี้ใช้เพื่อการคัดกรองเบื้องต้นสำหรับอายุ 11–20 ปี ไม่สามารถใช้แทนการวินิจฉัยทางการแพทย์ของจิตแพทย์ได้
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>คำตอบทั้งหมด</h2>
+    <table>
+      <thead><tr><th style="width:2.5em">ข้อ</th><th>อาการ</th><th style="width:8em">คำตอบ</th><th style="width:3.5em">คะแนน</th></tr></thead>
+      <tbody id="allAns"></tbody>
+    </table>
+  </div>
+
+  <div class="printonly card">ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................</div>
+
+  <div class="row noprint">
+    <button class="ghost" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="ghost" id="editBtn">แก้ไขคำตอบ</button>
+    <button class="ghost" id="newBtn">เริ่มแบบสอบถามใหม่</button>
+  </div>
+</section>
+
+<footer>
+  PHQ-A ฉบับภาษาไทย พัฒนาโดย กลุ่มงานวิจัยและพัฒนา กลุ่มภารกิจพัฒนาสู่ความเป็นเลิศ สถาบันสุขภาพจิตเด็กและวัยรุ่นราชนครินทร์.
+  ข้อมูลที่กรอกประมวลผลบนเครื่องนี้เท่านั้น ไม่มีการส่งออกไปที่ใด
+</footer>
+</div>
+
+<script>
+const ITEMS = [
+  "รู้สึกซึม เศร้า หงุดหงิด หรือสิ้นหวัง",
+  "เบื่อ ไม่ค่อยสนใจ หรือไม่เพลิดเพลินเวลาทำสิ่งต่างๆ",
+  "นอนหลับยาก รู้สึกง่วงทั้งวัน หรือนอนมากเกินไป",
+  "ไม่อยากอาหาร น้ำหนักลด หรือกินมากกว่าปกติ",
+  "รู้สึกเหนื่อยล้า หรือไม่ค่อยมีพลัง",
+  "รู้สึกแย่กับตัวเอง หรือรู้สึกว่าตัวเองล้มเหลว หรือทำให้ตัวเองหรือครอบครัวผิดหวัง",
+  "จดจ่อกับสิ่งต่างๆ ได้ยาก เช่น ทำการบ้าน อ่านหนังสือ หรือดูโทรทัศน์",
+  "พูดหรือทำอะไรช้าลงมากจนคนอื่นสังเกตเห็นได้ หรือในทางตรงกันข้าม คือกระสับกระส่ายหรือกระวนกระวายจนต้องเคลื่อนไหวไปมามากกว่าปกติ",
+  "คิดว่าตายไปเสียจะดีกว่า หรือคิดจะทำร้ายตัวเองด้วยวิธีใดวิธีหนึ่ง"
+];
+const SCALE = ["ไม่มีเลย","มีบางวัน","มีมากกว่า 7 วัน","มีแทบทุกวัน"];
+const SUP = [
+  "ใน 1 เดือนที่ผ่านมา มีความคิดอยากตาย หรือไม่อยากมีชีวิตอยู่อย่างจริงจัง",
+  "ตลอดชีวิตที่ผ่านมา เคยพยายามทำให้ตัวเองตาย หรือลงมือฆ่าตัวตาย"
+];
+
+const LEVELS = [
+  {k:"l0", min:0,  max:4,  tag:"ไม่มี",     title:"ไม่มีภาวะซึมเศร้า", text:"ยังไม่พบภาวะซึมเศร้าที่ชัดเจน"},
+  {k:"l1", min:5,  max:9,  tag:"เล็กน้อย",  title:"มีภาวะซึมเศร้าเล็กน้อย", text:"ควรหากิจกรรมผ่อนคลายอารมณ์ หรือปรึกษาคนใกล้ชิดที่ไว้ใจ"},
+  {k:"l2", min:10, max:14, tag:"ปานกลาง",  title:"มีภาวะซึมเศร้าปานกลาง", text:"ควรปรึกษาแพทย์เพื่อวินิจฉัยและบำบัดรักษา"},
+  {k:"l3", min:15, max:19, tag:"มาก",      title:"มีภาวะซึมเศร้ามาก", text:"ควรปรึกษาแพทย์เพื่อวินิจฉัยและบำบัดรักษา"},
+  {k:"l4", min:20, max:27, tag:"รุนแรง",    title:"มีภาวะซึมเศร้ารุนแรง", text:"ควรปรึกษาแพทย์เพื่อวินิจฉัยและบำบัดรักษา"}
+];
+
+const $ = id => document.getElementById(id);
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const val = name => { const c=document.querySelector(`input[name="${name}"]:checked`); return c ? +c.value : null; };
+function fmtDate(v){ return v ? new Date(v+"T00:00:00").toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}) : ""; }
+
+$("questions").innerHTML = ITEMS.map((t,i)=>{
+  const n=i+1;
+  return `<div class="q" id="q${n}"><div class="qt"><span class="n">${n}.</span>${t}</div>
+    <div class="opts" role="radiogroup" aria-label="ข้อ ${n}">
+      ${SCALE.map((s,v)=>`<input type="radio" name="q${n}" id="q${n}_${v}" value="${v}"><label for="q${n}_${v}">${s}<small>${v}</small></label>`).join("")}
+    </div></div>`;
+}).join("");
+
+function update(){
+  let done=0;
+  for(let n=1;n<=9;n++) if(val("q"+n)!==null) done++;
+  if(val("s1")!==null) done++;
+  if(val("s2")!==null) done++;
+  $("barFill").style.width=(done/11*100)+"%";
+  $("ptext").textContent=`ตอบแล้ว ${done} / 11 ข้อ`;
+}
+$("form").addEventListener("change",e=>{
+  const q=e.target.closest(".q,.supq"); if(q) q.classList.remove("missing"); update();
+});
+
+function parseISO(v){ const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+function calcAge(){
+  const w=$("ageWarn"); w.hidden=true; $("age").value="";
+  if(!$("dob").value||!$("date").value) return;
+  const b=parseISO($("dob").value), r=parseISO($("date").value);
+  if(b>r){ w.hidden=false; w.textContent="วันเกิดต้องไม่อยู่หลังวันที่ประเมิน"; return; }
+  let months=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth());
+  if(r.getDate()<b.getDate()) months--;
+  const y=Math.floor(months/12);
+  $("age").value=`${y} ปี ${months%12} เดือน`;
+  if(y<11||y>20){ w.hidden=false; w.textContent=`อายุ ${y} ปี อยู่นอกช่วงที่แบบประเมินนี้ออกแบบไว้ (11–20 ปี) ผลที่ได้อาจไม่แม่นยำ`; }
+}
+$("date").value=todayStr;
+$("dob").addEventListener("change",calcAge);
+$("date").addEventListener("change",calcAge);
+
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ans=[], missing=[];
+  for(let n=1;n<=9;n++){ const v=val("q"+n); ans.push(v); if(v===null) missing.push("q"+n); }
+  ["s1","s2"].forEach(s=>{ if(val(s)===null) missing.push(s); });
+  document.querySelectorAll(".q,.supq").forEach(el=>el.classList.remove("missing"));
+  if(missing.length){
+    missing.forEach(id=>$(id).classList.add("missing"));
+    const nums=missing.map(id=>id[0]==="q"?id.slice(1):(id==="s1"?"คำถามเรื่องความคิดอยากตาย":"คำถามเรื่องการพยายามฆ่าตัวตาย"));
+    $("formErr").hidden=false; $("formErr").textContent=`ยังไม่ได้ตอบ: ${nums.join(", ")} กรุณาตอบให้ครบทุกข้อ`;
+    $(missing[0]).scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  $("formErr").hidden=true;
+  showResult(ans, val("s1"), val("s2"));
+});
+
+function showResult(ans, s1, s2){
+  const total=ans.reduce((a,b)=>a+b,0);
+  const L=LEVELS.find(l=>total>=l.min && total<=l.max);
+
+  const bits=[];
+  if($("cname").value) bits.push("ชื่อ: "+$("cname").value);
+  if($("hn").value) bits.push("HN: "+$("hn").value);
+  const sx=document.querySelector("input[name=sex]:checked"); if(sx) bits.push("เพศ: "+sx.value);
+  if($("dob").value) bits.push("วันเกิด: "+fmtDate($("dob").value));
+  if($("age").value) bits.push("อายุ: "+$("age").value);
+  if($("date").value) bits.push("วันที่ประเมิน: "+fmtDate($("date").value));
+  $("infoLine").textContent=bits.join("  •  ");
+
+  // suicide risk
+  const reasons=[];
+  if(ans[8]>0) reasons.push(`ข้อ 9 (คิดว่าตายไปเสียจะดีกว่า/คิดทำร้ายตัวเอง): ${SCALE[ans[8]]}`);
+  if(s1===1) reasons.push("ใน 1 เดือนที่ผ่านมา มีความคิดอยากตายอย่างจริงจัง");
+  if(s2===1) reasons.push("เคยพยายามฆ่าตัวตาย");
+  const risk=reasons.length>0;
+  $("alertS").classList.toggle("show", risk);
+  $("alertSList").innerHTML=reasons.map(r=>`<li>${r}</li>`).join("");
+  $("helpBox").style.display = risk ? "block" : "none";
+
+  $("alertR").classList.toggle("show", L.k==="l4");
+  $("verdict").className="verdict "+L.k;
+  $("vTag").className="tag "+L.k; $("vTag").textContent=L.tag;
+  $("vScore").textContent=total;
+  $("vTitle").textContent=`${L.min}–${L.max} คะแนน : ${L.title}`;
+  $("vText").textContent=L.text;
+  $("bands").innerHTML=LEVELS.map(l=>`<div style="background:var(--${l.k})" class="${l.k===L.k?"on":""}">${l.min}–${l.max}<br>${l.tag}</div>`).join("");
+
+  $("riskBox").innerHTML = `<b>ความเสี่ยงทำร้ายตนเอง/ฆ่าตัวตาย:</b> ` + (risk
+    ? `<span class="tag p">พบความเสี่ยง</span> ต้องประเมินความเสี่ยงและเฝ้าระวังอย่างใกล้ชิดทันที`
+    : `<span class="tag l0">ไม่พบ</span> <span class="muted">ข้อ 9 = 0 และตอบ “ไม่ใช่” ทั้ง 2 ข้อเสริม</span>`);
+
+  $("allAns").innerHTML = ITEMS.map((t,i)=>{
+    const cls = i===8 && ans[i]>0 ? "flagp" : ans[i]>=2 ? "flag" : "muted";
+    return `<tr><td>${i+1}</td><td>${t}</td><td>${SCALE[ans[i]]}</td><td class="${cls}">${ans[i]}</td></tr>`;
+  }).join("") + SUP.map((t,i)=>{
+    const v=[s1,s2][i];
+    return `<tr><td>–</td><td>${t}</td><td class="${v?"flagp":""}">${v?"ใช่":"ไม่ใช่"}</td><td class="muted">ไม่คิดคะแนน</td></tr>`;
+  }).join("");
+
+  $("form").style.display="none"; $("result").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("editBtn").onclick=()=>{ $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0}); };
+$("newBtn").onclick=()=>{
+  $("form").reset(); $("date").value=todayStr; $("age").value=""; $("ageWarn").hidden=true; update();
+  $("result").style.display="none"; $("form").style.display="block"; window.scrollTo({top:0});
+};
+<\/script>
+
+<script>
+(function(){
+  const TOOL = "phqa";
+  const g = id => document.getElementById(id);
+  const txt = id => (g(id) ? g(id).textContent.trim() : "");
+  const shown = id => !!(g(id) && g(id).classList.contains("show"));
+  let last = null;
+  function apply(d){
+    if(!d) return;
+    [["date",d.date],["dob",d.dob],["cname",d.cname],["hn",d.hn]].forEach(([id,v])=>{
+      const el=g(id); if(!el || !v) return;
+      el.value=v;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  window.addEventListener("message", e=>{
+    if(e.data && e.data.type==="prefill"){ last=e.data; apply(last); }
+  });
+  document.addEventListener("click", e=>{
+    if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
+    const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
+  });
+  function extract(){
+    const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    switch(TOOL){
+      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
+      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "sdq": {
+        const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
+          .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
+        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+      }
+      case "snap": {
+        const parts=[...document.querySelectorAll(".dom")].map(d=>{
+          const n=d.querySelector(".name").textContent.replace(/\s*\(.*$/,"").replace("ด้าน","");
+          const sc=d.querySelector(".score").firstChild.textContent.trim();
+          return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
+        });
+        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+      }
+      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
+      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+    }
+  }
+  const res=g("result");
+  let wasShown=false;
+  new MutationObserver(()=>{
+    const vis=res.style.display==="block";
+    if(vis && !wasShown){ try{ parent.postMessage(Object.assign({type:"result"},extract()),"*"); }catch(err){} }
+    wasShown=vis;
+  }).observe(res,{attributes:true,attributeFilter:["style"]});
+})();
+<\/script>
+</body>
+</html>
+
+</script>
+
+<script>
+const MASCOTS = {"mchat": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#dcecfb\"/>\n<rect x=\"10\" y=\"64\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#f6b73c\"/><text x=\"20\" y=\"79\" font-size=\"13\" text-anchor=\"middle\" fill=\"#fff\" font-weight=\"700\" font-family=\"sans-serif\">A</text>\n<rect x=\"70\" y=\"66\" width=\"18\" height=\"18\" rx=\"4\" fill=\"#ef6f6c\"/><text x=\"79\" y=\"80\" font-size=\"12\" text-anchor=\"middle\" fill=\"#fff\" font-weight=\"700\" font-family=\"sans-serif\">B</text>\n<rect x=\"73\" y=\"50\" width=\"13\" height=\"13\" rx=\"3\" fill=\"#6cc3a0\"/>\n<circle cx=\"27\" cy=\"50\" r=\"5.5\" fill=\"#ffd2ad\"/><circle cx=\"73\" cy=\"44\" r=\"5.5\" fill=\"#ffd2ad\"/>\n<circle cx=\"50\" cy=\"48\" r=\"24\" fill=\"#ffdcbc\"/>\n<path d=\"M41 27 q9 -12 16 -1\" stroke=\"#8a5a36\" stroke-width=\"4.5\" fill=\"none\" stroke-linecap=\"round\"/>\n<circle cx=\"41\" cy=\"47\" r=\"3.2\" fill=\"#3a2e2a\"/><circle cx=\"59\" cy=\"47\" r=\"3.2\" fill=\"#3a2e2a\"/>\n<circle cx=\"42.2\" cy=\"45.8\" r=\"1\" fill=\"#fff\"/><circle cx=\"60.2\" cy=\"45.8\" r=\"1\" fill=\"#fff\"/>\n<circle cx=\"35\" cy=\"56\" r=\"4.5\" fill=\"#f7a1a1\" opacity=\".75\"/><circle cx=\"65\" cy=\"56\" r=\"4.5\" fill=\"#f7a1a1\" opacity=\".75\"/>\n<path d=\"M44 57 q6 7 12 0\" stroke=\"#3a2e2a\" stroke-width=\"2.6\" fill=\"none\" stroke-linecap=\"round\"/></svg>", "c": "#3b82c4", "cs": "#e3effa"}, "pddsq": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#dcf2ef\"/>\n<path d=\"M60 18 h10 a5 5 0 1 1 10 0 h8 v20 h-28z\" fill=\"#f6b73c\" opacity=\".9\"/>\n<path d=\"M24 34 h13 a7 7 0 1 1 14 0 h13 v13 a7 7 0 1 1 0 14 v13 h-13 a7 7 0 1 0 -14 0 h-13 z\" fill=\"#2aa198\"/>\n<circle cx=\"37\" cy=\"52\" r=\"3.2\" fill=\"#fff\"/><circle cx=\"53\" cy=\"52\" r=\"3.2\" fill=\"#fff\"/>\n<circle cx=\"37.6\" cy=\"52.6\" r=\"1.6\" fill=\"#3a2e2a\"/><circle cx=\"53.6\" cy=\"52.6\" r=\"1.6\" fill=\"#3a2e2a\"/>\n<circle cx=\"32\" cy=\"60\" r=\"3.6\" fill=\"#f7a1a1\" opacity=\".8\"/><circle cx=\"58\" cy=\"60\" r=\"3.6\" fill=\"#f7a1a1\" opacity=\".8\"/>\n<path d=\"M40 60 q5 6 10 0\" stroke=\"#fff\" stroke-width=\"2.6\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M14 80 l3 -6 l3 6 l-6 -3 h6z\" fill=\"#f6b73c\"/></svg>", "c": "#1f8a84", "cs": "#e0f3f1"}, "sdq": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#fce4ec\"/>\n<path d=\"M50 82 C20 62 16 36 33 30 C43 27 50 35 50 39 C50 35 57 27 67 30 C84 36 80 62 50 82Z\" fill=\"#e2637f\"/>\n<path d=\"M30 38 q4 -6 10 -5\" stroke=\"#fff\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\" opacity=\".7\"/>\n<path d=\"M39 49 q4 -4 8 0\" stroke=\"#fff\" stroke-width=\"2.8\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M53 49 q4 -4 8 0\" stroke=\"#fff\" stroke-width=\"2.8\" fill=\"none\" stroke-linecap=\"round\"/>\n<circle cx=\"37\" cy=\"58\" r=\"4\" fill=\"#ffb3c1\"/><circle cx=\"63\" cy=\"58\" r=\"4\" fill=\"#ffb3c1\"/>\n<path d=\"M43 58 q7 8 14 0\" stroke=\"#fff\" stroke-width=\"2.8\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M80 16 l3 7 l7 1 l-5 5 l1.5 7 l-6.5 -3.5 l-6.5 3.5 l1.5 -7 l-5 -5 l7 -1z\" fill=\"#f6b73c\"/>\n<circle cx=\"18\" cy=\"26\" r=\"3\" fill=\"#f6b73c\"/></svg>", "c": "#cc4f70", "cs": "#fbe7ed"}, "snap": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#e6e8fb\"/>\n<circle cx=\"20\" cy=\"24\" r=\"2.5\" fill=\"#f6b73c\"/><circle cx=\"80\" cy=\"78\" r=\"2\" fill=\"#f6b73c\"/><circle cx=\"84\" cy=\"22\" r=\"3\" fill=\"#fff\"/>\n<g transform=\"rotate(35 50 50)\">\n<path d=\"M44 70 Q50 92 56 70Z\" fill=\"#f6b73c\"/><path d=\"M46.5 70 Q50 83 53.5 70Z\" fill=\"#ef6f6c\"/>\n<path d=\"M41 54 L30 70 L42 67Z\" fill=\"#ef6f6c\"/><path d=\"M59 54 L70 70 L58 67Z\" fill=\"#ef6f6c\"/>\n<path d=\"M50 14 C64 28 64 58 59 70 H41 C36 58 36 28 50 14Z\" fill=\"#fff\" stroke=\"#5a63c9\" stroke-width=\"3\"/>\n<circle cx=\"50\" cy=\"40\" r=\"10\" fill=\"#a9b4f5\" stroke=\"#5a63c9\" stroke-width=\"3\"/>\n<circle cx=\"46.5\" cy=\"39\" r=\"1.8\" fill=\"#3a2e2a\"/><circle cx=\"53.5\" cy=\"39\" r=\"1.8\" fill=\"#3a2e2a\"/>\n<path d=\"M46.5 43.5 q3.5 3 7 0\" stroke=\"#3a2e2a\" stroke-width=\"1.8\" fill=\"none\" stroke-linecap=\"round\"/>\n</g></svg>", "c": "#5a63c9", "cs": "#e9ebfb"}, "gad7": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#efe6fa\"/>\n<g fill=\"#fff\"><circle cx=\"34\" cy=\"56\" r=\"15\"/><circle cx=\"52\" cy=\"45\" r=\"19\"/><circle cx=\"69\" cy=\"56\" r=\"14\"/><rect x=\"20\" y=\"56\" width=\"63\" height=\"15\" rx=\"7.5\"/></g>\n<path d=\"M39 54 q4 4 8 0\" stroke=\"#3a2e2a\" stroke-width=\"2.4\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M56 54 q4 4 8 0\" stroke=\"#3a2e2a\" stroke-width=\"2.4\" fill=\"none\" stroke-linecap=\"round\"/>\n<circle cx=\"37\" cy=\"61\" r=\"3.6\" fill=\"#f7a1a1\" opacity=\".8\"/><circle cx=\"66\" cy=\"61\" r=\"3.6\" fill=\"#f7a1a1\" opacity=\".8\"/>\n<path d=\"M48 61 q3.5 3 7 0\" stroke=\"#3a2e2a\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M16 34 q6 -4 12 0\" stroke=\"#8a5cc2\" stroke-width=\"2.4\" fill=\"none\" stroke-linecap=\"round\" opacity=\".6\"/>\n<path d=\"M74 28 q6 -4 12 0\" stroke=\"#8a5cc2\" stroke-width=\"2.4\" fill=\"none\" stroke-linecap=\"round\" opacity=\".6\"/>\n<path d=\"M50 84 c-4 -4 -9 -8 -4.5 -11 c2 -1.3 4 0 4.5 1.5 c0.5 -1.5 2.5 -2.8 4.5 -1.5 c4.5 3 -0.5 7 -4.5 11z\" fill=\"#c9a6ef\"/></svg>", "c": "#8a5cc2", "cs": "#f1e9fa"}, "phqa": {"svg": "<svg viewBox=\"0 0 100 100\" aria-hidden=\"true\"><circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#e3f0f6\"/>\n<circle cx=\"78\" cy=\"24\" r=\"9\" fill=\"#f6c84c\"/>\n<g stroke=\"#f6c84c\" stroke-width=\"2.4\" stroke-linecap=\"round\"><path d=\"M78 9 v3\"/><path d=\"M93 24 h-3\"/><path d=\"M88.6 13.4 l-2 2\"/><path d=\"M88.6 34.6 l-2 -2\"/></g>\n<path d=\"M50 62 V36\" stroke=\"#3f9a5b\" stroke-width=\"3.5\" stroke-linecap=\"round\"/>\n<path d=\"M50 46 C38 46 32 38 32 30 C42 30 50 36 50 46Z\" fill=\"#6cc38a\"/>\n<path d=\"M50 40 C60 40 68 32 68 24 C58 24 50 30 50 40Z\" fill=\"#4fb174\"/>\n<path d=\"M31 60 H69 L65 86 H35Z\" fill=\"#e8915b\"/><rect x=\"28\" y=\"56\" width=\"44\" height=\"9\" rx=\"3\" fill=\"#d97a43\"/>\n<circle cx=\"43\" cy=\"72\" r=\"2.4\" fill=\"#3a2e2a\"/><circle cx=\"57\" cy=\"72\" r=\"2.4\" fill=\"#3a2e2a\"/>\n<circle cx=\"39\" cy=\"77\" r=\"3\" fill=\"#f7b0a0\" opacity=\".9\"/><circle cx=\"61\" cy=\"77\" r=\"3\" fill=\"#f7b0a0\" opacity=\".9\"/>\n<path d=\"M46 77 q4 4 8 0\" stroke=\"#3a2e2a\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/></svg>", "c": "#2c7aa0", "cs": "#e3f0f6"}};
+
+// ---------- Protocol (sorted by starting age); age bounds in months, inclusive ----------
+const TOOLS = [
+  {id:"mchat", short:"M-CHAT-R", name:"คัดกรองกลุ่มอาการออทิซึม", ageTxt:"18–24 เดือน", min:18, max:24, who:"ผู้ปกครองตอบ"},
+  {id:"pddsq", short:"PDDSQ 4-18", name:"คัดกรองกลุ่มอาการออทิซึมซ้ำ", ageTxt:"4–18 ปี", min:48, max:18*12+11, who:"ผู้ปกครองตอบ"},
+  {id:"sdq",   short:"SDQ", name:"แบบสอบถามพฤติกรรมและอารมณ์", ageTxt:"4–16 ปี", min:48, max:16*12+11, who:"ผู้ปกครอง / ครู / เด็ก ≥ 11 ปี"},
+  {id:"snap",  short:"SNAP-IV (Short Form)", name:"เฝ้าระวังโรคสมาธิสั้น", ageTxt:"6–10 ปี", min:72, max:10*12+11, who:"ผู้ปกครอง / ครู"},
+  {id:"gad7",  short:"GAD-7", name:"คัดกรองภาวะวิตกกังวล", ageTxt:"≥ 8 ปี", min:96, max:Infinity, who:"ผู้ป่วยตอบเอง"},
+  {id:"phqa",  short:"PHQ-A", name:"คัดกรองภาวะซึมเศร้า", ageTxt:"≥ 11 ปี", min:132, max:Infinity, who:"ผู้ป่วยตอบเอง"}
+];
+
+const $ = id => document.getElementById(id);
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const parseISO=v=>{const [y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d);};
+const fmtDate=v=>v?parseISO(v).toLocaleDateString("th-TH",{year:"numeric",month:"long",day:"numeric"}):"";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cvars=id=>`--c:${MASCOTS[id].c};--cs:${MASCOTS[id].cs}`;
+$("pDate").value=todayStr;
+
+let ageMonths=null;
+const results={};
+const frames={};
+
+function calcAge(){
+  ageMonths=null; const box=$("ageBox"); box.classList.remove("err");
+  if(!$("pDob").value||!$("pDate").value){ box.innerHTML=`<span class="em">🎂</span><span>กรอกวันเกิดเพื่อดูแบบคัดกรองที่ตรงกับช่วงอายุ</span>`; render(); return; }
+  const b=parseISO($("pDob").value), r=parseISO($("pDate").value);
+  if(b>r){ box.classList.add("err"); box.innerHTML=`<span class="em">⚠️</span><span>วันเกิดต้องไม่อยู่หลังวันที่ทำแบบสอบถาม</span>`; render(); return; }
+  let m=(r.getFullYear()-b.getFullYear())*12+(r.getMonth()-b.getMonth()); if(r.getDate()<b.getDate()) m--;
+  ageMonths=m;
+  const due=TOOLS.filter(t=>m>=t.min&&m<=t.max).map(t=>t.short);
+  box.innerHTML=`<span class="em">🎂</span><span><b>อายุ ${Math.floor(m/12)} ปี ${m%12} เดือน</b> <span class="hint">(${m} เดือน)</span><br>` +
+    (due.length?`แบบคัดกรองที่แนะนำ: <b>${due.join(", ")}</b>`:`ไม่มีแบบคัดกรองในช่วงอายุนี้ตาม protocol`)+`</span>`;
+  render();
+}
+["pDob","pDate"].forEach(id=>$(id).addEventListener("change",calcAge));
+["pName","pHn"].forEach(id=>$(id).addEventListener("input",renderSummary));
+
+function render(){
+  $("proto").innerHTML=TOOLS.map(t=>{
+    const due = ageMonths!==null && ageMonths>=t.min && ageMonths<=t.max;
+    const cls = ageMonths===null ? "" : (due?"due":"off");
+    const r=results[t.id], b=[];
+    if(due) b.push(`<span class="bdg due">★ ตรงช่วงอายุ</span>`);
+    if(r){ b.push(`<span class="bdg done">✓ ทำแล้ว</span>`);
+      if(r.alert) b.push(`<span class="bdg alert">! HIGH ALERT</span>`);
+      if(r.sui) b.push(`<span class="bdg sui">! เสี่ยงทำร้ายตนเอง</span>`); }
+    return `<button class="item ${cls}" data-id="${t.id}" style="${cvars(t.id)}">
+      <div class="m">${MASCOTS[t.id].svg}</div>
+      <div class="t"><span class="pill">${t.ageTxt}</span><span class="who">${esc(t.who)}</span>
+        <b>${t.name}</b><span class="sh">${t.short}</span>${r?`<span class="res">ผล: ${esc(r.text)}</span>`:""}
+        ${b.length?`<div class="badges">${b.join("")}</div>`:""}</div>
+      <div class="go">›</div></button>`;
+  }).join("");
+  document.querySelectorAll(".item").forEach(el=>el.onclick=()=>openTool(el.dataset.id));
+  renderSummary();
+}
+
+function renderSummary(){
+  const ids=TOOLS.filter(t=>results[t.id]);
+  $("sumCard").hidden=!ids.length; $("printSum").hidden=!ids.length;
+  if($("saveDbBtn")) $("saveDbBtn").hidden=!ids.length;
+  broadcastScreeningUpdate();
+  if(!ids.length) return;
+  const bits=[];
+  if($("pName").value) bits.push("ชื่อ: "+$("pName").value);
+  if($("pHn").value) bits.push("HN: "+$("pHn").value);
+  if($("pDob").value) bits.push("วันเกิด: "+fmtDate($("pDob").value));
+  if(ageMonths!==null) bits.push(`อายุ: ${Math.floor(ageMonths/12)} ปี ${ageMonths%12} เดือน`);
+  if($("pDate").value) bits.push("วันที่: "+fmtDate($("pDate").value));
+  $("sumInfo").textContent=bits.join("  •  ");
+  $("sumList").innerHTML=ids.map(t=>{
+    const r=results[t.id];
+    return `<div class="sumrow"><div>${MASCOTS[t.id].svg}</div><div><div class="n">${t.short} <span class="hint">${t.name}</span></div>
+      <div class="r ${r.sui?"sui":r.alert?"alert":""}">${esc(r.text)}${r.alert?" — HIGH ALERT":""}${r.sui?" — เสี่ยงทำร้ายตนเอง":""}</div></div></div>`;
+  }).join("");
+}
+
+function getPayload(isRequestSave){
+  let hasAlert = false, hasSuicideRisk = false;
+  Object.values(results).forEach(r => {
+    if (r && r.alert) hasAlert = true;
+    if (r && r.sui) hasSuicideRisk = true;
+  });
+  return {
+    type: isRequestSave ? "child_screening_request_save" : "child_screening_update",
+    hn: $("pHn").value,
+    patientName: $("pName").value,
+    birthDate: $("pDob").value,
+    assessmentDate: $("pDate").value,
+    ageYears: ageMonths !== null ? Math.floor(ageMonths / 12) : null,
+    ageMonths: ageMonths !== null ? (ageMonths % 12) : null,
+    totalAgeMonths: ageMonths,
+    screenings: results,
+    hasAlert,
+    hasSuicideRisk,
+    completedCount: Object.keys(results).length,
+  };
+}
+
+function broadcastScreeningUpdate(){
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage(getPayload(false), "*");
+  }
+}
+
+if($("saveDbBtn")){
+  $("saveDbBtn").onclick = () => {
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage(getPayload(true), "*");
+    } else {
+      alert("กรุณาใช้งานผ่านระบบ FormLocal เพื่อบันทึกข้อมูลลงฐานข้อมูล");
+    }
+  };
+}
+
+function prefillMsg(){ return {type:"prefill", cname:$("pName").value, hn:$("pHn").value, dob:$("pDob").value, date:$("pDate").value}; }
+function openTool(id){
+  const t=TOOLS.find(x=>x.id===id);
+  $("toolTitle").textContent=`${t.short} — ${t.name}`;
+  $("toolMascot").innerHTML=MASCOTS[id].svg;
+  $("toolView").style.setProperty("--tc",MASCOTS[id].c); $("toolView").style.setProperty("--tcs",MASCOTS[id].cs);
+  if(!frames[id]){
+    const f=document.createElement("iframe");
+    f.title=t.short;
+    f.srcdoc=document.getElementById("tpl-"+id).textContent.replace(/<\\\/script/g,"</scr"+"ipt");
+    f.addEventListener("load",()=>f.contentWindow.postMessage(prefillMsg(),"*"));
+    $("frames").appendChild(f); frames[id]=f;
+  } else frames[id].contentWindow.postMessage(prefillMsg(),"*");
+  Object.entries(frames).forEach(([k,f])=>f.classList.toggle("show",k===id));
+  $("toolView").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+$("backBtn").onclick=()=>{ $("toolView").classList.remove("show"); document.body.style.overflow=""; };
+
+window.addEventListener("message",e=>{
+  const d=e.data; if(!d) return;
+  if(d.type === "child_screening_save_success"){
+    const btn = $("saveDbBtn");
+    if(btn){
+      const orig = btn.innerHTML;
+      btn.innerHTML = "✓ บันทึกสำเร็จแล้ว";
+      btn.style.background = "#2e7d4f";
+      btn.style.borderColor = "#2e7d4f";
+      setTimeout(()=>{
+        btn.innerHTML = orig;
+        btn.style.background = "#2c7aa0";
+        btn.style.borderColor = "#2c7aa0";
+      }, 3000);
+    }
+    return;
+  }
+  if(d.type!=="result") return;
+  const id=Object.keys(frames).find(k=>frames[k].contentWindow===e.source); if(!id) return;
+  results[id]={text:d.text, alert:!!d.alert, sui:!!d.sui};
+  render();
+});
+
+
+$("resetAll").onclick=()=>{
+  Object.values(frames).forEach(f=>f.remove());
+  for(const k in frames) delete frames[k];
+  for(const k in results) delete results[k];
+  $("pName").value=""; $("pHn").value=""; $("pDob").value=""; $("pDate").value=todayStr;
+  calcAge(); window.scrollTo({top:0});
+};
+
+calcAge();
+</script>
+</body>
+</html>

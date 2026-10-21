@@ -58,7 +58,7 @@ export const createFormSchema = z.object({
   departmentId: z.string().nullable().optional(),
   isAcceptingResponses: z.boolean().optional().default(true),
   requireLogin: z.boolean().optional().default(true),
-  pdpaEnabled: z.boolean().optional().default(false),
+  pdpaEnabled: z.boolean().optional().default(true),
   pdpaTitle: z.string().nullable().optional(),
   pdpaContent: z.string().nullable().optional(),
   openAt: z.string().datetime({ offset: true }).nullable().optional(),

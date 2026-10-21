@@ -18,7 +18,7 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
     type: form.type,
     isMchat,
     isScoreTest,
-    pdpaEnabled: Boolean(form.pdpaEnabled),
+    pdpaEnabled: form.pdpaEnabled !== false,
     pdpaTitle: form.pdpaTitle || '',
     pdpaContent: form.pdpaContent || '',
     schema: form.schema,
@@ -359,46 +359,88 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
     </div>
   </div>
 
-  ${form.pdpaEnabled ? `
-  <!-- Modal ข้อตกลง PDPA -->
+  ${form.pdpaEnabled !== false ? `
+  <!-- Modal ข้อตกลง PDPA (RAM2 Preliminary Assessment Standard) -->
   <div id="pdpaModal" class="modal-overlay open" style="z-index: 10000;">
-    <div class="modal-card" style="max-width: 620px;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: #f6ffed; border: 1px solid #b7eb8f; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+    <div class="modal-card" style="max-width: 680px; padding: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.18);">
+      <!-- Header Banner: Royal Blue -->
+      <div style="background: #0047cc; padding: 16px 24px; color: white; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
           🛡️
         </div>
         <div>
-          <h2 style="font-size: 17px; font-weight: 700; color: #1e293b; margin: 0; line-height: 1.3;">
-            ${escapeHtml(form.pdpaTitle || 'ข้อตกลงและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคล (PDPA Consent)')}
-          </h2>
-          <span style="font-size: 11px; background: #e6f4ff; color: #0958d9; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-top: 4px; font-weight: 600;">
-            พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562
-          </span>
+          <div style="font-size: 16px; font-weight: 700; line-height: 1.3;">RAM2 Preliminary Assessment</div>
+          <div style="font-size: 12px; color: #e0e7ff; margin-top: 2px;">โรงพยาบาลรามคำแหง 2</div>
         </div>
       </div>
 
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
-        โปรดอ่านข้อกำหนดและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคลด้านล่างนี้ให้ครบถ้วนก่อนเริ่มทำแบบฟอร์ม:
-      </p>
+      <!-- Body Content -->
+      <div style="padding: 24px 28px; max-height: calc(85vh - 75px); overflow-y: auto; background: #ffffff; text-align: left;">
+        <h2 style="font-size: 19px; font-weight: 700; color: #111827; margin: 0 0 4px; line-height: 1.4;">
+          ${escapeHtml(form.pdpaTitle || 'หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล')}
+        </h2>
+        <p style="font-size: 13.5px; color: #6b7280; margin: 0 0 16px;">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</p>
 
-      <div style="max-height: 240px; overflow-y: auto; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; line-height: 1.7; color: #334155; white-space: pre-line; margin-bottom: 16px;">
-        ${escapeHtml(form.pdpaContent || `แบบฟอร์มนี้จัดทำขึ้นโดยมีการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคลของผู้ตอบ เพื่อวัตถุประสงค์ในการประมวลผลข้อมูลตามภารกิจและการดำเนินงานขององค์กร โดยสอดคล้องตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)`)}
-      </div>
+        <!-- Selected Form Box -->
+        <div style="padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 20px;">
+          <div style="font-size: 12px; color: #64748b;">หัวข้อแบบประเมินที่เลือก</div>
+          <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-top: 2px;">${escapeHtml(form.title)}</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${escapeHtml(form.description || 'แบบประเมินสุขภาพ')}</div>
+        </div>
 
-      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;">
-        <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 13px; font-weight: 600; color: #166534;">
-          <input type="checkbox" id="pdpaAgreeCheckbox" onchange="togglePdpaAcceptBtn(this.checked)" style="margin-top: 3px; transform: scale(1.15);">
-          <span>ข้าพเจ้าได้อ่าน เข้าใจ และยินยอมให้จัดเก็บและประมวลผลข้อมูลส่วนบุคคลตามเงื่อนไขที่ระบุข้างต้น</span>
-        </label>
-      </div>
+        <!-- 4 Sections -->
+        <div style="font-size: 13.5px; line-height: 1.65; color: #374151;">
+          <div style="margin-bottom: 16px;">
+            <div style="font-weight: 700; color: #111827; margin-bottom: 4px;">1. วัตถุประสงค์ในการเก็บข้อมูล</div>
+            <p style="margin: 0;">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</p>
+          </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn btn-outline" onclick="declinePdpa()" style="padding: 10px 18px; font-size: 14px; border: 1px solid #d9d9d9; background: white; border-radius: 8px; cursor: pointer; color: #475569;">
-          ไม่ยินยอม
+          <div style="margin-bottom: 16px;">
+            <div style="font-weight: 700; color: #111827; margin-bottom: 4px;">2. ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
+            <ul style="margin: 4px 0 0; padding-left: 20px;">
+              <li>ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ</li>
+              <li>คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก</li>
+              <li>ผลการประเมินที่คำนวณจากคำตอบ</li>
+              <li>ข้อมูลติดต่อ เฉพาะกรณีที่มีการร้องขอและแจ้งวัตถุประสงค์ไว้โดยชัดเจน</li>
+              <li>ข้อมูลทางเทคนิคที่จำเป็นต่อการรักษาความปลอดภัยของระบบ ตามที่ระบุในประกาศความเป็นส่วนตัว</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <div style="font-weight: 700; color: #111827; margin-bottom: 4px;">3. ข้อจำกัดของบริการ</div>
+            <p style="margin: 0;">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</p>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <div style="font-weight: 700; color: #111827; margin-bottom: 4px;">4. การรักษาความลับและสิทธิของท่าน</div>
+            <p style="margin: 0;">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน PDPA@ram2-hosp.com เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</p>
+          </div>
+        </div>
+
+        <!-- Checkbox 1 -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 13.5px; color: #1f2937; line-height: 1.45;">
+            <input type="checkbox" id="pdpaAgree1" onchange="checkPdpaReady()" style="margin-top: 3px; transform: scale(1.15);">
+            <span>ข้าพเจ้าได้อ่านและรับทราบประกาศความเป็นส่วนตัว รวมถึงวัตถุประสงค์และข้อจำกัดของแบบประเมินแล้ว</span>
+          </label>
+        </div>
+
+        <!-- Checkbox 2 -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 13.5px; color: #1f2937; line-height: 1.45;">
+            <input type="checkbox" id="pdpaAgree2" onchange="checkPdpaReady()" style="margin-top: 3px; transform: scale(1.15);">
+            <span>ข้าพเจ้ายินยอมโดยชัดแจ้งให้โรงพยาบาลรามคำแหง 2 เก็บรวบรวม ใช้ และประมวลผลข้อมูลสุขภาพที่ข้าพเจ้าให้ผ่านแบบประเมินนี้ เพื่อวัตถุประสงค์ที่ระบุไว้ข้างต้นและในประกาศความเป็นส่วนตัว</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="button" id="pdpaAcceptBtn" disabled onclick="acceptPdpa()" style="width: 100%; height: 46px; border-radius: 10px; font-size: 15px; font-weight: 600; border: none; background: #f3f4f6; color: #9ca3af; cursor: not-allowed; transition: all 0.2s ease;">
+          ยินยอมและเริ่มทำแบบประเมิน
         </button>
-        <button type="button" id="pdpaAcceptBtn" disabled onclick="acceptPdpa()" class="btn" style="padding: 10px 20px; font-size: 14px; opacity: 0.5; border-radius: 8px; cursor: not-allowed;">
-          ยินยอมและเริ่มทำแบบฟอร์ม
-        </button>
+
+        <div style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 10px;">
+          หากไม่ประสงค์ให้ความยินยอมที่จำเป็น ระบบจะไม่เริ่มเก็บคำตอบสุขภาพสำหรับแบบประเมินนี้
+        </div>
       </div>
     </div>
   </div>
@@ -428,12 +470,24 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
       renderFields();
     });
 
-    function togglePdpaAcceptBtn(checked) {
+    function checkPdpaReady() {
+      const c1 = document.getElementById('pdpaAgree1');
+      const c2 = document.getElementById('pdpaAgree2');
       const btn = document.getElementById('pdpaAcceptBtn');
+      const ready = c1 && c1.checked && c2 && c2.checked;
       if (btn) {
-        btn.disabled = !checked;
-        btn.style.opacity = checked ? '1' : '0.5';
-        btn.style.cursor = checked ? 'pointer' : 'not-allowed';
+        btn.disabled = !ready;
+        if (ready) {
+          btn.style.background = '#0047cc';
+          btn.style.color = '#ffffff';
+          btn.style.cursor = 'pointer';
+          btn.style.boxShadow = '0 4px 12px rgba(0, 71, 204, 0.25)';
+        } else {
+          btn.style.background = '#f3f4f6';
+          btn.style.color = '#9ca3af';
+          btn.style.cursor = 'not-allowed';
+          btn.style.boxShadow = 'none';
+        }
       }
     }
 
@@ -446,6 +500,7 @@ export function generateStandaloneFormHtml(form: FormDetail): string {
     function declinePdpa() {
       alert('หากท่านไม่ยินยอมตามข้อตกลง PDPA จะไม่สามารถกรอกข้อมูลในแบบฟอร์มนี้ได้');
     }
+
 
     function renderFields() {
       const container = document.getElementById('formFieldsContainer');

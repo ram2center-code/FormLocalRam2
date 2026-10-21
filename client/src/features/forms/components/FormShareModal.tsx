@@ -62,7 +62,7 @@ export const FormShareModal: React.FC<FormShareModalProps> = ({
 
   const [visibility, setVisibility] = useState<FormVisibility>('PRIVATE');
   const [requireLogin, setRequireLogin] = useState<boolean>(true);
-  const [pdpaEnabled, setPdpaEnabled] = useState<boolean>(false);
+  const [pdpaEnabled, setPdpaEnabled] = useState<boolean>(true);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [searchUserText, setSearchUserText] = useState('');
@@ -109,7 +109,7 @@ export const FormShareModal: React.FC<FormShareModalProps> = ({
     if (formDetail) {
       setVisibility(formDetail.visibility);
       setRequireLogin(formDetail.requireLogin !== false);
-      setPdpaEnabled(Boolean(formDetail.pdpaEnabled));
+      setPdpaEnabled(formDetail.pdpaEnabled !== false);
       const sharedIds = (formDetail.shares || []).map((s) => s.userId);
       setSelectedUserIds(sharedIds);
     }

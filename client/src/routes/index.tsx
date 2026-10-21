@@ -10,13 +10,25 @@ import FormsPage from '../features/forms/FormsPage';
 import FormBuilderPage from '../features/forms/pages/FormBuilderPage';
 import FormViewPage from '../features/forms/pages/FormViewPage';
 import FormSubmissionsPage from '../features/forms/pages/FormSubmissionsPage';
+import DepartmentFormsPage from '../features/forms/pages/DepartmentFormsPage';
 import UsersPage from '../features/users/UsersPage';
 import DepartmentsPage from '../features/departments/DepartmentsPage';
 import AuditLogsPage from '../features/auditLog/AuditLogsPage';
 import SettingsPage from '../features/settings/SettingsPage';
 import DocumentationPage from '../features/docs/DocumentationPage';
+import ChildScreeningPage from '../features/screening/pages/ChildScreeningPage';
 
 import { Result, Button } from 'antd';
+import { useAuthStore } from '../store/authStore';
+
+// คอมโพเนนต์ตรวจสอบสิทธิ์และพาไปยังหน้าแรกที่เหมาะสม (USER ทั่วไปเข้าสู่คลังแบบฟอร์มเพื่อประเมินคนไข้)
+const RootRedirect: React.FC = () => {
+  const { user } = useAuthStore();
+  if (user?.role === 'ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <Navigate to="/department-forms" replace />;
+};
 
 export const router = createBrowserRouter([
   {
@@ -40,7 +52,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/dashboard" replace />,
+            element: <RootRedirect />,
           },
           {
             path: 'dashboard',
@@ -53,6 +65,18 @@ export const router = createBrowserRouter([
           {
             path: 'forms',
             element: <FormsPage />,
+          },
+          {
+            path: 'department-forms',
+            element: <DepartmentFormsPage />,
+          },
+          {
+            path: 'child-screening',
+            element: <ChildScreeningPage />,
+          },
+          {
+            path: 'forms/departments',
+            element: <Navigate to="/department-forms" replace />,
           },
           {
             path: 'forms/new',

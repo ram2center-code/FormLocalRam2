@@ -186,7 +186,7 @@ export class FormService {
                 status: FormStatus.DRAFT,
                 isAcceptingResponses: input.isAcceptingResponses ?? true,
                 requireLogin: input.requireLogin ?? true,
-                pdpaEnabled: input.pdpaEnabled ?? false,
+                pdpaEnabled: input.pdpaEnabled ?? true,
                 pdpaTitle: input.pdpaTitle || null,
                 pdpaContent: input.pdpaContent || null,
                 openAt: input.openAt ? new Date(input.openAt) : null,

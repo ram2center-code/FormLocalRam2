@@ -22,7 +22,6 @@ import {
   Statistic,
   Row,
   Col,
-  Modal,
 } from 'antd';
 import {
   TrophyOutlined,
@@ -38,7 +37,6 @@ import {
   PrinterOutlined,
   DownloadOutlined,
   SafetyCertificateOutlined,
-  CheckOutlined,
   LockOutlined,
   GlobalOutlined,
   LoginOutlined,
@@ -53,9 +51,9 @@ import {
   FormField,
 } from '../api/formApi';
 import { FormShareModal } from '../components/FormShareModal';
+import { PdpaConsentModal } from '../components/PdpaConsentModal';
 import { downloadFormHtml } from '../utils/exportHtml';
 import { useAuthStore } from '../../../store/authStore';
-import { DEFAULT_PDPA_TITLE, DEFAULT_PDPA_CONTENT } from '../constants/pdpa';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -73,7 +71,6 @@ export const FormViewPage: React.FC = () => {
 
   // PDPA States
   const [pdpaConsentAccepted, setPdpaConsentAccepted] = useState(false);
-  const [pdpaAgreedChecked, setPdpaAgreedChecked] = useState(false);
   const [pdpaModalOpen, setPdpaModalOpen] = useState(false);
 
   // ดึงข้อมูลแบบฟอร์ม (ซ่อนเฉลยอัตโนมัติที่ Backend สำหรับผู้ที่ไม่ได้เป็นเจ้าของ)
@@ -88,12 +85,14 @@ export const FormViewPage: React.FC = () => {
     retry: false,
   });
 
-  // เมื่อแบบฟอร์มโหลดเสร็จและเปิดใช้งาน PDPA ให้แสดง Modal ขอความยินยอมทันที
+  const isPdpaRequired = form ? form.pdpaEnabled !== false : false;
+
+  // เมื่อแบบฟอร์มโหลดเสร็จและมีข้อตกลง PDPA ให้แสดง Modal ขอความยินยอมทันที
   React.useEffect(() => {
-    if (form?.pdpaEnabled && !pdpaConsentAccepted) {
+    if (form && isPdpaRequired && !pdpaConsentAccepted) {
       setPdpaModalOpen(true);
     }
-  }, [form?.pdpaEnabled, pdpaConsentAccepted]);
+  }, [form, isPdpaRequired, pdpaConsentAccepted]);
 
   // ตั้งค่าวันที่เริ่มต้นสำหรับวันที่ทำแบบสอบถามโดยอัตโนมัติ (เช่น วันที่ทำแบบสอบถาม)
   React.useEffect(() => {
@@ -120,7 +119,7 @@ export const FormViewPage: React.FC = () => {
   // Mutation: ส่งคำตอบไปยังเซิร์ฟเวอร์
   const submitMutation = useMutation({
     mutationFn: () =>
-      submitFormApi(id!, answers, Boolean(form?.pdpaEnabled ? pdpaConsentAccepted : true)),
+      submitFormApi(id!, answers, Boolean(isPdpaRequired ? pdpaConsentAccepted : true)),
     onSuccess: (data) => {
       setSubmissionResult(data);
       message.success('ส่งคำตอบเรียบร้อยแล้ว!');
@@ -160,7 +159,7 @@ export const FormViewPage: React.FC = () => {
     if (!form) return;
 
     // ตรวจสอบข้อตกลง PDPA หากเปิดใช้งาน
-    if (form.pdpaEnabled && !pdpaConsentAccepted) {
+    if (isPdpaRequired && !pdpaConsentAccepted) {
       setPdpaModalOpen(true);
       message.warning('กรุณาอ่านและกดยินยอมข้อตกลง PDPA ก่อนส่งคำตอบ');
       return;
@@ -664,10 +663,10 @@ export const FormViewPage: React.FC = () => {
               <Button
                 size="large"
                 icon={<ArrowLeftOutlined />}
-                onClick={() => navigate('/forms')}
+                onClick={() => navigate(user?.role === 'ADMIN' ? '/forms' : '/department-forms')}
                 style={{ minWidth: 150, height: 48, borderRadius: 10 }}
               >
-                กลับหน้ารายการ
+                กลับหน้ารายการฟอร์ม
               </Button>
             ) : null}
           </div>
@@ -762,10 +761,10 @@ export const FormViewPage: React.FC = () => {
               <Button
                 size="large"
                 icon={<ArrowLeftOutlined />}
-                onClick={() => navigate('/forms')}
+                onClick={() => navigate(user?.role === 'ADMIN' ? '/forms' : '/department-forms')}
                 style={{ minWidth: 140 }}
               >
-                กลับหน้ารายการ
+                กลับหน้ารายการฟอร์ม
               </Button>
             )}
             {form.allowMultiple && (
@@ -1110,7 +1109,7 @@ export const FormViewPage: React.FC = () => {
         )}
 
         {/* แจ้งเตือนสถานะข้อตกลง PDPA */}
-        {form.pdpaEnabled && (
+        {isPdpaRequired && (
           <Alert
             type={pdpaConsentAccepted ? 'success' : 'warning'}
             showIcon
@@ -1204,8 +1203,63 @@ export const FormViewPage: React.FC = () => {
         </Card>
       )}
 
-      {/* รายการคำถามในแบบฟอร์ม */}
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+      {/* แจ้งเตือนและปุ่มเปิดข้อตกลงหากยังไม่ได้ยอมรับ PDPA */}
+      {isPdpaRequired && !pdpaConsentAccepted && (
+        <Card
+          style={{
+            borderRadius: 14,
+            border: '2px dashed #faad14',
+            backgroundColor: '#fffbe6',
+            marginBottom: 20,
+            textAlign: 'center',
+          }}
+          styles={{ body: { padding: '24px 20px' } }}
+        >
+          <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
+            <SafetyCertificateOutlined style={{ fontSize: 44, color: '#faad14' }} />
+            <div>
+              <Title level={4} style={{ margin: '0 0 6px 0', color: '#d46b08' }}>
+                จำเป็นต้องยอมรับข้อตกลง PDPA ก่อนเริ่มทำแบบฟอร์ม
+              </Title>
+              <Text type="secondary" style={{ fontSize: 14 }}>
+                แบบฟอร์มนี้อยู่ภายใต้ พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 กรุณากดปุ่มด้านล่างเพื่อเปิดอ่านและกดยอมรับข้อตกลง (Accept)
+              </Text>
+            </div>
+            <Button
+              type="primary"
+              size="large"
+              icon={<SafetyCertificateOutlined />}
+              onClick={() => setPdpaModalOpen(true)}
+              style={{
+                borderRadius: 8,
+                height: 44,
+                padding: '0 28px',
+                fontSize: 15,
+                fontWeight: 600,
+                backgroundColor: '#1677ff',
+              }}
+            >
+              เปิดหน้าต่างข้อตกลง PDPA เพื่อกดยอมรับ (Accept)
+            </Button>
+          </Space>
+        </Card>
+      )}
+
+      {/* รายการคำถามในแบบฟอร์ม (ถูกล็อคจนกว่าจะกดกดยอมรับ PDPA) */}
+      <div
+        style={{
+          width: '100%',
+          ...(isPdpaRequired && !pdpaConsentAccepted
+            ? {
+                pointerEvents: 'none',
+                userSelect: 'none',
+                filter: 'grayscale(20%) opacity(0.55)',
+                transition: 'all 0.3s ease',
+              }
+            : { transition: 'all 0.3s ease' }),
+        }}
+      >
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         {(() => {
           const topLevelFields = form.schema.filter((f) => !f.layerId || f.type === 'layer_box');
 
@@ -1351,7 +1405,7 @@ export const FormViewPage: React.FC = () => {
             icon={<SendOutlined />}
             loading={submitMutation.isPending}
             onClick={handleSubmit}
-            disabled={!isAccepting || (Boolean(form.pdpaEnabled) && !pdpaConsentAccepted)}
+            disabled={!isAccepting || (Boolean(isPdpaRequired) && !pdpaConsentAccepted)}
             style={{
               height: 52,
               minWidth: 220,
@@ -1378,6 +1432,7 @@ export const FormViewPage: React.FC = () => {
           FormLocal ©{new Date().getFullYear()} — Powered By: <strong style={{ color: '#1677ff' }}>Pantamit.Y</strong>
         </div>
       </Space>
+      </div>
 
       {/* Share Modal */}
       <FormShareModal
@@ -1386,118 +1441,29 @@ export const FormViewPage: React.FC = () => {
         onClose={() => setShareModalOpen(false)}
       />
 
-      {/* Modal ข้อตกลงความยินยอมข้อมูลส่วนบุคคล (PDPA Consent Modal) */}
-      <Modal
-        title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                backgroundColor: '#f6ffed',
-                border: '1px solid #b7eb8f',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <SafetyCertificateOutlined style={{ color: '#52c41a', fontSize: 24 }} />
-            </div>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1f2937', lineHeight: 1.3 }}>
-                {form.pdpaTitle || DEFAULT_PDPA_TITLE}
-              </div>
-              <Tag color="green" style={{ fontSize: 11, padding: '0 6px', marginTop: 3 }}>
-                พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
-              </Tag>
-            </div>
-          </div>
-        }
+      {/* Modal ข้อตกลงความยินยอมข้อมูลส่วนบุคคล (PDPA Consent Modal - RAM2 Preliminary Assessment Standard) */}
+      <PdpaConsentModal
         open={pdpaModalOpen}
-        closable={false}
-        maskClosable={false}
-        width={640}
-        footer={[
-          <Button
-            key="decline"
-            onClick={() => {
-              modal.confirm({
-                title: 'ปฏิเสธข้อตกลง PDPA',
-                content: 'หากท่านไม่ยินยอมตามข้อตกลงความยินยอม จะไม่สามารถกรอกและส่งแบบฟอร์มนี้ได้',
-                okText: 'ออกจากหน้านี้',
-                cancelText: 'กลับไปอ่านข้อตกลง',
-                onOk: () => navigate(isAuthenticated ? '/forms' : '/login'),
-              });
-            }}
-          >
-            ไม่ยินยอม (Decline)
-          </Button>,
-          <Button
-            key="accept"
-            type="primary"
-            icon={<CheckOutlined />}
-            disabled={!pdpaAgreedChecked}
-            onClick={() => {
-              setPdpaConsentAccepted(true);
-              setPdpaModalOpen(false);
-              message.success('ยินยอมตามข้อตกลง PDPA เรียบร้อยแล้ว');
-            }}
-            style={{
-              borderRadius: 8,
-              height: 38,
-              padding: '0 20px',
-              fontWeight: 600,
-            }}
-          >
-            ยินยอมและเริ่มทำแบบฟอร์ม
-          </Button>,
-        ]}
-      >
-        <div style={{ marginTop: 14 }}>
-          <Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 12 }}>
-            โปรดอ่านข้อกำหนดและเงื่อนไขการคุ้มครองข้อมูลส่วนบุคคลด้านล่างนี้ให้ครบถ้วนก่อนเริ่มทำแบบฟอร์ม:
-          </Paragraph>
-
-          <div
-            style={{
-              maxHeight: 280,
-              overflowY: 'auto',
-              padding: '16px 18px',
-              backgroundColor: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: 10,
-              whiteSpace: 'pre-line',
-              lineHeight: 1.7,
-              fontSize: 13,
-              color: '#334155',
-            }}
-          >
-            {form.pdpaContent || DEFAULT_PDPA_CONTENT}
-          </div>
-
-          <div
-            style={{
-              marginTop: 16,
-              padding: '12px 14px',
-              backgroundColor: '#f0fdf4',
-              border: '1px solid #bbf7d0',
-              borderRadius: 8,
-            }}
-          >
-            <Checkbox
-              checked={pdpaAgreedChecked}
-              onChange={(e) => setPdpaAgreedChecked(e.target.checked)}
-              style={{ fontSize: 13 }}
-            >
-              <span style={{ fontWeight: 600, color: '#166534' }}>
-                ข้าพเจ้าได้อ่าน เข้าใจ และยินยอมให้จัดเก็บและประมวลผลข้อมูลส่วนบุคคลตามเงื่อนไขที่ระบุข้างต้น
-              </span>
-            </Checkbox>
-          </div>
-        </div>
-      </Modal>
+        formTitle={form.title}
+        formDescription={form.description}
+        pdpaTitle={form.pdpaTitle}
+        pdpaContent={form.pdpaContent}
+        onAccept={() => {
+          setPdpaConsentAccepted(true);
+          setPdpaModalOpen(false);
+          message.success('ยินยอมตามข้อตกลง PDPA เรียบร้อยแล้ว เริ่มทำแบบฟอร์มได้เลย');
+        }}
+        onDecline={() => {
+          modal.confirm({
+            title: 'ปฏิเสธข้อตกลง PDPA',
+            content: 'หากท่านไม่ยินยอมตามข้อตกลงความยินยอม จะไม่สามารถกรอกและส่งแบบฟอร์มนี้ได้',
+            okText: 'ออกจากหน้านี้',
+            cancelText: 'กลับไปหน้าแบบฟอร์ม',
+            onOk: () => navigate(isAuthenticated ? '/forms' : '/login'),
+            onCancel: () => setPdpaModalOpen(false),
+          });
+        }}
+      />
       </div>
     </div>
   );

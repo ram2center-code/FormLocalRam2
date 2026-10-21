@@ -26,6 +26,7 @@ import {
   SettingOutlined,
   BookOutlined,
   QuestionCircleOutlined,
+  SmileOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -65,9 +66,19 @@ export const MainLayout: React.FC = () => {
       label: 'งานของฉัน (My Tasks)',
     },
     {
+      key: '/department-forms',
+      icon: <ApartmentOutlined style={{ fontSize: 18 }} />,
+      label: 'คลังฟอร์มตามแผนก (Forms Portal)',
+    },
+    {
+      key: '/child-screening',
+      icon: <SmileOutlined style={{ fontSize: 18 }} />,
+      label: 'ชุดคัดกรองเด็กและวัยรุ่น (Child Suite)',
+    },
+    {
       key: '/forms',
       icon: <FormOutlined style={{ fontSize: 18 }} />,
-      label: 'จัดการแบบฟอร์ม (Forms)',
+      label: 'จัดการแบบฟอร์ม (Studio)',
     },
     {
       key: '/docs',
