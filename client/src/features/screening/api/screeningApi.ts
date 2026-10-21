@@ -101,6 +101,8 @@ export const getScreeningRecordsApi = async (params?: {
   search?: string;
   hasAlert?: boolean;
   hasSuicideRisk?: boolean;
+  startDate?: string;
+  endDate?: string;
 }): Promise<ChildScreeningRecordItem[]> => {
   let query = supabase
     .from('ChildScreeningRecord')
@@ -118,6 +120,14 @@ export const getScreeningRecordsApi = async (params?: {
 
   if (params?.hasSuicideRisk !== undefined) {
     query = query.eq('hasSuicideRisk', params.hasSuicideRisk);
+  }
+
+  if (params?.startDate) {
+    query = query.gte('assessmentDate', params.startDate);
+  }
+
+  if (params?.endDate) {
+    query = query.lte('assessmentDate', params.endDate);
   }
 
   const { data, error } = await query;
