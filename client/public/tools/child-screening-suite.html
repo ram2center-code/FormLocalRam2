@@ -109,9 +109,164 @@
     .printonly{display:block}
     .card{border:1px solid #ccc;box-shadow:none;break-inside:avoid}
   }
+
+  /* PDPA Modal Styles */
+  .pdpa-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+  .pdpa-modal{background:#ffffff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 48px rgba(0,0,0,0.22);border:1px solid #cbd5e1;animation:pdpaPop .2s ease-out}
+  @keyframes pdpaPop{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+  .pdpa-h{background:#0047cc;padding:16px 20px;color:#ffffff;display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .pdpa-h-ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .pdpa-h-t{font-family:"Mitr",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.2}
+  .pdpa-h-sub{font-size:0.85rem;opacity:0.9}
+  .pdpa-body{padding:20px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:14px;color:#1e293b}
+  .pdpa-main-t{font-family:"Mitr",sans-serif;font-weight:600;font-size:1.15rem;color:#0f172a;line-height:1.35;margin:0}
+  .pdpa-main-sub{color:#64748b;font-size:0.9rem;margin:-6px 0 0}
+  .pdpa-form-badge{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:10px 14px}
+  .pdpa-form-name{font-weight:700;color:#1d4ed8;font-size:0.95rem}
+  .pdpa-form-desc{color:#475569;font-size:0.85rem;margin-top:2px}
+  .pdpa-secs{display:flex;flex-direction:column;gap:12px}
+  .pdpa-sec{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}
+  .pdpa-num{width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:0.82rem;display:flex;align-items:center;justify-content:center}
+  .pdpa-sec-title{font-weight:700;color:#0f172a;font-size:0.95rem;margin-bottom:2px}
+  .pdpa-sec-p{color:#334155;font-size:0.88rem;line-height:1.55}
+  .pdpa-sec-ul{margin:3px 0 0 16px;padding:0;color:#334155;font-size:0.88rem;line-height:1.55}
+  .pdpa-notice-btn{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:border-color .15s}
+  .pdpa-notice-btn:hover{border-color:#3b82f6}
+  .pdpa-full{background:#f1f5f9;border-radius:10px;padding:12px 14px;font-size:0.85rem;color:#334155;white-space:pre-line;line-height:1.6;border:1px solid #cbd5e1;max-height:180px;overflow-y:auto}
+  .pdpa-boxes{display:flex;flex-direction:column;gap:10px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:14px}
+  .pdpa-cb{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.9rem;font-weight:500;color:#1e293b}
+  .pdpa-cb input{margin-top:3px;width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:#0047cc}
+  .pdpa-ft-note{font-size:0.8rem;color:#92400e;line-height:1.4}
+  .pdpa-acts{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+  .pdpa-acts button{font:inherit;font-weight:700;border-radius:12px;padding:12px 18px;cursor:pointer;border:0}
+  .pdpa-btn-accept{background:#0047cc;color:#fff;flex:2 1 180px;font-size:1rem;transition:opacity .15s,background .15s}
+  .pdpa-btn-accept:disabled{opacity:0.4;cursor:not-allowed;background:#94a3b8}
+  .pdpa-btn-decline{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1!important;flex:1 1 120px}
 </style>
 </head>
 <body>
+
+<!-- หน้าต่างขอความยินยอม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (RAM2 PDPA Consent Modal) -->
+<div id="pdpaModal" class="pdpa-overlay" style="display:none;">
+  <div class="pdpa-modal" role="dialog" aria-modal="true" aria-labelledby="pdpaMainTitle">
+    <div class="pdpa-h">
+      <div class="pdpa-h-ic" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pdpa-h-t">RAM2 Preliminary Assessment</div>
+        <div class="pdpa-h-sub">โรงพยาบาลรามคำแหง 2</div>
+      </div>
+    </div>
+
+    <div class="pdpa-body">
+      <div>
+        <h2 id="pdpaMainTitle" class="pdpa-main-t">หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล</h2>
+        <p class="pdpa-main-sub">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</p>
+      </div>
+
+      <div class="pdpa-form-badge">
+        <div class="pdpa-form-name">ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น</div>
+        <div class="pdpa-form-desc">Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)</div>
+      </div>
+
+      <div class="pdpa-secs">
+        <div class="pdpa-sec">
+          <div class="pdpa-num">1</div>
+          <div>
+            <div class="pdpa-sec-title">วัตถุประสงค์ในการเก็บข้อมูล</div>
+            <div class="pdpa-sec-p">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</div>
+          </div>
+        </div>
+
+        <div class="pdpa-sec">
+          <div class="pdpa-num">2</div>
+          <div>
+            <div class="pdpa-sec-title">ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
+            <ul class="pdpa-sec-ul">
+              <li>ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ</li>
+              <li>คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก</li>
+              <li>ผลการประเมินที่คำนวณจากคำตอบ</li>
+              <li>ข้อมูลติดต่อ เฉพาะกรณีที่มีการร้องขอและแจ้งวัตถุประสงค์ไว้โดยชัดเจน</li>
+              <li>ข้อมูลทางเทคนิคที่จำเป็นต่อการรักษาความปลอดภัยของระบบ ตามที่ระบุในประกาศความเป็นส่วนตัว</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pdpa-sec">
+          <div class="pdpa-num">3</div>
+          <div>
+            <div class="pdpa-sec-title">ข้อจำกัดของบริการ</div>
+            <div class="pdpa-sec-p">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</div>
+          </div>
+        </div>
+
+        <div class="pdpa-sec">
+          <div class="pdpa-num">4</div>
+          <div>
+            <div class="pdpa-sec-title">การรักษาความลับและสิทธิของท่าน</div>
+            <div class="pdpa-sec-p">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน PDPA@ram2-hosp.com เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdpa-notice-btn" id="pdpaNoticeToggle" onclick="togglePrivacyNotice()">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.2rem;">📄</span>
+          <div>
+            <div style="font-weight:600;color:#0047cc;font-size:0.9rem;">อ่านประกาศความเป็นส่วนตัวฉบับเต็ม (Privacy Notice)</div>
+            <div style="font-size:0.8rem;color:#64748b;">สิทธิของท่านตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</div>
+          </div>
+        </div>
+        <span id="privacyArrow" style="font-size:1.2rem;font-weight:700;color:#0047cc;">›</span>
+      </div>
+
+      <div id="pdpaFullNotice" class="pdpa-full" style="display:none;">
+<b>ประกาศความเป็นส่วนตัว (Privacy Notice) — โรงพยาบาลรามคำแหง 2</b>
+
+โรงพยาบาลรามคำแหง 2 ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและข้อมูลสุขภาพของท่าน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
+
+<b>1. การเก็บรวบรวมข้อมูลส่วนบุคคล</b>
+โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน
+
+<b>2. ฐานทางกฎหมายในการประมวลผล</b>
+• ฐานความยินยอม (Consent) สำหรับข้อมูลสุขภาพและข้อมูลอ่อนไหว
+• ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest) และการวินิจฉัยทางการแพทย์
+• ฐานการปฏิบัติตามกฎหมาย (Legal Obligation)
+
+<b>3. ระยะเวลาการเก็บรักษา</b>
+ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด และจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น
+
+<b>4. สิทธิของเจ้าของข้อมูล</b>
+ท่านมีสิทธิในการขอเข้าถึง ขอรับสำเนา ขอแก้ไข คัดค้าน หรือขอให้ระงับ/ลบข้อมูลของท่าน รวมถึงสิทธิในการถอนความยินยอมได้ตลอดเวลา โดยติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) ผ่านอีเมล PDPA@ram2-hosp.com
+      </div>
+
+      <div class="pdpa-boxes">
+        <label class="pdpa-cb">
+          <input type="checkbox" id="pdpaCb1" onchange="updatePdpaSubmitState()">
+          <span>ข้าพเจ้าได้อ่านและรับทราบประกาศความเป็นส่วนตัว รวมถึงวัตถุประสงค์และข้อจำกัดของแบบประเมินแล้ว</span>
+        </label>
+        <label class="pdpa-cb">
+          <input type="checkbox" id="pdpaCb2" onchange="updatePdpaSubmitState()">
+          <span>ข้าพเจ้ายินยอมโดยชัดแจ้งให้โรงพยาบาลรามคำแหง 2 เก็บรวบรวม ใช้ และประมวลผลข้อมูลสุขภาพที่ข้าพเจ้าให้ผ่านแบบประเมินนี้ เพื่อวัตถุประสงค์ที่ระบุไว้ข้างต้นและในประกาศความเป็นส่วนตัว</span>
+        </label>
+      </div>
+
+      <div class="pdpa-ft-note">
+        * หากไม่ประสงค์ให้ความยินยอมที่จำเป็น ระบบจะไม่เริ่มเก็บคำตอบสุขภาพสำหรับแบบประเมินนี้
+      </div>
+
+      <div class="pdpa-acts">
+        <button type="button" class="pdpa-btn-decline" onclick="handleDeclineStandalonePdpa()">ไม่อนุญาต / ปิด</button>
+        <button type="button" class="pdpa-btn-accept" id="pdpaAcceptBtn" disabled onclick="handleAcceptStandalonePdpa()">
+          ✓ เริ่มต้นทำแบบประเมิน
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="wrap" id="hub">
   <section class="hero noprint">
@@ -3231,8 +3386,66 @@ if($("saveDbBtn")){
   };
 }
 
+let pdpaConsentAccepted = false;
+const isEmbedded = (window.parent && window.parent !== window);
+
+function showStandalonePdpaModal(){
+  const m = $("pdpaModal");
+  if(m) m.style.display = "flex";
+}
+
+function closeStandalonePdpaModal(){
+  const m = $("pdpaModal");
+  if(m) m.style.display = "none";
+}
+
+function togglePrivacyNotice(){
+  const notice = $("pdpaFullNotice");
+  const arrow = $("privacyArrow");
+  if(!notice) return;
+  const isHidden = (notice.style.display === "none");
+  notice.style.display = isHidden ? "block" : "none";
+  if(arrow) arrow.textContent = isHidden ? "▾" : "›";
+}
+
+function updatePdpaSubmitState(){
+  const cb1 = $("pdpaCb1");
+  const cb2 = $("pdpaCb2");
+  const btn = $("pdpaAcceptBtn");
+  if(btn && cb1 && cb2){
+    btn.disabled = !(cb1.checked && cb2.checked);
+  }
+}
+
+function handleAcceptStandalonePdpa(){
+  const cb1 = $("pdpaCb1");
+  const cb2 = $("pdpaCb2");
+  if(cb1 && cb2 && cb1.checked && cb2.checked){
+    pdpaConsentAccepted = true;
+    closeStandalonePdpaModal();
+    if(isEmbedded){
+      window.parent.postMessage({ type: "pdpa_accepted_from_child" }, "*");
+    }
+  }
+}
+
+function handleDeclineStandalonePdpa(){
+  closeStandalonePdpaModal();
+  if(!pdpaConsentAccepted){
+    alert("ท่านยังไม่ได้ให้ความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) จึงไม่สามารถเริ่มทำแบบคัดกรองได้");
+  }
+}
+
 function prefillMsg(){ return {type:"prefill", cname:$("pName").value, hn:$("pHn").value, dob:$("pDob").value, date:$("pDate").value}; }
 function openTool(id){
+  if(!pdpaConsentAccepted){
+    if(isEmbedded){
+      window.parent.postMessage({ type: "pdpa_request_modal" }, "*");
+    } else {
+      showStandalonePdpaModal();
+    }
+    return;
+  }
   const t=TOOLS.find(x=>x.id===id);
   $("toolTitle").textContent=`${t.short} — ${t.name}`;
   $("toolMascot").innerHTML=MASCOTS[id].svg;
@@ -3252,6 +3465,11 @@ $("backBtn").onclick=()=>{ $("toolView").classList.remove("show"); document.body
 
 window.addEventListener("message",e=>{
   const d=e.data; if(!d) return;
+  if(d.type === "pdpa_accepted"){
+    pdpaConsentAccepted = true;
+    closeStandalonePdpaModal();
+    return;
+  }
   if(d.type === "child_screening_save_success"){
     const btn = $("saveDbBtn");
     if(btn){
@@ -3280,9 +3498,23 @@ $("resetAll").onclick=()=>{
   for(const k in results) delete results[k];
   $("pName").value=""; $("pHn").value=""; $("pDob").value=""; $("pDate").value=todayStr;
   calcAge(); window.scrollTo({top:0});
+
+  pdpaConsentAccepted = false;
+  const cb1 = $("pdpaCb1");
+  const cb2 = $("pdpaCb2");
+  if(cb1) cb1.checked = false;
+  if(cb2) cb2.checked = false;
+  updatePdpaSubmitState();
+
+  if(!isEmbedded){
+    showStandalonePdpaModal();
+  }
 };
 
 calcAge();
+if(!isEmbedded){
+  showStandalonePdpaModal();
+}
 </script>
 </body>
 </html>

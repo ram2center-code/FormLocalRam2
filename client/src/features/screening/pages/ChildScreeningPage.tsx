@@ -35,6 +35,7 @@ import {
   CheckCircleOutlined,
   WarningOutlined,
   HistoryOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -45,8 +46,9 @@ import {
   deleteScreeningRecordApi,
   ChildScreeningRecordItem,
 } from '../api/screeningApi';
+import { PdpaConsentModal } from '../../forms/components/PdpaConsentModal';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
 
 // ข้อมูลเครื่องมือแบบคัดกรองทั้ง 6 ชุด
@@ -78,6 +80,10 @@ export const ChildScreeningPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'screening' | 'history'>('screening');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoading, setIframeLoading] = useState(true);
+
+  // States สำหรับความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
+  const [pdpaConsentAccepted, setPdpaConsentAccepted] = useState(false);
+  const [pdpaModalOpen, setPdpaModalOpen] = useState(true);
 
   // ข้อมูลผลการประเมินปัจจุบันที่ส่งมาจาก iframe
   const [currentScreening, setCurrentScreening] = useState<{
@@ -247,6 +253,11 @@ export const ChildScreeningPage: React.FC = () => {
 
       if (d.type === 'child_screening_update') {
         setCurrentScreening(d);
+      } else if (d.type === 'pdpa_request_modal') {
+        setPdpaModalOpen(true);
+      } else if (d.type === 'pdpa_accepted_from_child') {
+        setPdpaConsentAccepted(true);
+        setPdpaModalOpen(false);
       } else if (d.type === 'child_screening_request_save') {
         setCurrentScreening(d);
         if (!d.screenings || Object.keys(d.screenings).length === 0) {
@@ -306,13 +317,31 @@ export const ChildScreeningPage: React.FC = () => {
     }
   };
 
-  // รีเซ็ตแบบประเมินทั้งหมด
+  // จัดการเมื่อผู้ป่วย/ผู้ปกครองยินยอมข้อตกลง PDPA
+  const handleAcceptPdpa = () => {
+    setPdpaConsentAccepted(true);
+    setPdpaModalOpen(false);
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'pdpa_accepted' }, '*');
+    }
+    message.success('ยินยอมข้อตกลง PDPA เรียบร้อยแล้ว สามารถเริ่มทำแบบคัดกรองได้');
+  };
+
+  // จัดการเมื่อปฏิเสธหรือไม่ยินยอม PDPA
+  const handleDeclinePdpa = () => {
+    setPdpaModalOpen(false);
+    message.info('ท่านยังไม่ได้ให้ความยินยอม PDPA จึงยังไม่สามารถเริ่มทำแบบคัดกรองได้');
+  };
+
+  // รีเซ็ตแบบประเมินทั้งหมดสำหรับเริ่มผู้ป่วยรายใหม่ (บังคับทำ PDPA ใหม่สำหรับผู้ป่วยทุกคน)
   const handleReload = () => {
     if (iframeRef.current) {
       setIframeLoading(true);
       setCurrentScreening(null);
+      setPdpaConsentAccepted(false);
+      setPdpaModalOpen(true);
       iframeRef.current.src = '/tools/child-screening-suite.html';
-      message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว');
+      message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว กรุณาให้ความยินยอม PDPA สำหรับผู้ป่วยรายใหม่');
     }
   };
 
@@ -583,6 +612,40 @@ export const ChildScreeningPage: React.FC = () => {
 
               {activeTab === 'screening' && (
                 <>
+                  <Tooltip title="หนังสือให้ความยินยอมการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล (PDPA)">
+                    {pdpaConsentAccepted ? (
+                      <Tag
+                        color="success"
+                        icon={<SafetyCertificateOutlined />}
+                        style={{
+                          borderRadius: 8,
+                          padding: '4px 10px',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                        }}
+                        onClick={() => setPdpaModalOpen(true)}
+                      >
+                        ✓ ยินยอม PDPA แล้ว
+                      </Tag>
+                    ) : (
+                      <Button
+                        icon={<SafetyCertificateOutlined />}
+                        onClick={() => setPdpaModalOpen(true)}
+                        style={{
+                          borderColor: '#f59e0b',
+                          color: '#b45309',
+                          background: '#fffbeb',
+                          fontWeight: 600,
+                        }}
+                      >
+                        ยินยอม PDPA
+                      </Button>
+                    )}
+                  </Tooltip>
                   <Tooltip title="บันทึกผลการคัดกรองคนไข้รายนี้ลงฐานข้อมูล FormLocal">
                     <Button
                       type="primary"
@@ -708,6 +771,39 @@ export const ChildScreeningPage: React.FC = () => {
           </div>
 
           <Space size={8} wrap style={{ flexShrink: 0 }}>
+            {pdpaConsentAccepted ? (
+              <Tag
+                color="success"
+                icon={<SafetyCertificateOutlined />}
+                style={{
+                  borderRadius: 99,
+                  padding: '4px 12px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+                onClick={() => setPdpaModalOpen(true)}
+              >
+                PDPA ยินยอมแล้ว
+              </Tag>
+            ) : (
+              <Button
+                shape="round"
+                icon={<SafetyCertificateOutlined />}
+                onClick={() => setPdpaModalOpen(true)}
+                style={{
+                  borderColor: '#f59e0b',
+                  color: '#b45309',
+                  background: '#fffbeb',
+                  fontWeight: 600,
+                }}
+              >
+                ยินยอม PDPA
+              </Button>
+            )}
             <Button
               type="primary"
               shape="round"
@@ -745,7 +841,7 @@ export const ChildScreeningPage: React.FC = () => {
       {/* เนื้อหาแท็บที่ 1: Iframe ทำแบบประเมิน */}
       {activeTab === 'screening' && (
         <Card
-          styles={{ body: { padding: 0, height: '100%' } }}
+          styles={{ body: { padding: 0, height: '100%', position: 'relative' } }}
           style={{
             flex: isFullscreen ? '1 1 auto' : undefined,
             borderRadius: isFullscreen ? 0 : 20,
@@ -758,6 +854,78 @@ export const ChildScreeningPage: React.FC = () => {
             position: 'relative',
           }}
         >
+          {/* แผ่นล็อกเมื่อยังไม่ยินยอม PDPA */}
+          {!pdpaConsentAccepted && (
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 5,
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+                background: 'rgba(247, 245, 241, 0.82)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 24,
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  background: '#ffffff',
+                  borderRadius: 20,
+                  padding: '36px 32px',
+                  maxWidth: 480,
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1)',
+                  border: '1.5px solid #e2e8f0',
+                }}
+              >
+                <div
+                  style={{
+                    width: 58,
+                    height: 58,
+                    borderRadius: '50%',
+                    background: '#eff6ff',
+                    color: '#0047cc',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 28,
+                    margin: '0 auto 16px',
+                  }}
+                >
+                  <SafetyCertificateOutlined />
+                </div>
+                <Title level={4} style={{ margin: '0 0 8px', color: '#1e293b' }}>
+                  ความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)
+                </Title>
+                <Paragraph type="secondary" style={{ fontSize: 14, margin: '0 0 22px', lineHeight: 1.6 }}>
+                  โรงพยาบาลรามคำแหง 2 ให้ความสำคัญกับการคุ้มครองข้อมูลสุขภาพของผู้ป่วย
+                  กรุณาอ่านและให้ความยินยอมก่อนเริ่มทำแบบคัดกรองเด็กและวัยรุ่น
+                </Paragraph>
+                <Button
+                  type="primary"
+                  size="large"
+                  icon={<SafetyCertificateOutlined />}
+                  onClick={() => setPdpaModalOpen(true)}
+                  style={{
+                    background: '#0047cc',
+                    borderColor: '#0047cc',
+                    borderRadius: 12,
+                    height: 48,
+                    padding: '0 32px',
+                    fontWeight: 600,
+                    fontSize: 16,
+                  }}
+                >
+                  อ่านและให้ความยินยอม PDPA
+                </Button>
+              </div>
+            </div>
+          )}
+
           <Spin spinning={iframeLoading} tip="กำลังโหลดชุดคัดกรองเด็กและวัยรุ่น..." style={{ height: '100%' }}>
             <iframe
               ref={iframeRef}
@@ -770,7 +938,12 @@ export const ChildScreeningPage: React.FC = () => {
                 border: 'none',
                 display: 'block',
               }}
-              onLoad={() => setIframeLoading(false)}
+              onLoad={() => {
+                setIframeLoading(false);
+                if (pdpaConsentAccepted && iframeRef.current && iframeRef.current.contentWindow) {
+                  iframeRef.current.contentWindow.postMessage({ type: 'pdpa_accepted' }, '*');
+                }
+              }}
             />
           </Spin>
         </Card>
@@ -1158,6 +1331,18 @@ export const ChildScreeningPage: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* หน้าต่างขอความยินยอม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA Consent Modal) */}
+      <PdpaConsentModal
+        open={pdpaModalOpen}
+        onAccept={handleAcceptPdpa}
+        onDecline={handleDeclinePdpa}
+        headerTitle="RAM2 Preliminary Assessment"
+        headerSubtitle="โรงพยาบาลรามคำแหง 2"
+        pdpaTitle="หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล"
+        formTitle="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"
+        formDescription="Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)"
+      />
     </div>
   );
 };
