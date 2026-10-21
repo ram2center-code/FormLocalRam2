@@ -15,6 +15,7 @@ import {
   Anchor,
   Breadcrumb,
   Tooltip,
+  Grid,
 } from 'antd';
 import {
   BookOutlined,
@@ -32,9 +33,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
+const { useBreakpoint } = Grid;
 
 export const DocumentationPage: React.FC = () => {
   const navigate = useNavigate();
+  const screens = useBreakpoint();
   const [searchTerm, setSearchTerm] = useState('');
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
@@ -97,27 +100,37 @@ export const DocumentationPage: React.FC = () => {
       {/* Header Banner */}
       <Card
         style={{
-          borderRadius: 16,
+          borderRadius: screens.xs ? 12 : 16,
           background: 'linear-gradient(135deg, #1677ff 0%, #0958d9 100%)',
           color: '#ffffff',
-          marginBottom: 24,
+          marginBottom: screens.xs ? 16 : 24,
           boxShadow: '0 4px 20px rgba(22, 119, 255, 0.15)',
         }}
-        styles={{ body: { padding: '32px 36px' } }}
+        styles={{ body: { padding: screens.xs ? '20px 16px' : '32px 36px' } }}
       >
-        <Row gutter={[24, 24]} align="middle">
+        <Row gutter={[screens.xs ? 16 : 24, screens.xs ? 16 : 24]} align="middle">
           <Col xs={24} md={15}>
-            <Space direction="vertical" size={10}>
+            <Space direction="vertical" size={screens.xs ? 6 : 10} style={{ width: '100%' }}>
               <Breadcrumb
                 items={[
                   { title: <span style={{ color: '#bae0ff' }}>หน้าหลัก</span> },
                   { title: <span style={{ color: '#ffffff' }}>คู่มือการใช้งาน</span> },
                 ]}
               />
-              <Title level={2} style={{ color: '#ffffff', margin: 0, fontWeight: 700 }}>
+              <Title
+                level={screens.xs ? 3 : 2}
+                style={{
+                  color: '#ffffff',
+                  margin: 0,
+                  fontWeight: 700,
+                  fontSize: screens.xs ? 20 : 26,
+                  lineHeight: 1.35,
+                  wordBreak: 'break-word',
+                }}
+              >
                 📖 ศูนย์ช่วยเหลือและคู่มือการใช้งานระบบ FormLocal
               </Title>
-              <Paragraph style={{ color: '#e6f4ff', fontSize: 15, margin: 0 }}>
+              <Paragraph style={{ color: '#e6f4ff', fontSize: screens.xs ? 13 : 15, margin: 0, lineHeight: 1.6 }}>
                 คู่มือแนะนำฟังก์ชันการทำงานอย่างละเอียด สำหรับการสร้างแบบฟอร์ม การจัดชุดข้อสอบวัดผล
                 การกำหนดเฉลย การตั้งค่าความเป็นส่วนตัว และการวิเคราะห์ผลตอบกลับ
               </Paragraph>
@@ -125,18 +138,18 @@ export const DocumentationPage: React.FC = () => {
           </Col>
 
           <Col xs={24} md={9}>
-            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', padding: 16, borderRadius: 12 }}>
-              <Text strong style={{ color: '#ffffff', display: 'block', marginBottom: 8 }}>
+            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', padding: screens.xs ? 12 : 16, borderRadius: 12 }}>
+              <Text strong style={{ color: '#ffffff', display: 'block', marginBottom: 6, fontSize: screens.xs ? 13 : 14 }}>
                 🔍 ค้นหาหัวข้อคู่มืออย่างรวดเร็ว
               </Text>
               <Input
-                size="large"
+                size={screens.xs ? 'middle' : 'large'}
                 prefix={<SearchOutlined style={{ color: '#1677ff' }} />}
-                placeholder="ค้นหา เช่น สิทธิ์เข้าถึง, เฉลยคำตอบ, สร้างฟอร์ม..."
+                placeholder="ค้นหา เช่น สิทธิ์เข้าถึง, เฉลยคำตอบ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 allowClear
-                style={{ borderRadius: 8, height: 44 }}
+                style={{ borderRadius: 8, height: screens.xs ? 40 : 44 }}
               />
             </div>
           </Col>
@@ -144,17 +157,17 @@ export const DocumentationPage: React.FC = () => {
       </Card>
 
       {/* Main Layout Grid */}
-      <Row gutter={[24, 24]}>
+      <Row gutter={[screens.xs ? 16 : 24, screens.xs ? 16 : 24]}>
         {/* Left: Quick Table of Contents / Anchor Menu */}
         <Col xs={24} lg={6}>
           <Card
             style={{
               borderRadius: 12,
-              position: 'sticky',
+              position: screens.lg ? 'sticky' : 'static',
               top: 84,
               boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             }}
-            styles={{ body: { padding: 18 } }}
+            styles={{ body: { padding: screens.xs ? 14 : 18 } }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <BookOutlined style={{ color: '#1677ff', fontSize: 18 }} />
@@ -240,10 +253,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="getting-started"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   🚀 บทที่ 1: ภาพรวมระบบ FormLocal
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -261,8 +274,11 @@ export const DocumentationPage: React.FC = () => {
               </Paragraph>
 
               <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-                <Col xs={24} md={8}>
-                  <Card style={{ backgroundColor: '#f0f5ff', border: '1px solid #d6e4ff', borderRadius: 8 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{ backgroundColor: '#f0f5ff', border: '1px solid #d6e4ff', borderRadius: 8, height: '100%' }}
+                    styles={{ body: { padding: 16 } }}
+                  >
                     <Space align="start">
                       <FormOutlined style={{ fontSize: 24, color: '#1677ff' }} />
                       <div>
@@ -274,8 +290,11 @@ export const DocumentationPage: React.FC = () => {
                     </Space>
                   </Card>
                 </Col>
-                <Col xs={24} md={8}>
-                  <Card style={{ backgroundColor: '#f6ffed', border: '1px solid #b7eb8f', borderRadius: 8 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{ backgroundColor: '#f6ffed', border: '1px solid #b7eb8f', borderRadius: 8, height: '100%' }}
+                    styles={{ body: { padding: 16 } }}
+                  >
                     <Space align="start">
                       <TrophyOutlined style={{ fontSize: 24, color: '#52c41a' }} />
                       <div>
@@ -287,8 +306,11 @@ export const DocumentationPage: React.FC = () => {
                     </Space>
                   </Card>
                 </Col>
-                <Col xs={24} md={8}>
-                  <Card style={{ backgroundColor: '#fff7e6', border: '1px solid #ffd591', borderRadius: 8 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{ backgroundColor: '#fff7e6', border: '1px solid #ffd591', borderRadius: 8, height: '100%' }}
+                    styles={{ body: { padding: 16 } }}
+                  >
                     <Space align="start">
                       <LockOutlined style={{ fontSize: 24, color: '#fa8c16' }} />
                       <div>
@@ -323,10 +345,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="form-management"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   📝 บทที่ 2: การสร้างและจัดการแบบฟอร์ม (Form Management)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -385,34 +407,121 @@ export const DocumentationPage: React.FC = () => {
               </Paragraph>
 
               <Row gutter={[16, 16]}>
-                <Col xs={24} md={8}>
-                  <Card style={{ border: '1.5px solid #ffa940', borderRadius: 8, backgroundColor: '#fff7e6' }}>
-                    <Tag icon={<LockOutlined />} color="orange" style={{ marginBottom: 8 }}>
-                      🔒 ส่วนบุคคล (Private)
-                    </Tag>
-                    <Paragraph style={{ fontSize: 13, margin: 0 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{
+                      border: '1.5px solid #ffa940',
+                      borderRadius: 10,
+                      backgroundColor: '#fff7e6',
+                      height: '100%',
+                      overflow: 'hidden',
+                      boxShadow: '0 2px 6px rgba(250, 140, 22, 0.06)',
+                    }}
+                    styles={{ body: { padding: '16px 18px', display: 'flex', flexDirection: 'column', height: '100%' } }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                      <Tag
+                        icon={<LockOutlined />}
+                        color="orange"
+                        style={{
+                          margin: 0,
+                          fontSize: 13,
+                          padding: '3px 10px',
+                          borderRadius: 6,
+                          fontWeight: 600,
+                          whiteSpace: 'normal',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          lineHeight: 1.5,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        ส่วนบุคคล (Private)
+                      </Tag>
+                    </div>
+                    <Paragraph style={{ fontSize: 13, margin: 0, lineHeight: 1.7, color: '#595959', flex: 1 }}>
                       แบบฟอร์มนี้จะมีเพียง<strong>ตัวท่าน (เจ้าของฟอร์ม)</strong> และผู้ที่ท่านกดแชร์ให้โดยเฉพาะเท่านั้นที่สามารถเข้าถึงได้ คนอื่นในระบบจะไม่สามารถค้นพบได้
                     </Paragraph>
                   </Card>
                 </Col>
 
-                <Col xs={24} md={8}>
-                  <Card style={{ border: '1.5px solid #b37feb', borderRadius: 8, backgroundColor: '#f9f0ff' }}>
-                    <Tag icon={<ApartmentOutlined />} color="purple" style={{ marginBottom: 8 }}>
-                      🏢 เฉพาะแผนก (Department)
-                    </Tag>
-                    <Paragraph style={{ fontSize: 13, margin: 0 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{
+                      border: '1.5px solid #b37feb',
+                      borderRadius: 10,
+                      backgroundColor: '#f9f0ff',
+                      height: '100%',
+                      overflow: 'hidden',
+                      boxShadow: '0 2px 6px rgba(114, 46, 209, 0.06)',
+                    }}
+                    styles={{ body: { padding: '16px 18px', display: 'flex', flexDirection: 'column', height: '100%' } }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                      <Tag
+                        icon={<ApartmentOutlined />}
+                        color="purple"
+                        style={{
+                          margin: 0,
+                          fontSize: 13,
+                          padding: '3px 10px',
+                          borderRadius: 6,
+                          fontWeight: 600,
+                          whiteSpace: 'normal',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          lineHeight: 1.5,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        เฉพาะแผนก (Department)
+                      </Tag>
+                    </div>
+                    <Paragraph style={{ fontSize: 13, margin: 0, lineHeight: 1.7, color: '#595959', flex: 1 }}>
                       แบบฟอร์มนี้เปิดให้<strong>บุคลากรทุกคนที่สังกัดในแผนกเดียวกัน</strong>สามารถมองเห็น ค้นพบ และเข้าทำแบบฟอร์มได้ เหมาะสำหรับแบบสำรวจภายในฝ่ายงาน
                     </Paragraph>
                   </Card>
                 </Col>
 
-                <Col xs={24} md={8}>
-                  <Card style={{ border: '1.5px solid #95de64', borderRadius: 8, backgroundColor: '#f6ffed' }}>
-                    <Tag icon={<GlobalOutlined />} color="green" style={{ marginBottom: 8 }}>
-                      🌐 ทุกคนในองค์กร (Public)
-                    </Tag>
-                    <Paragraph style={{ fontSize: 13, margin: 0 }}>
+                <Col xs={24} sm={24} xl={8}>
+                  <Card
+                    style={{
+                      border: '1.5px solid #95de64',
+                      borderRadius: 10,
+                      backgroundColor: '#f6ffed',
+                      height: '100%',
+                      overflow: 'hidden',
+                      boxShadow: '0 2px 6px rgba(82, 196, 26, 0.06)',
+                    }}
+                    styles={{ body: { padding: '16px 18px', display: 'flex', flexDirection: 'column', height: '100%' } }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                      <Tag
+                        icon={<GlobalOutlined />}
+                        color="green"
+                        style={{
+                          margin: 0,
+                          fontSize: 13,
+                          padding: '3px 10px',
+                          borderRadius: 6,
+                          fontWeight: 600,
+                          whiteSpace: 'normal',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          lineHeight: 1.5,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        ทุกคนในองค์กร (Public)
+                      </Tag>
+                    </div>
+                    <Paragraph style={{ fontSize: 13, margin: 0, lineHeight: 1.7, color: '#595959', flex: 1 }}>
                       แบบฟอร์มสาธารณะภายในระบบ <strong>บุคลากรทุกคนที่ล็อกอิน</strong>เข้าสู่ระบบจะสามารถมองเห็นและเข้ามาตอบแบบฟอร์มนี้ได้อย่างอิสระ
                     </Paragraph>
                   </Card>
@@ -455,10 +564,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="form-builder"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   🎨 บทที่ 3: Studio ออกแบบแบบฟอร์ม (Form Studio & Canvas)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -535,10 +644,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="scoring-answers"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   🎯 บทที่ 4: การกำหนดเฉลยและเกณฑ์การสอบ (Answer Key & Scoring)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -606,10 +715,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="runner-submissions"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   📋 บทที่ 5: การตอบฟอร์มและดูผลลัพธ์ (Runner & Submissions)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -651,10 +760,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="admin-guide"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   ⚙️ บทที่ 6: การตั้งค่าระบบสำหรับผู้ดูแล (Admin Guide)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">
@@ -702,10 +811,10 @@ export const DocumentationPage: React.FC = () => {
             <Card
               id="faq"
               style={{ borderRadius: 12, scrollMarginTop: 90 }}
-              styles={{ body: { padding: 28 } }}
+              styles={{ body: { padding: screens.xs ? '18px 14px' : 28 } }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={3} style={{ margin: 0, color: '#1677ff' }}>
+                <Title level={3} style={{ margin: 0, color: '#1677ff', fontSize: screens.xs ? 17 : 20, lineHeight: 1.35 }}>
                   ❓ บทที่ 7: คำถามที่พบบ่อย (FAQ & Troubleshooting)
                 </Title>
                 <Tooltip title="คัดลอกลิงก์หัวข้อนี้">

@@ -381,6 +381,7 @@
     box-shadow: none;
     cursor: not-allowed;
     outline: none;
+    padding: 10px;
   }
   .pdpa-ft-note{
     text-align: center;
@@ -753,6 +754,7 @@
     <button id="backBtn">← หน้าหลัก</button>
     <div class="tm" id="toolMascot"></div>
     <div class="tt" id="toolTitle"></div>
+    <button id="toolSaveDbBtn" style="margin-left:auto;background:#2c7aa0;color:#fff;font-weight:700;display:none;align-items:center;gap:6px;border:0;border-radius:12px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.92rem;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.1);">💾 บันทึกผลลงฐานข้อมูล</button>
   </div>
   <div id="frames"></div>
 </div>
@@ -3763,6 +3765,7 @@ function renderSummary(){
   const ids=TOOLS.filter(t=>results[t.id]);
   $("sumCard").hidden=!ids.length; $("printSum").hidden=!ids.length;
   if($("saveDbBtn")) $("saveDbBtn").hidden=!ids.length;
+  if($("toolSaveDbBtn")) $("toolSaveDbBtn").style.display = ids.length ? "inline-flex" : "none";
   broadcastScreeningUpdate();
   if(!ids.length) return;
   const bits=[];
@@ -3807,14 +3810,132 @@ function broadcastScreeningUpdate(){
   }
 }
 
-if($("saveDbBtn")){
-  $("saveDbBtn").onclick = () => {
-    if(window.parent && window.parent !== window){
-      window.parent.postMessage(getPayload(true), "*");
-    } else {
-      alert("กรุณาใช้งานผ่านระบบ FormLocal เพื่อบันทึกข้อมูลลงฐานข้อมูล");
-    }
+async function handleSaveScreeningToDb(){
+  const btn = $("saveDbBtn");
+  const toolBtn = $("toolSaveDbBtn");
+  const btns = [btn, toolBtn].filter(Boolean);
+
+  const ids = TOOLS.filter(t => results[t.id]);
+  if(!ids.length){
+    alert("ยังไม่มีผลการคัดกรองอย่างน้อย 1 รายการ กรุณาทำแบบประเมินก่อนบันทึก");
+    return;
+  }
+
+  const origTexts = new Map();
+  btns.forEach(b => {
+    origTexts.set(b, b.innerHTML);
+    b.disabled = true;
+    b.innerHTML = "⏳ กำลังบันทึกลงฐานข้อมูล...";
+  });
+
+  const payload = getPayload(true);
+
+  // แจ้ง parent window หากฝังอยู่ใน iframe
+  if(window.parent && window.parent !== window){
+    try {
+      window.parent.postMessage(payload, "*");
+    } catch(_) {}
+  }
+
+  const bodyData = {
+    hn: payload.hn ? payload.hn.trim() : null,
+    patientName: payload.patientName ? payload.patientName.trim() : null,
+    birthDate: payload.birthDate || null,
+    assessmentDate: payload.assessmentDate || null,
+    ageYears: payload.ageYears ?? null,
+    ageMonths: payload.ageMonths ?? null,
+    totalAgeMonths: payload.totalAgeMonths ?? null,
+    screenings: payload.screenings || {},
+    hasAlert: Boolean(payload.hasAlert),
+    hasSuicideRisk: Boolean(payload.hasSuicideRisk),
   };
+
+  let savedSuccess = false;
+
+  // วิธีที่ 1: บันทึกผ่าน Backend API (/api/screening)
+  try {
+    const res = await fetch("/api/screening", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData),
+    });
+    if(res.ok){
+      const data = await res.json().catch(() => ({}));
+      if(data.success !== false) savedSuccess = true;
+    }
+  } catch(err){
+    console.warn("Backend /api/screening save failed, attempting Supabase REST fallback...", err);
+  }
+
+  // วิธีที่ 2: หาก Backend ไม่สำเร็จ ให้ Fallback ตรงไปยัง Supabase REST API
+  if(!savedSuccess){
+    try {
+      const nowIso = new Date().toISOString();
+      const sbRecord = {
+        id: "scr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
+        hn: bodyData.hn,
+        patientName: bodyData.patientName,
+        birthDate: bodyData.birthDate ? new Date(bodyData.birthDate).toISOString() : null,
+        assessmentDate: bodyData.assessmentDate ? new Date(bodyData.assessmentDate).toISOString() : nowIso,
+        ageYears: bodyData.ageYears,
+        ageMonths: bodyData.ageMonths,
+        totalAgeMonths: bodyData.totalAgeMonths,
+        screenings: bodyData.screenings,
+        hasAlert: bodyData.hasAlert,
+        hasSuicideRisk: bodyData.hasSuicideRisk,
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      };
+
+      const sbRes = await fetch("https://pgokdsqumwbitqtptuom.supabase.co/rest/v1/ChildScreeningRecord", {
+        method: "POST",
+        headers: {
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify(sbRecord),
+      });
+
+      if(sbRes.ok){
+        savedSuccess = true;
+      } else {
+        const sbErr = await sbRes.text().catch(() => "");
+        throw new Error(sbErr || "Supabase status " + sbRes.status);
+      }
+    } catch(sbErr){
+      console.error("Supabase direct REST save error:", sbErr);
+      btns.forEach(b => {
+        b.disabled = false;
+        b.innerHTML = origTexts.get(b) || "💾 บันทึกผลลงฐานข้อมูล";
+      });
+      alert("บันทึกลงฐานข้อมูลไม่สำเร็จ: " + (sbErr.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ"));
+      return;
+    }
+  }
+
+  // แสดงผลสำเร็จ
+  btns.forEach(b => {
+    b.innerHTML = "✓ บันทึกผลลงฐานข้อมูลสำเร็จแล้ว";
+    b.style.background = "#2e7d4f";
+    b.style.borderColor = "#2e7d4f";
+  });
+  setTimeout(() => {
+    btns.forEach(b => {
+      b.disabled = false;
+      b.innerHTML = origTexts.get(b) || "💾 บันทึกผลลงฐานข้อมูล";
+      b.style.background = "#2c7aa0";
+      b.style.borderColor = "#2c7aa0";
+    });
+  }, 3500);
+}
+
+if($("saveDbBtn")){
+  $("saveDbBtn").onclick = handleSaveScreeningToDb;
+}
+if($("toolSaveDbBtn")){
+  $("toolSaveDbBtn").onclick = handleSaveScreeningToDb;
 }
 
 let pdpaConsentAccepted = false;

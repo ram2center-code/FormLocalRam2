@@ -42,6 +42,12 @@ export interface CreateScreeningRecordPayload {
   notes?: string | null;
 }
 
+const safeIsoDate = (val?: string | null): string | null => {
+  if (!val || typeof val !== 'string' || !val.trim()) return null;
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+};
+
 /**
  * บันทึกผลการคัดกรองเด็กลงฐานข้อมูล Supabase / PostgreSQL
  */
@@ -62,12 +68,46 @@ export const createScreeningRecordApi = async (
     });
   }
 
+  // 1. ลองบันทึกผ่าน FormLocal Backend API (/api/screening) เพื่อบันทึกผ่าน Prisma ลง DB ที่ Active อยู่
+  try {
+    const res = await fetch('/api/screening', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hn: payload.hn?.trim() || null,
+        patientName: payload.patientName?.trim() || null,
+        birthDate: payload.birthDate || null,
+        assessmentDate: payload.assessmentDate || null,
+        ageYears: payload.ageYears ?? null,
+        ageMonths: payload.ageMonths ?? null,
+        totalAgeMonths: payload.totalAgeMonths ?? null,
+        screenings: payload.screenings || {},
+        hasAlert,
+        hasSuicideRisk,
+        notes: payload.notes?.trim() || null,
+      }),
+    });
+
+    if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (json.success && json.data) {
+        return json.data as ChildScreeningRecordItem;
+      }
+    }
+  } catch (backendErr) {
+    console.warn('Backend /api/screening save failed, falling back to direct Supabase:', backendErr);
+  }
+
+  // 2. บันทึกผ่าน Supabase Client
+  const parsedBirth = safeIsoDate(payload.birthDate);
+  const parsedAssessment = safeIsoDate(payload.assessmentDate) || now;
+
   const record = {
     id,
     hn: payload.hn?.trim() || null,
     patientName: payload.patientName?.trim() || null,
-    birthDate: payload.birthDate ? new Date(payload.birthDate).toISOString() : null,
-    assessmentDate: payload.assessmentDate ? new Date(payload.assessmentDate).toISOString() : now,
+    birthDate: parsedBirth,
+    assessmentDate: parsedAssessment,
     ageYears: payload.ageYears ?? null,
     ageMonths: payload.ageMonths ?? null,
     totalAgeMonths: payload.totalAgeMonths ?? null,

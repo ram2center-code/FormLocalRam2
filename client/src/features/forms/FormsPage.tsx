@@ -43,6 +43,8 @@ import {
   MoreOutlined,
   CheckOutlined,
   BarChartOutlined,
+  SmileOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -330,7 +332,32 @@ export const FormsPage: React.FC = () => {
   };
 
   // เมนู 3 จุด (...) รวบรวมคำสั่งจัดการแบบฟอร์ม
-  const getActionMenuItems = (item: FormItem) => [
+  const getActionMenuItems = (item: FormItem) => {
+    const isSpecialSuite = item.id === 'form_child_screening_suite';
+    if (isSpecialSuite) {
+      return [
+        {
+          key: 'open_suite',
+          icon: <SmileOutlined style={{ fontSize: 16, color: '#2c7aa0' }} />,
+          label: 'เปิดทำแบบคัดกรองเด็ก',
+          onClick: () => navigate('/child-screening'),
+        },
+        {
+          key: 'history_suite',
+          icon: <HistoryOutlined style={{ fontSize: 16, color: '#1677ff' }} />,
+          label: `ประวัติการคัดกรองในฐานข้อมูล (${item.submissionsCount || 0} ครั้ง)`,
+          onClick: () => navigate('/child-screening?tab=history'),
+        },
+        {
+          key: 'share',
+          icon: <ShareAltOutlined style={{ fontSize: 16 }} />,
+          label: 'แชร์ฟอร์ม / คัดลอกลิงก์',
+          onClick: () => setShareModalFormId(item.id),
+        },
+      ];
+    }
+
+    return [
     {
       key: 'view',
       icon: <EyeOutlined style={{ fontSize: 16 }} />,
@@ -497,6 +524,7 @@ export const FormsPage: React.FC = () => {
         ]
       : []),
   ];
+};
 
   const columns = [
     {
@@ -539,9 +567,15 @@ export const FormsPage: React.FC = () => {
       width: 220,
       render: (_: any, record: FormItem) => (
         <Space direction="vertical" size={4}>
-          <Tag color={record.type === 'SCORE_TEST' ? 'gold' : 'blue'} style={{ borderRadius: 6 }}>
-            {record.type === 'SCORE_TEST' ? 'แบบทดสอบมีคะแนน' : 'แบบฟอร์มทั่วไป'}
-          </Tag>
+          {record.id === 'form_child_screening_suite' ? (
+            <Tag style={{ borderRadius: 6, fontWeight: 700, background: 'linear-gradient(135deg, #722ed1 0%, #2c7aa0 100%)', color: '#fff', border: 0 }}>
+              ✨ ฟอร์มพิเศษ (Clinical Suite)
+            </Tag>
+          ) : (
+            <Tag color={record.type === 'SCORE_TEST' ? 'gold' : 'blue'} style={{ borderRadius: 6 }}>
+              {record.type === 'SCORE_TEST' ? 'แบบทดสอบมีคะแนน' : 'แบบฟอร์มทั่วไป'}
+            </Tag>
+          )}
           <Space wrap size={[4, 4]}>
             {getVisibilityBadge(record.visibility, record.department?.name, record)}
             {record.requireLogin === false ? (
@@ -608,15 +642,27 @@ export const FormsPage: React.FC = () => {
       align: 'center' as const,
       render: (_: any, record: FormItem) => (
         <Space size="middle">
-          <Button
-            type="primary"
-            size="middle"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`/forms/${record.id}/builder`)}
-            style={{ height: 34, borderRadius: 6 }}
-          >
-            แก้ไข
-          </Button>
+          {record.id === 'form_child_screening_suite' ? (
+            <Button
+              type="primary"
+              size="middle"
+              icon={<SmileOutlined />}
+              onClick={() => navigate('/child-screening')}
+              style={{ height: 34, borderRadius: 6, background: '#2c7aa0', borderColor: '#2c7aa0' }}
+            >
+              เข้าสู่ระบบ
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              size="middle"
+              icon={<EditOutlined />}
+              onClick={() => navigate(`/forms/${record.id}/builder`)}
+              style={{ height: 34, borderRadius: 6 }}
+            >
+              แก้ไข
+            </Button>
+          )}
 
           <Dropdown
             menu={{ items: getActionMenuItems(record) }}
@@ -922,7 +968,8 @@ export const FormsPage: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      border: '1px solid #f0f0f0',
+                      border: item.id === 'form_child_screening_suite' ? '1.5px solid #bce1f3' : '1px solid #f0f0f0',
+                      background: item.id === 'form_child_screening_suite' ? 'linear-gradient(145deg, #ffffff 0%, #f6fafd 100%)' : '#ffffff',
                     }}
                     bodyStyle={{
                       padding: 20,
@@ -942,13 +989,19 @@ export const FormsPage: React.FC = () => {
                           marginBottom: 12,
                         }}
                       >
-                        <Tag
-                          color={item.type === 'SCORE_TEST' ? 'gold' : 'blue'}
-                          icon={item.type === 'SCORE_TEST' ? <TrophyOutlined /> : <FormOutlined />}
-                          style={{ borderRadius: 6, fontWeight: 500 }}
-                        >
-                          {item.type === 'SCORE_TEST' ? 'แบบทดสอบ' : 'แบบฟอร์ม'}
-                        </Tag>
+                        {item.id === 'form_child_screening_suite' ? (
+                          <Tag style={{ borderRadius: 6, fontWeight: 700, background: 'linear-gradient(135deg, #722ed1 0%, #2c7aa0 100%)', color: '#fff', border: 0 }}>
+                            ✨ ฟอร์มพิเศษ (Clinical Suite)
+                          </Tag>
+                        ) : (
+                          <Tag
+                            color={item.type === 'SCORE_TEST' ? 'gold' : 'blue'}
+                            icon={item.type === 'SCORE_TEST' ? <TrophyOutlined /> : <FormOutlined />}
+                            style={{ borderRadius: 6, fontWeight: 500 }}
+                          >
+                            {item.type === 'SCORE_TEST' ? 'แบบทดสอบ' : 'แบบฟอร์ม'}
+                          </Tag>
+                        )}
                         {getStatusBadge(item.status)}
                       </div>
 
@@ -957,7 +1010,7 @@ export const FormsPage: React.FC = () => {
                         level={5}
                         ellipsis={{ rows: 2 }}
                         style={{ margin: '0 0 8px 0', fontSize: 16, cursor: 'pointer' }}
-                        onClick={() => navigate(`/forms/${item.id}/builder`)}
+                        onClick={() => navigate(item.id === 'form_child_screening_suite' ? '/child-screening' : `/forms/${item.id}/builder`)}
                       >
                         {item.title}
                       </Title>
@@ -981,6 +1034,11 @@ export const FormsPage: React.FC = () => {
                             🔒 ต้อง Login
                           </Tag>
                         )}
+                        {item.id === 'form_child_screening_suite' && (
+                          <Tag color="cyan" style={{ borderRadius: 6, margin: 0, fontWeight: 600 }}>
+                            👶 6 เครื่องมือมาตรฐาน
+                          </Tag>
+                        )}
                       </Space>
                     </div>
 
@@ -998,22 +1056,29 @@ export const FormsPage: React.FC = () => {
                       >
                         <span>เวอร์ชัน {item.latestVersionNumber}</span>
                         <a
-                          onClick={() => navigate(`/forms/${item.id}/submissions`)}
+                          onClick={() => navigate(item.id === 'form_child_screening_suite' ? '/child-screening?tab=history' : `/forms/${item.id}/submissions`)}
                           style={{ color: '#1677ff', fontWeight: 500 }}
                           title="คลิกเพื่อดูสถิติและวิเคราะห์ผลตอบกลับ"
                         >
-                          📊 วิเคราะห์ข้อมูล: {item.submissionsCount} ครั้ง
+                          {item.id === 'form_child_screening_suite' ? `📊 ประเมินแล้ว: ${item.submissionsCount} ครั้ง` : `📊 วิเคราะห์ข้อมูล: ${item.submissionsCount} ครั้ง`}
                         </a>
                       </div>
 
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                         <Button
                           type="primary"
-                          icon={<EditOutlined />}
-                          onClick={() => navigate(`/forms/${item.id}/builder`)}
-                          style={{ flex: 1, height: 38, borderRadius: 8, fontWeight: 500 }}
+                          icon={item.id === 'form_child_screening_suite' ? <SmileOutlined /> : <EditOutlined />}
+                          onClick={() => navigate(item.id === 'form_child_screening_suite' ? '/child-screening' : `/forms/${item.id}/builder`)}
+                          style={{
+                            flex: 1,
+                            height: 38,
+                            borderRadius: 8,
+                            fontWeight: 500,
+                            backgroundColor: item.id === 'form_child_screening_suite' ? '#2c7aa0' : undefined,
+                            borderColor: item.id === 'form_child_screening_suite' ? '#2c7aa0' : undefined,
+                          }}
                         >
-                          ออกแบบฟอร์ม
+                          {item.id === 'form_child_screening_suite' ? 'เข้าสู่ระบบคัดกรอง' : 'ออกแบบฟอร์ม'}
                         </Button>
 
                         <Dropdown

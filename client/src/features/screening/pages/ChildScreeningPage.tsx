@@ -21,7 +21,6 @@ import {
 import {
   ArrowLeftOutlined,
   PrinterOutlined,
-  FullscreenOutlined,
   FullscreenExitOutlined,
   ExportOutlined,
   ReloadOutlined,
@@ -37,7 +36,7 @@ import {
   HistoryOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
@@ -74,10 +73,22 @@ const formatThaiDate = (val?: string | null, includeTime = false) => {
 
 export const ChildScreeningPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const [activeTab, setActiveTab] = useState<'screening' | 'history'>('screening');
+  const initialTab = searchParams.get('tab') === 'history' ? 'history' : 'screening';
+  const [activeTab, setActiveTab] = useState<'screening' | 'history'>(initialTab);
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'history') {
+      setActiveTab('history');
+    } else if (tabParam === 'screening') {
+      setActiveTab('screening');
+    }
+  }, [searchParams]);
+
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoading, setIframeLoading] = useState(true);
 
@@ -679,7 +690,7 @@ export const ChildScreeningPage: React.FC = () => {
                       พิมพ์สรุปผล
                     </Button>
                   </Tooltip>
-                  <Button
+                  {/* <Button
                     type="primary"
                     icon={<FullscreenOutlined />}
                     onClick={() => setIsFullscreen(true)}
@@ -689,7 +700,7 @@ export const ChildScreeningPage: React.FC = () => {
                     }}
                   >
                     โหมดเต็มจอ (Kiosk)
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </Space>

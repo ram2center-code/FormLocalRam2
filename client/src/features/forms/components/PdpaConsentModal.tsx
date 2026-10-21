@@ -316,6 +316,7 @@ export const PdpaConsentModal: React.FC<PdpaConsentModalProps> = ({
               color: canSubmit ? '#ffffff' : '#9ca3af',
               boxShadow: canSubmit ? '0 4px 12px rgba(0, 71, 204, 0.25)' : 'none',
               cursor: canSubmit ? 'pointer' : 'not-allowed',
+              padding: '20px'
             }}
           >
             ยินยอมและเริ่มทำแบบประเมิน

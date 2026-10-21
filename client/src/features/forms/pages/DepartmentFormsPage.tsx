@@ -38,6 +38,8 @@ import {
   FolderOpenOutlined,
   UserOutlined,
   SmileOutlined,
+  HistoryOutlined,
+  ExportOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -337,6 +339,8 @@ export const DepartmentFormsPage: React.FC = () => {
       );
     }
 
+    const isSpecialSuite = form.id === 'form_child_screening_suite' || form.id.includes('screening_suite');
+
     return (
       <Col xs={24} sm={12} lg={8} xl={8} key={form.id}>
         <Card
@@ -346,9 +350,10 @@ export const DepartmentFormsPage: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             borderRadius: 14,
-            border: '1px solid #e2e8f0',
+            border: isSpecialSuite ? '1.5px solid #bce1f3' : '1px solid #e2e8f0',
+            background: isSpecialSuite ? 'linear-gradient(145deg, #ffffff 0%, #f6fafd 100%)' : '#ffffff',
             overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            boxShadow: isSpecialSuite ? '0 4px 14px rgba(44, 122, 160, 0.08)' : '0 2px 8px rgba(0,0,0,0.04)',
             transition: 'all 0.25s ease',
           }}
           styles={{
@@ -389,19 +394,36 @@ export const DepartmentFormsPage: React.FC = () => {
               {form.department?.name || 'ส่วนกลาง / ทั่วไป'}
             </Tag>
 
-            <Tag
-              color={isScore ? 'gold' : 'cyan'}
-              icon={isScore ? <TrophyOutlined /> : <FormOutlined />}
-              style={{
-                borderRadius: 6,
-                padding: '3px 8px',
-                fontSize: 12,
-                fontWeight: 600,
-                margin: 0,
-              }}
-            >
-              {isScore ? 'แบบประเมิน/ข้อสอบ' : 'แบบฟอร์ม'}
-            </Tag>
+            {isSpecialSuite ? (
+              <Tag
+                style={{
+                  borderRadius: 6,
+                  padding: '3px 8px',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  margin: 0,
+                  background: 'linear-gradient(135deg, #722ed1 0%, #2c7aa0 100%)',
+                  color: '#ffffff',
+                  border: 0,
+                }}
+              >
+                ✨ ฟอร์มพิเศษ (Clinical Suite)
+              </Tag>
+            ) : (
+              <Tag
+                color={isScore ? 'gold' : 'cyan'}
+                icon={isScore ? <TrophyOutlined /> : <FormOutlined />}
+                style={{
+                  borderRadius: 6,
+                  padding: '3px 8px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  margin: 0,
+                }}
+              >
+                {isScore ? 'แบบประเมิน/ข้อสอบ' : 'แบบฟอร์ม'}
+              </Tag>
+            )}
           </div>
 
           {/* ชื่อแบบฟอร์ม */}
@@ -466,9 +488,15 @@ export const DepartmentFormsPage: React.FC = () => {
               </Tag>
             )}
 
+            {isSpecialSuite && (
+              <Tag color="cyan" style={{ borderRadius: 4, margin: 0, fontSize: 11, fontWeight: 600 }}>
+                👶 6 เครื่องมือมาตรฐาน
+              </Tag>
+            )}
+
             {/* จำนวนผู้ตอบแบบสอบถาม */}
-            <Tag color="default" style={{ borderRadius: 4, margin: 0, fontSize: 11 }}>
-              📊 ตอบแล้ว {form.submissionsCount || 0} ครั้ง
+            <Tag color={isSpecialSuite ? "processing" : "default"} style={{ borderRadius: 4, margin: 0, fontSize: 11, fontWeight: isSpecialSuite ? 600 : 400 }}>
+              📊 {isSpecialSuite ? `ประเมินแล้ว ${form.submissionsCount || 0} ครั้ง` : `ตอบแล้ว ${form.submissionsCount || 0} ครั้ง`}
             </Tag>
           </div>
 
@@ -480,24 +508,31 @@ export const DepartmentFormsPage: React.FC = () => {
               {/* 1. ปุ่มเริ่มทำแบบฟอร์ม (Primary Action) */}
               <Button
                 type="primary"
-                icon={<FormOutlined />}
+                icon={isSpecialSuite ? <SmileOutlined /> : <FormOutlined />}
                 size="large"
                 disabled={!form.isAcceptingResponses}
-                onClick={() => navigate(`/forms/${form.id}/fill`)}
+                onClick={() => {
+                  if (isSpecialSuite) {
+                    navigate('/child-screening');
+                  } else {
+                    navigate(`/forms/${form.id}/fill`);
+                  }
+                }}
                 style={{
                   flex: 1,
                   height: 44,
                   fontSize: 14,
                   fontWeight: 600,
                   borderRadius: 8,
-                  backgroundColor: '#1677ff',
+                  backgroundColor: isSpecialSuite ? '#2c7aa0' : '#1677ff',
+                  borderColor: isSpecialSuite ? '#2c7aa0' : '#1677ff',
                 }}
               >
-                เริ่มทำแบบประเมิน
+                {isSpecialSuite ? 'เริ่มทำชุดแบบคัดกรอง' : 'เริ่มทำแบบประเมิน'}
               </Button>
 
               {/* 2. ปุ่มโหมด iPad / คีออสก์ สำหรับส่งให้ผู้ป่วย/ผู้รับบริการทำแบบเต็มจอ */}
-              <Tooltip title="เปิดโหมดเต็มจอ เหมาะสำหรับเปิดบน iPad หรือตู้ Kiosk ยื่นให้คนไข้กรอก">
+              {/* <Tooltip title="เปิดโหมดเต็มจอ เหมาะสำหรับเปิดบน iPad หรือตู้ Kiosk ยื่นให้คนไข้กรอก">
                 <Button
                   icon={<TabletOutlined style={{ color: '#722ed1', fontSize: 16 }} />}
                   size="large"
@@ -516,53 +551,88 @@ export const DepartmentFormsPage: React.FC = () => {
                 >
                   {!isMobile && 'โหมด iPad'}
                 </Button>
-              </Tooltip>
+              </Tooltip> */}
             </div>
 
             {/* ปุ่มเสริม: ดูตัวอย่าง, แชร์, คัดลอกลิงก์, ผลวิเคราะห์ */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6, marginTop: 2 }}>
-              <Tooltip title="ดูตัวอย่างคำถามในฟอร์ม">
-                <Button
-                  size="middle"
-                  icon={<EyeOutlined />}
-                  onClick={() => setPreviewFormId(form.id)}
-                  style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34 }}
-                >
-                  ตัวอย่าง
-                </Button>
-              </Tooltip>
-
-              <Tooltip title="แชร์ QR Code และลิงก์">
-                <Button
-                  size="middle"
-                  icon={<ShareAltOutlined />}
-                  onClick={() => setShareModalFormId(form.id)}
-                  style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34 }}
-                >
-                  แชร์
-                </Button>
-              </Tooltip>
-
-              <Tooltip title="คัดลอกลิงก์กรอกฟอร์มด่วน">
-                <Button
-                  size="middle"
-                  icon={<CopyOutlined />}
-                  onClick={() => handleCopyLink(form.id, form.title)}
-                  style={{ borderRadius: 6, width: 36, height: 34, padding: 0 }}
-                />
-              </Tooltip>
-
-              {isOwnerOrAdmin && (
-                <Tooltip title="ดูผลตอบกลับ / สถิติ">
+            {isSpecialSuite ? (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6, marginTop: 2 }}>
+                <Tooltip title="ดูประวัติการคัดกรองทั้งหมดในฐานข้อมูล">
                   <Button
                     size="middle"
-                    icon={<BarChartOutlined style={{ color: '#1677ff' }} />}
-                    onClick={() => navigate(`/forms/${form.id}/submissions`)}
+                    icon={<HistoryOutlined style={{ color: '#2c7aa0' }} />}
+                    onClick={() => navigate('/child-screening?tab=history')}
+                    style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34, fontWeight: 500 }}
+                  >
+                    ประวัติ ({form.submissionsCount || 0})
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="เปิดทำแบบคัดกรองในแท็บใหม่แยกต่างหาก (สะดวกเมื่อต้องการส่งต่อ)">
+                  <Button
+                    size="middle"
+                    icon={<ExportOutlined />}
+                    onClick={() => window.open('/tools/child-screening-suite.html', '_blank')}
+                    style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34 }}
+                  >
+                    แท็บใหม่
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="แชร์ QR Code และลิงก์">
+                  <Button
+                    size="middle"
+                    icon={<ShareAltOutlined />}
+                    onClick={() => setShareModalFormId(form.id)}
                     style={{ borderRadius: 6, width: 36, height: 34, padding: 0 }}
                   />
                 </Tooltip>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6, marginTop: 2 }}>
+                <Tooltip title="ดูตัวอย่างคำถามในฟอร์ม">
+                  <Button
+                    size="middle"
+                    icon={<EyeOutlined />}
+                    onClick={() => setPreviewFormId(form.id)}
+                    style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34 }}
+                  >
+                    ตัวอย่าง
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="แชร์ QR Code และลิงก์">
+                  <Button
+                    size="middle"
+                    icon={<ShareAltOutlined />}
+                    onClick={() => setShareModalFormId(form.id)}
+                    style={{ flex: 1, borderRadius: 6, fontSize: 12, height: 34 }}
+                  >
+                    แชร์
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="คัดลอกลิงก์กรอกฟอร์มด่วน">
+                  <Button
+                    size="middle"
+                    icon={<CopyOutlined />}
+                    onClick={() => handleCopyLink(form.id, form.title)}
+                    style={{ borderRadius: 6, width: 36, height: 34, padding: 0 }}
+                  />
+                </Tooltip>
+
+                {isOwnerOrAdmin && (
+                  <Tooltip title="ดูผลตอบกลับ / สถิติ">
+                    <Button
+                      size="middle"
+                      icon={<BarChartOutlined style={{ color: '#1677ff' }} />}
+                      onClick={() => navigate(`/forms/${form.id}/submissions`)}
+                      style={{ borderRadius: 6, width: 36, height: 34, padding: 0 }}
+                    />
+                  </Tooltip>
+                )}
+              </div>
+            )}
           </div>
         </Card>
       </Col>
@@ -863,7 +933,7 @@ export const DepartmentFormsPage: React.FC = () => {
       >
         <Row gutter={[12, 12]} align="middle">
           {/* กล่องค้นหา */}
-          <Col xs={24} md={10} lg={10}>
+          <Col xs={24} sm={24} md={9} lg={9} xl={9}>
             <Input
               size="large"
               placeholder="ค้นหาชื่อแบบฟอร์ม, คำอธิบาย หรือชื่อแผนก..."
@@ -876,7 +946,7 @@ export const DepartmentFormsPage: React.FC = () => {
           </Col>
 
           {/* เลือกแผนก (บนมือถือหรือจอเล็ก) */}
-          <Col xs={12} sm={8} md={5} lg={5}>
+          <Col xs={12} sm={8} md={5} lg={5} xl={5}>
             <Select
               size="large"
               style={{ width: '100%' }}
@@ -895,7 +965,7 @@ export const DepartmentFormsPage: React.FC = () => {
           </Col>
 
           {/* ประเภทฟอร์ม */}
-          <Col xs={12} sm={8} md={5} lg={5}>
+          <Col xs={12} sm={8} md={5} lg={5} xl={5}>
             <Select
               size="large"
               style={{ width: '100%' }}
@@ -909,20 +979,49 @@ export const DepartmentFormsPage: React.FC = () => {
           </Col>
 
           {/* รูปแบบการแสดงผล (จัดกลุ่มแผนก / การ์ดรวม) */}
-          <Col xs={24} sm={8} md={4} lg={4} style={{ textAlign: isMobile ? 'left' : 'right' }}>
+          <Col xs={24} sm={8} md={5} lg={5} xl={5} style={{ display: 'flex', justifyContent: isMobile ? 'stretch' : 'flex-end' }}>
             <Radio.Group
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
               optionType="button"
               buttonStyle="solid"
               size="large"
-              style={{ width: isMobile ? '100%' : 'auto', display: isMobile ? 'flex' : 'inline-flex' }}
+              style={{
+                width: isMobile ? '100%' : 'auto',
+                display: 'inline-flex',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
             >
-              <Radio.Button value="grouped" style={{ flex: 1, textAlign: 'center' }}>
-                <BarsOutlined /> {!isMobile && 'ตามแผนก'}
+              <Radio.Button
+                value="grouped"
+                style={{
+                  flex: isMobile ? 1 : 'none',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  padding: '0 12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <BarsOutlined /> <span style={{ whiteSpace: 'nowrap' }}>ตามแผนก</span>
               </Radio.Button>
-              <Radio.Button value="grid" style={{ flex: 1, textAlign: 'center' }}>
-                <AppstoreOutlined /> {!isMobile && 'การ์ดรวม'}
+              <Radio.Button
+                value="grid"
+                style={{
+                  flex: isMobile ? 1 : 'none',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  padding: '0 12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <AppstoreOutlined /> <span style={{ whiteSpace: 'nowrap' }}>การ์ดรวม</span>
               </Radio.Button>
             </Radio.Group>
           </Col>

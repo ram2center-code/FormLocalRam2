@@ -246,7 +246,22 @@ export const getFormsApi = async (): Promise<FormItem[]> => {
     throw new Error(error.message || 'ไม่สามารถดึงรายการแบบฟอร์มได้');
   }
 
-  return (data || []).map((f: any) => mapFormItem(f, currentUser?.id, currentUser?.role));
+  // ดึงจำนวน submissions จริงสำหรับ Child Screening Suite
+  let screeningCount = 0;
+  try {
+    const { count } = await supabase
+      .from('ChildScreeningRecord')
+      .select('*', { count: 'exact', head: true });
+    screeningCount = count || 0;
+  } catch (_) {}
+
+  return (data || []).map((f: any) => {
+    const item = mapFormItem(f, currentUser?.id, currentUser?.role);
+    if (item.id === 'form_child_screening_suite') {
+      item.submissionsCount = screeningCount;
+    }
+    return item;
+  });
 };
 
 export const getFormByIdApi = async (id: string, _forEditing = false): Promise<FormDetail> => {

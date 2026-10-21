@@ -93,13 +93,16 @@ export class FormService {
       orderBy: isTrash ? { deletedAt: 'desc' } : { updatedAt: 'desc' },
     });
 
+    const screeningCount = await prisma.childScreeningRecord.count().catch(() => 0);
+
     return forms.map((f) => {
       const latestVersion = f.versions[0] || null;
+      const isSuite = f.id === 'form_child_screening_suite';
       return {
         ...f,
         latestVersionNumber: latestVersion?.version ?? 1,
         latestVersionId: latestVersion?.id ?? null,
-        submissionsCount: latestVersion?._count.submissions ?? 0,
+        submissionsCount: isSuite ? screeningCount : (latestVersion?._count.submissions ?? 0),
         isOwner: f.ownerId === userId || userRole === Role.ADMIN,
       };
     });

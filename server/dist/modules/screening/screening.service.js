@@ -27,7 +27,7 @@ export class ScreeningService {
                     hasSuicideRisk = true;
             });
         }
-        return prisma.childScreeningRecord.create({
+        const record = await prisma.childScreeningRecord.create({
             data: {
                 hn: input.hn?.trim() || null,
                 patientName: input.patientName?.trim() || null,
@@ -44,6 +44,40 @@ export class ScreeningService {
                 notes: input.notes?.trim() || null,
             },
         });
+        // ซิงค์เรคคอร์ดลงตาราง Submission ของ FormLocal โดยอัตโนมัติ
+        try {
+            const suiteFormVersion = await prisma.formVersion.findFirst({
+                where: { formId: 'form_child_screening_suite' },
+                orderBy: { version: 'desc' },
+            });
+            if (suiteFormVersion) {
+                await prisma.submission.create({
+                    data: {
+                        formVersionId: suiteFormVersion.id,
+                        userId: examinerId || null,
+                        answers: {
+                            hn: input.hn?.trim() || null,
+                            patientName: input.patientName?.trim() || null,
+                            birthDate: input.birthDate || null,
+                            assessmentDate: input.assessmentDate || null,
+                            ageYears: input.ageYears ?? null,
+                            ageMonths: input.ageMonths ?? null,
+                            totalAgeMonths: input.totalAgeMonths ?? null,
+                            screenings: input.screenings || {},
+                            hasAlert,
+                            hasSuicideRisk,
+                            notes: input.notes?.trim() || null,
+                        },
+                        pdpaConsent: true,
+                        submittedAt: parsedAssessmentDate,
+                    },
+                });
+            }
+        }
+        catch (syncErr) {
+            console.warn('Could not sync to Submission table:', syncErr);
+        }
+        return record;
     }
     /**
      * ดึงรายการประวัติการคัดกรองทั้งหมด พร้อมตัวกรองค้นหา

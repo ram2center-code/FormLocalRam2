@@ -264,7 +264,7 @@ export const MainLayout: React.FC = () => {
         {/* Top Header */}
         <Header
           style={{
-            padding: '0 20px',
+            padding: screens.xs ? '0 12px' : '0 20px',
             background: token.colorBgContainer,
             display: 'flex',
             alignItems: 'center',
@@ -276,14 +276,24 @@ export const MainLayout: React.FC = () => {
             height: 64,
           }}
         >
-          {/* Left: Collapse toggle button */}
-          <Space size="middle">
+          {/* Left: Collapse toggle button & Title */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: screens.xs ? 8 : 12,
+              minWidth: 0,
+              flex: 1,
+              marginRight: 8,
+              overflow: 'hidden',
+            }}
+          >
             {isTabletOrMobile ? (
               <Button
                 type="text"
                 icon={<MenuOutlined style={{ fontSize: 18 }} />}
                 onClick={() => setMobileDrawerOpen(true)}
-                style={{ width: 42, height: 42 }}
+                style={{ width: 38, height: 38, flexShrink: 0 }}
                 aria-label="เปิดเมนู"
               />
             ) : (
@@ -291,19 +301,34 @@ export const MainLayout: React.FC = () => {
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
-                style={{ width: 40, height: 40 }}
+                style={{ width: 40, height: 40, flexShrink: 0 }}
                 aria-label="ย่อ/ขยายเมนู"
               />
             )}
-            <Text strong style={{ fontSize: 16 }}>
-              {menuItems
-                .flatMap((item: any) => item.children || [item])
-                .find((item: any) => item?.key === location.pathname)?.label || 'ระบบฟอร์มภายใน'}
+            <Text
+              strong
+              style={{
+                fontSize: screens.xs ? 15 : 16,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'block',
+              }}
+            >
+              {screens.xs
+                ? (
+                    menuItems
+                      .flatMap((item: any) => item.children || [item])
+                      .find((item: any) => item?.key === location.pathname)?.label || 'ระบบฟอร์มภายใน'
+                  ).replace(/\s*\([^)]*\)$/, '')
+                : menuItems
+                    .flatMap((item: any) => item.children || [item])
+                    .find((item: any) => item?.key === location.pathname)?.label || 'ระบบฟอร์มภายใน'}
             </Text>
-          </Space>
+          </div>
 
           {/* Right: User Profile & Actions */}
-          <Space size="middle" align="center" wrap={false} style={{ flexShrink: 0 }}>
+          <Space size={screens.xs ? 6 : 'middle'} align="center" wrap={false} style={{ flexShrink: 0 }}>
             {user?.department?.name && screens.sm && (
               <Tag color="cyan" style={{ margin: 0, borderRadius: 6, padding: '2px 8px' }}>
                 {user.department.name}
@@ -326,6 +351,7 @@ export const MainLayout: React.FC = () => {
                 borderRadius: 8,
                 backgroundColor: location.pathname === '/docs' ? '#e6f4ff' : undefined,
                 height: 38,
+                padding: screens.xs ? '4px 8px' : undefined,
               }}
             >
               {screens.md && <span style={{ color: '#1677ff', fontWeight: 500 }}>คู่มือการใช้งาน</span>}
@@ -374,11 +400,11 @@ export const MainLayout: React.FC = () => {
         {/* Content Area */}
         <Content
           style={{
-            margin: '20px 20px',
-            padding: screens.xs ? '16px' : '24px',
+            margin: screens.xs ? '12px 8px' : '20px 20px',
+            padding: screens.xs ? '14px 12px' : '24px',
             minHeight: 'calc(100vh - 170px)',
             background: token.colorBgContainer,
-            borderRadius: 12,
+            borderRadius: screens.xs ? 8 : 12,
             boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
