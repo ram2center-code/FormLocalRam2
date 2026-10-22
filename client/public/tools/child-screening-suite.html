@@ -522,13 +522,301 @@
   .pdpa-drawer-ack-btn:hover{
     background: #0037a3;
   }
+
+  /* แถบแจ้งเตือนเมื่อแบบฟอร์มถูกล็อกเนื่องจากยังไม่ได้ยินยอม PDPA */
+  .pdpa-form-lock-banner{
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 2px solid #ea580c;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(234, 88, 12, 0.15);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
+    animation: pdpaLockPulse 2s infinite ease-in-out;
+  }
+  .pdpa-form-lock-banner:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(234, 88, 12, 0.25);
+  }
+  @keyframes pdpaLockPulse{
+    0%, 100% { border-color: #ea580c; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.15); }
+    50% { border-color: #f97316; box-shadow: 0 6px 24px rgba(234, 88, 12, 0.32); }
+  }
+  .pdpa-lock-content{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1 1 auto;
+  }
+  .pdpa-lock-icon-wrap{
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #ffedd5;
+    border: 1.5px solid #fdba74;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .pdpa-lock-texts{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pdpa-lock-head{
+    font-family: "Mitr", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #9a3412;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pdpa-lock-tag{
+    font-size: 11px;
+    font-weight: 700;
+    background: #ea580c;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    letter-spacing: 0.3px;
+  }
+  .pdpa-lock-desc{
+    font-size: 13px;
+    color: #7c2d12;
+    line-height: 1.5;
+  }
+  .pdpa-lock-btn{
+    background: #ea580c;
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-family: "Mitr", sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+    transition: background 0.15s, transform 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pdpa-lock-btn:hover{
+    background: #c2410c;
+    transform: translateY(-1px);
+  }
+
+  /* สถานะฟอร์มถูกล็อกเมื่อยังไม่ได้ยอมรับ PDPA */
+  .pdpa-locked #patientCard,
+  .pdpa-locked #protoCard,
+  .pdpa-locked #sumCard,
+  .pdpa-locked .row {
+    position: relative;
+    opacity: 0.65;
+    cursor: pointer !important;
+  }
+  .pdpa-locked #patientCard input {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+  .pdpa-locked .proto .p-item {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    filter: grayscale(0.2);
+  }
+  .pdpa-locked button.ghost {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+
+  /* กล่องย่อแสดงผลการแจ้งเตือน PDPA ที่กระพริบ (Floating Minimized PDPA Pill) */
+  .pdpa-mini-pill{
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9998;
+    background: linear-gradient(135deg, #0047cc 0%, #002d80 100%);
+    color: #ffffff;
+    border: 2px solid #38bdf8;
+    border-radius: 9999px;
+    padding: 10px 18px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 71, 204, 0.45);
+    font-family: "Mitr", sans-serif;
+    animation: pdpaBlinkPill 1.8s infinite ease-in-out;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+    user-select: none;
+    max-width: min(450px, 92vw);
+  }
+  .pdpa-mini-pill:hover{
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 71, 204, 0.6), 0 0 0 3px rgba(56, 189, 248, 0.5);
+  }
+  .pdpa-mini-pill:active{
+    transform: scale(0.98);
+  }
+  @keyframes pdpaBlinkPill{
+    0%, 100%{
+      box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7), 0 8px 24px rgba(0, 71, 204, 0.45);
+      border-color: #38bdf8;
+    }
+    50%{
+      box-shadow: 0 0 0 10px rgba(249, 115, 22, 0), 0 12px 32px rgba(249, 115, 22, 0.55);
+      border-color: #f97316;
+    }
+  }
+  .pdpa-mini-badge{
+    position: relative;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  .pdpa-mini-dot{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #f97316;
+  }
+  .pdpa-mini-ping{
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: #f97316;
+    opacity: 0.75;
+    animation: pdpaPing 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes pdpaPing{
+    75%, 100%{
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+  .pdpa-mini-icon{
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .pdpa-mini-info{
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .pdpa-mini-title{
+    font-weight: 700;
+    font-size: 13.5px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+  }
+  .pdpa-mini-sub{
+    font-size: 11.5px;
+    color: #bae0ff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pdpa-mini-cta{
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 5px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .pdpa-mini-pill:hover .pdpa-mini-cta{
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .pdpa-mini-shake{
+    animation: pdpaShake 0.45s ease-in-out !important;
+  }
+  @keyframes pdpaShake{
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px) scale(1.04); }
+    40%, 80% { transform: translateX(8px) scale(1.04); }
+  }
+
+  .pdpa-toast{
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #065f46;
+    color: #ffffff;
+    border: 1px solid #10b981;
+    border-radius: 9999px;
+    padding: 10px 22px;
+    font-family: "Mitr", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 10002;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .pdpa-toast.show{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
+  @media (max-width: 600px){
+    .pdpa-mini-pill{
+      bottom: 16px;
+      right: 12px;
+      left: 12px;
+      max-width: none;
+      padding: 10px 14px;
+    }
+    .pdpa-form-lock-banner{
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pdpa-lock-btn{
+      width: 100%;
+      justify-content: center;
+    }
+  }
 </style>
 </head>
 <body>
 
 <!-- หน้าต่างขอความยินยอม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (RAM2 PDPA Consent Modal) -->
-<div id="pdpaModal" class="pdpa-overlay" style="display:none;">
-  <div class="pdpa-modal" role="dialog" aria-modal="true" aria-labelledby="pdpaMainTitle">
+<div id="pdpaModal" class="pdpa-overlay" style="display:none;" onclick="handlePdpaOverlayClick(event)">
+  <div class="pdpa-modal" role="dialog" aria-modal="true" aria-labelledby="pdpaMainTitle" onclick="event.stopPropagation()">
     <div class="pdpa-h">
       <div class="pdpa-h-left">
         <div class="pdpa-h-ic" aria-hidden="true">
@@ -542,7 +830,7 @@
           <div class="pdpa-h-sub">โรงพยาบาลรามคำแหง 2</div>
         </div>
       </div>
-      <button type="button" class="pdpa-h-close" onclick="goBack(event)" title="ปิด / กลับระบบหลัก" aria-label="ปิด">✕</button>
+      <button type="button" class="pdpa-h-close" onclick="minimizePdpaModal(event)" title="ย่อหน้าต่างนี้ไว้ชั่วคราว (ต้องกดยินยอมก่อนเริ่มกรอกแบบฟอร์ม)" aria-label="ย่อหน้าต่าง">✕</button>
     </div>
 
     <div class="pdpa-body">
@@ -619,9 +907,28 @@
       </button>
 
       <div class="pdpa-ft-note">
-        หากไม่ประสงค์ให้ความยินยอมที่จำเป็น ระบบจะไม่เริ่มเก็บคำตอบสุขภาพสำหรับแบบประเมินนี้
+        หากยังไม่ประสงค์ให้ความยินยอม สามารถ <a href="javascript:void(0)" onclick="minimizePdpaModal(event)" style="color:#0047cc;font-weight:600;text-decoration:underline;">ย่อหน้าต่างนี้ไว้ก่อน</a> ได้ (แบบฟอร์มจะถูกล็อกจนกว่าจะยินยอม) หรือ <a href="/department-forms" onclick="return goBack(event)" style="color:#64748b;text-decoration:underline;">กลับสู่ระบบหลัก</a>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- กล่องย่อแสดงผลการแจ้งเตือน PDPA ที่กระพริบ (Floating Minimized PDPA Pill) -->
+<div id="pdpaMiniPill" class="pdpa-mini-pill noprint" onclick="expandPdpaModal(event)" role="button" tabindex="0" title="คลิกเพื่อเปิดอ่านและยินยอม PDPA">
+  <div class="pdpa-mini-badge" aria-hidden="true">
+    <span class="pdpa-mini-ping"></span>
+    <span class="pdpa-mini-dot"></span>
+  </div>
+  <div class="pdpa-mini-icon" aria-hidden="true">🛡️</div>
+  <div class="pdpa-mini-info">
+    <div class="pdpa-mini-title">รอการยินยอมข้อมูลส่วนบุคคล (PDPA)</div>
+    <div class="pdpa-mini-sub">คลิกเพื่อเปิดอ่านและกดยินยอมเพื่อเริ่มกรอกฟอร์ม</div>
+  </div>
+  <div class="pdpa-mini-cta">
+    <span>เปิดอ่าน</span>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
   </div>
 </div>
 
@@ -709,7 +1016,31 @@
     <div class="art"><svg viewBox="0 0 240 130" aria-hidden="true"><ellipse cx="120" cy="122" rx="105" ry="8" fill="#000" opacity=".06"/><path d="M196 18 l3.5 8 l8.5 1 l-6 6 l1.8 8.5 l-7.8 -4.3 l-7.8 4.3 l1.8 -8.5 l-6 -6 l8.5 -1z" fill="#f6b73c"/><circle cx="34" cy="26" r="4" fill="#ef6f6c"/><circle cx="218" cy="70" r="3" fill="#6cc3a0"/><circle cx="20" cy="84" r="3" fill="#5a63c9"/><path d="M44 102 q4 -18 22 -18 q18 0 22 18z" fill="#6cc3a0"/><path d="M96 108 q6 -26 28 -26 q22 0 28 26z" fill="#5a9bd8"/><path d="M156 104 q4 -18 22 -18 q18 0 22 18z" fill="#e2637f"/><circle cx="66" cy="66" r="21" fill="#ffdcbc"/><circle cx="43.95" cy="54.45" r="7.35" fill="#4a3426"/><circle cx="88.05" cy="54.45" r="7.35" fill="#4a3426"/><path d="M45 63.9 C45 39.75 87 39.75 87 63.9 C74.4 51.3 57.6 51.3 45 63.9Z" fill="#4a3426"/><circle cx="58.65" cy="66" r="2.52" fill="#3a2e2a"/><circle cx="73.35" cy="66" r="2.52" fill="#3a2e2a"/><circle cx="54.45" cy="72.3" r="3.36" fill="#f7a1a1" opacity=".75"/><circle cx="77.55" cy="72.3" r="3.36" fill="#f7a1a1" opacity=".75"/><path d="M60.75 72.3 q5.25 6.3 10.5 0" stroke="#3a2e2a" stroke-width="1.89" fill="none" stroke-linecap="round"/><circle cx="124" cy="56" r="26" fill="#f2c49b"/><path d="M99.3 49.5 C100.6 24.8 147.4 24.8 148.7 49.5 C131.8 36.5 124 44.3 99.3 49.5Z" fill="#2f2420"/><circle cx="114.9" cy="56" r="3.12" fill="#3a2e2a"/><circle cx="133.1" cy="56" r="3.12" fill="#3a2e2a"/><circle cx="109.7" cy="63.8" r="4.16" fill="#f7a1a1" opacity=".75"/><circle cx="138.3" cy="63.8" r="4.16" fill="#f7a1a1" opacity=".75"/><path d="M117.5 63.8 q6.5 7.8 13.0 0" stroke="#3a2e2a" stroke-width="2.34" fill="none" stroke-linecap="round"/><circle cx="178" cy="68" r="20" fill="#ffe2c8"/><path d="M156.4 72.0 C155.0 42.0 201.0 42.0 199.6 72.0 L194.0 62.0 C184.0 56.0 172.0 56.0 162.0 62.0Z" fill="#8a5a36"/><circle cx="171.0" cy="68" r="2.4" fill="#3a2e2a"/><circle cx="185.0" cy="68" r="2.4" fill="#3a2e2a"/><circle cx="167.0" cy="74.0" r="3.2" fill="#f7a1a1" opacity=".75"/><circle cx="189.0" cy="74.0" r="3.2" fill="#f7a1a1" opacity=".75"/><path d="M173.0 74.0 q5.0 6.0 10.0 0" stroke="#3a2e2a" stroke-width="1.7999999999999998" fill="none" stroke-linecap="round"/></svg></div>
   </section>
 
-  <div class="card" id="patientCard">
+  <!-- แถบแจ้งเตือนเมื่อแบบฟอร์มถูกล็อกเนื่องจากยังไม่ได้ยินยอม PDPA -->
+  <div id="pdpaFormLockBanner" class="pdpa-form-lock-banner noprint" onclick="expandPdpaModal(event)">
+    <div class="pdpa-lock-content">
+      <div class="pdpa-lock-icon-wrap" aria-hidden="true">
+        🔒
+      </div>
+      <div class="pdpa-lock-texts">
+        <div class="pdpa-lock-head">
+          <span>แบบฟอร์มถูกระงับชั่วคราว — รอการยินยอม PDPA</span>
+          <span class="pdpa-lock-tag">จำเป็นต้องยินยอม</span>
+        </div>
+        <div class="pdpa-lock-desc">
+          ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล (PDPA) ท่านต้องอ่านและให้ความยินยอมก่อน จึงจะสามารถกรอกข้อมูลผู้ป่วยและทำแบบประเมินได้
+        </div>
+      </div>
+    </div>
+    <button type="button" class="pdpa-lock-btn" onclick="expandPdpaModal(event)">
+      <span>🛡️ เปิดอ่านและยินยอม</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="card" id="patientCard" onclick="handleLockedFormClick(event)">
     <h2><span class="ic">📝</span>ข้อมูลผู้ป่วย</h2>
     <div class="grid2">
       <div><label class="f" for="pName">ชื่อ–นามสกุล</label><input type="text" id="pName" autocomplete="off"></div>
@@ -721,7 +1052,7 @@
     <p class="hint" style="margin:8px 0 0">ข้อมูลนี้จะถูกกรอกให้อัตโนมัติในทุกแบบสอบถาม</p>
   </div>
 
-  <div class="card" id="protoCard">
+  <div class="card" id="protoCard" onclick="handleLockedFormClick(event)">
     <h2><span class="ic">🧭</span>แบบคัดกรองตามช่วงอายุ</h2>
     <div class="hint">เลือกแบบสอบถามที่ต้องการทำ — แบบที่ตรงกับอายุผู้ป่วยจะถูกเน้นไว้</div>
     <div class="proto" id="proto"></div>
@@ -3941,15 +4272,127 @@ if($("toolSaveDbBtn")){
 let pdpaConsentAccepted = false;
 const isEmbedded = (window.parent && window.parent !== window);
 
+function lockForm(){
+  const hub = $("hub");
+  if(hub) hub.classList.add("pdpa-locked");
+  const lockBanner = $("pdpaFormLockBanner");
+  if(lockBanner) lockBanner.style.display = "flex";
+
+  // ปิดกั้นการพิมพ์ลงในช่องข้อมูลผู้ป่วยทั้งหมดจนกว่าจะยินยอม PDPA
+  ["pName", "pHn", "pDob", "pDate"].forEach(id => {
+    const el = $(id);
+    if(el){
+      el.disabled = true;
+      el.readOnly = true;
+    }
+  });
+}
+
+function unlockForm(){
+  const hub = $("hub");
+  if(hub) hub.classList.remove("pdpa-locked");
+  const lockBanner = $("pdpaFormLockBanner");
+  if(lockBanner) lockBanner.style.display = "none";
+  const miniPill = $("pdpaMiniPill");
+  if(miniPill) miniPill.style.display = "none";
+
+  // ปลดล็อกให้กรอกข้อมูลได้ตามปกติ
+  ["pName", "pHn", "pDob", "pDate"].forEach(id => {
+    const el = $(id);
+    if(el){
+      el.disabled = false;
+      el.readOnly = false;
+    }
+  });
+}
+
 function showStandalonePdpaModal(){
   const m = $("pdpaModal");
   if(m) m.style.display = "flex";
+  const miniPill = $("pdpaMiniPill");
+  if(miniPill) miniPill.style.display = "none";
 }
 
 function closeStandalonePdpaModal(){
   const m = $("pdpaModal");
   if(m) m.style.display = "none";
 }
+
+function minimizePdpaModal(e){
+  if(e){
+    try { if(typeof e.preventDefault === 'function') e.preventDefault(); } catch(_) {}
+    try { if(typeof e.stopPropagation === 'function') e.stopPropagation(); } catch(_) {}
+  }
+  closeStandalonePdpaModal();
+  if(!pdpaConsentAccepted){
+    lockForm();
+    const miniPill = $("pdpaMiniPill");
+    if(miniPill){
+      miniPill.style.display = "flex";
+      miniPill.classList.remove("pdpa-mini-shake");
+      void miniPill.offsetWidth; // trigger reflow
+      miniPill.classList.add("pdpa-mini-shake");
+    }
+  }
+}
+
+function expandPdpaModal(e){
+  if(e){
+    try { if(typeof e.preventDefault === 'function') e.preventDefault(); } catch(_) {}
+    try { if(typeof e.stopPropagation === 'function') e.stopPropagation(); } catch(_) {}
+  }
+  showStandalonePdpaModal();
+}
+
+function handleLockedFormClick(e){
+  if(pdpaConsentAccepted) return;
+  if(e){
+    try { if(typeof e.preventDefault === 'function') e.preventDefault(); } catch(_) {}
+    try { if(typeof e.stopPropagation === 'function') e.stopPropagation(); } catch(_) {}
+  }
+  const miniPill = $("pdpaMiniPill");
+  if(miniPill && miniPill.style.display !== "none"){
+    miniPill.classList.remove("pdpa-mini-shake");
+    void miniPill.offsetWidth;
+    miniPill.classList.add("pdpa-mini-shake");
+  }
+  expandPdpaModal();
+}
+
+function handlePdpaOverlayClick(e){
+  if(e.target === $("pdpaModal")){
+    minimizePdpaModal(e);
+  }
+}
+
+function showUnlockToast(){
+  let toast = $("pdpaToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "pdpaToast";
+    toast.className = "pdpa-toast";
+    toast.innerHTML = "<span>✅</span><span>ยินยอมเรียบร้อยแล้ว — เริ่มต้นทำแบบคัดกรองได้เลย</span>";
+    document.body.appendChild(toast);
+  }
+  toast.classList.add("show");
+  setTimeout(function(){
+    if(toast) toast.classList.remove("show");
+  }, 3500);
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape"){
+    const drawer = $("pdpaDrawer");
+    if(drawer && drawer.classList.contains("show")){
+      closePrivacyDrawer();
+      return;
+    }
+    const m = $("pdpaModal");
+    if(m && m.style.display === "flex"){
+      minimizePdpaModal(e);
+    }
+  }
+});
 
 function openPrivacyDrawer(){
   const drawer = $("pdpaDrawer");
@@ -4041,17 +4484,19 @@ function handleAcceptStandalonePdpa(){
   const cb2 = $("pdpaCb2");
   if(cb1 && cb2 && cb1.checked && cb2.checked){
     pdpaConsentAccepted = true;
+    unlockForm();
     closeStandalonePdpaModal();
     if(isEmbedded){
       window.parent.postMessage({ type: "pdpa_accepted_from_child" }, "*");
     }
+    showUnlockToast();
   }
 }
 
 function handleDeclineStandalonePdpa(){
   closeStandalonePdpaModal();
   if(!pdpaConsentAccepted){
-    alert("ท่านยังไม่ได้ให้ความยินยอมตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) จึงไม่สามารถเริ่มทำแบบคัดกรองได้");
+    lockForm();
   }
 }
 
@@ -4061,7 +4506,7 @@ function openTool(id){
     if(isEmbedded){
       window.parent.postMessage({ type: "pdpa_request_modal" }, "*");
     } else {
-      showStandalonePdpaModal();
+      expandPdpaModal();
     }
     return;
   }
@@ -4103,7 +4548,9 @@ window.addEventListener("message",e=>{
   const d=e.data; if(!d) return;
   if(d.type === "pdpa_accepted"){
     pdpaConsentAccepted = true;
+    unlockForm();
     closeStandalonePdpaModal();
+    showUnlockToast();
     return;
   }
   if(d.type === "child_screening_save_success"){
@@ -4136,6 +4583,7 @@ $("resetAll").onclick=()=>{
   calcAge(); window.scrollTo({top:0});
 
   pdpaConsentAccepted = false;
+  lockForm();
   const cb1 = $("pdpaCb1");
   const cb2 = $("pdpaCb2");
   if(cb1) cb1.checked = false;
@@ -4148,6 +4596,9 @@ $("resetAll").onclick=()=>{
 };
 
 calcAge();
+if(!pdpaConsentAccepted){
+  lockForm();
+}
 if(!isEmbedded){
   showStandalonePdpaModal();
 }
