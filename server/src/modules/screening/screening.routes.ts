@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { ScreeningController } from './screening.controller.js';
 import { createScreeningRecordSchema } from './screening.schema.js';
 import { validate } from '../../middlewares/validate.middleware.js';
-import { optionalAuthenticate, authenticate } from '../../middlewares/auth.middleware.js';
+import { Role } from '@prisma/client';
+import { optionalAuthenticate, authenticate, authorize } from '../../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -14,6 +15,10 @@ router.get('/', authenticate, ScreeningController.getAll);
 
 // สถิติภาพรวม
 router.get('/stats', authenticate, ScreeningController.getStats);
+
+// ข้อความและนโยบาย PDPA สำหรับ Suite คัดกรอง
+router.get('/pdpa-config', ScreeningController.getPdpaConfig);
+router.put('/pdpa-config', authenticate, authorize(Role.ADMIN), ScreeningController.updatePdpaConfig);
 
 // รายละเอียดผลการคัดกรองรายบุคคล
 router.get('/:id', authenticate, ScreeningController.getById);

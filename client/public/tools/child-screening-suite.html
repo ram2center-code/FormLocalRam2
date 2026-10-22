@@ -52,7 +52,8 @@
     transform:translateY(0);
     background:#d5e7f3;
   }
-  .top-nav-tag{font-size:0.85rem;color:var(--muted);font-weight:500}
+  .top-nav-tag{font-size:0.95rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:12px}
+  .top-nav-logo{height:44px;max-height:48px;width:auto;object-fit:contain;vertical-align:middle;transition:height .2s}
 
   /* hero */
   .hero{position:relative;overflow:hidden;border-radius:26px;padding:24px 22px;display:flex;align-items:center;gap:10px;
@@ -111,6 +112,72 @@
   }
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-top:4px}
   .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+  /* สไตล์แจ้งเตือนและล็อกเมื่อยังไม่ได้กรอกชื่อเด็ก */
+  .pname-empty-notice {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: #fff1f2;
+    border: 1.5px solid #f43f5e;
+    color: #9f1239;
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    animation: pNameAlertPulse 2s infinite ease-in-out;
+  }
+  @keyframes pNameAlertPulse {
+    0%, 100% { border-color: #f43f5e; box-shadow: 0 2px 8px rgba(244, 63, 94, 0.15); }
+    50% { border-color: #fb7185; box-shadow: 0 4px 14px rgba(244, 63, 94, 0.28); }
+  }
+  .pname-shake {
+    animation: pNameShake 0.45s ease-in-out !important;
+    border-color: #e11d48 !important;
+    background-color: #fff1f2 !important;
+    box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.22) !important;
+  }
+  @keyframes pNameShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .proto-name-lock-banner {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1.5px solid #ea580c;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #9a3412;
+    font-size: 13.5px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+  }
+  .proto-name-lock-banner:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+  }
+  .proto.needs-name .item {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+    filter: saturate(0.65);
+    position: relative;
+  }
+  .proto.needs-name .item:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: var(--line) !important;
+  }
+  .proto.needs-name .item .go {
+    opacity: 0.5;
+  }
 
   /* summary */
   .sumrow{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -233,6 +300,194 @@
   }
   .pdpa-h-close:hover{
     background: rgba(255, 255, 255, 0.25);
+  }
+  .pdpa-h-actions{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pdpa-h-edit-btn{
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 7px;
+    padding: 4px 10px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    line-height: 1.4;
+    user-select: none;
+  }
+  .pdpa-h-edit-btn:hover{
+    background: rgba(255, 255, 255, 0.28);
+    border-color: #ffffff;
+    transform: translateY(-1px);
+  }
+  .pdpa-editor-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 10005;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    animation: pdpaFadeIn 0.2s ease;
+  }
+  .pdpa-editor-modal{
+    background: #ffffff;
+    border-radius: 16px;
+    width: min(800px, 96vw);
+    max-height: 90vh;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: "Mitr", sans-serif;
+  }
+  .pdpa-editor-head{
+    padding: 14px 20px;
+    background: #0047cc;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .pdpa-editor-tabs{
+    display: flex;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .pdpa-editor-tab{
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .pdpa-editor-tab.active{
+    color: #0047cc;
+    border-bottom-color: #0047cc;
+    background: #ffffff;
+  }
+  .pdpa-editor-body{
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    font-size: 13.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .pdpa-editor-pane{
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pdpa-editor-pane.active{
+    display: flex;
+  }
+  .pdpa-field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .pdpa-field label{
+    font-weight: 600;
+    color: #334155;
+    font-size: 13px;
+  }
+  .pdpa-field input, .pdpa-field textarea{
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #cbd5e1;
+    font-size: 13.5px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .pdpa-field input:focus, .pdpa-field textarea:focus{
+    outline: none;
+    border-color: #0047cc;
+    box-shadow: 0 0 0 3px rgba(0, 71, 204, 0.12);
+  }
+  .pdpa-editor-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media(max-width: 640px){
+    .pdpa-editor-grid{ grid-template-columns: 1fr; }
+  }
+  .pdpa-editor-box{
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pdpa-editor-foot{
+    padding: 12px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .pdpa-btn{
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    border: 1px solid transparent;
+  }
+  .pdpa-btn-primary{
+    background: #0047cc;
+    color: #ffffff;
+  }
+  .pdpa-btn-primary:hover{
+    background: #0037a3;
+  }
+  .pdpa-btn-secondary{
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .pdpa-btn-secondary:hover{
+    background: #cbd5e1;
+  }
+  .pdpa-btn-danger{
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+  .pdpa-btn-danger:hover{
+    background: #fecaca;
   }
   .pdpa-body{
     padding: 24px 28px;
@@ -793,6 +1048,9 @@
   }
 
   @media (max-width: 600px){
+    .top-nav{gap:8px}
+    .top-nav-logo{height:34px}
+    .top-nav-tag{font-size:0.82rem;gap:8px}
     .pdpa-mini-pill{
       bottom: 16px;
       right: 12px;
@@ -826,34 +1084,42 @@
           </svg>
         </div>
         <div>
-          <div class="pdpa-h-t">RAM2 Preliminary Assessment</div>
-          <div class="pdpa-h-sub">โรงพยาบาลรามคำแหง 2</div>
+          <div id="pdpaHeaderTitle" class="pdpa-h-t">RAM2 Preliminary Assessment</div>
+          <div id="pdpaHeaderSubtitle" class="pdpa-h-sub" style="display:flex;align-items:center;gap:6px;">
+            <img src="/Ram2Logo.png" alt="RAM2" style="height:15px;object-fit:contain;background:#fff;padding:1px 4px;border-radius:3px;">
+            <span>โรงพยาบาลรามคำแหง 2</span>
+          </div>
         </div>
       </div>
-      <button type="button" class="pdpa-h-close" onclick="minimizePdpaModal(event)" title="ย่อหน้าต่างนี้ไว้ชั่วคราว (ต้องกดยินยอมก่อนเริ่มกรอกแบบฟอร์ม)" aria-label="ย่อหน้าต่าง">✕</button>
+      <div class="pdpa-h-actions">
+        <button type="button" id="pdpaEditHeaderBtn" class="pdpa-h-edit-btn" onclick="openPdpaSuiteEditor(event)" title="แก้ไขข้อความ PDPA สำหรับแบบฟอร์มนี้ (เฉพาะ Admin)" style="display: none;">
+          ⚙️ แก้ไขข้อความ
+        </button>
+        <button type="button" class="pdpa-h-close" onclick="minimizePdpaModal(event)" title="ย่อหน้าต่างนี้ไว้ชั่วคราว (ต้องกดยินยอมก่อนเริ่มกรอกแบบฟอร์ม)" aria-label="ย่อหน้าต่าง">✕</button>
+      </div>
     </div>
 
     <div class="pdpa-body">
       <div class="pdpa-title-wrap" style="margin-bottom:16px;">
         <h2 id="pdpaMainTitle" class="pdpa-main-t">หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล</h2>
-        <div class="pdpa-main-sub">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</div>
+        <div id="pdpaMainSubtitle" class="pdpa-main-sub">โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน</div>
       </div>
 
       <div class="pdpa-form-badge">
         <span class="pdpa-form-badge-label">หัวข้อแบบประเมินที่เลือก</span>
-        <div class="pdpa-form-name">ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น</div>
-        <div class="pdpa-form-desc">Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)</div>
+        <div id="pdpaFormName" class="pdpa-form-name">ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น</div>
+        <div id="pdpaFormDesc" class="pdpa-form-desc">Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)</div>
       </div>
 
       <div class="pdpa-secs">
         <div class="pdpa-sec">
-          <div class="pdpa-sec-title">1. วัตถุประสงค์ในการเก็บข้อมูล</div>
-          <p class="pdpa-sec-p">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</p>
+          <div id="pdpaSec1Title" class="pdpa-sec-title">1. วัตถุประสงค์ในการเก็บข้อมูล</div>
+          <p id="pdpaSec1Content" class="pdpa-sec-p">โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่</p>
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-sec-title">2. ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
-          <ul class="pdpa-sec-ul">
+          <div id="pdpaSec2Title" class="pdpa-sec-title">2. ประเภทข้อมูลที่อาจเก็บรวบรวม</div>
+          <ul id="pdpaSec2List" class="pdpa-sec-ul">
             <li>ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ</li>
             <li>คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก</li>
             <li>ผลการประเมินที่คำนวณจากคำตอบ</li>
@@ -863,13 +1129,13 @@
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-sec-title">3. ข้อจำกัดของบริการ</div>
-          <p class="pdpa-sec-p">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</p>
+          <div id="pdpaSec3Title" class="pdpa-sec-title">3. ข้อจำกัดของบริการ</div>
+          <p id="pdpaSec3Content" class="pdpa-sec-p">ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้</p>
         </div>
 
         <div class="pdpa-sec">
-          <div class="pdpa-sec-title">4. การรักษาความลับและสิทธิของท่าน</div>
-          <p class="pdpa-sec-p">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน PDPA@ram2-hosp.com เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</p>
+          <div id="pdpaSec4Title" class="pdpa-sec-title">4. การรักษาความลับและสิทธิของท่าน</div>
+          <p id="pdpaSec4Content" class="pdpa-sec-p">โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว ท่านสามารถติดต่อ DPO ผ่าน <a id="pdpaDpoLink" href="mailto:PDPA@ram2-hosp.com" style="color:#0047cc;font-weight:600;">PDPA@ram2-hosp.com</a> เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย</p>
         </div>
       </div>
 
@@ -906,7 +1172,7 @@
         ยินยอมและเริ่มทำแบบประเมิน
       </button>
 
-      <div class="pdpa-ft-note">
+      <div id="pdpaFooterNote" class="pdpa-ft-note">
         หากยังไม่ประสงค์ให้ความยินยอม สามารถ <a href="javascript:void(0)" onclick="minimizePdpaModal(event)" style="color:#0047cc;font-weight:600;text-decoration:underline;">ย่อหน้าต่างนี้ไว้ก่อน</a> ได้ (แบบฟอร์มจะถูกล็อกจนกว่าจะยินยอม) หรือ <a href="/department-forms" onclick="return goBack(event)" style="color:#64748b;text-decoration:underline;">กลับสู่ระบบหลัก</a>
       </div>
     </div>
@@ -942,7 +1208,7 @@
         <div id="drawerTitle" style="font-weight:700;font-size:1rem;color:#0f172a;line-height:1.3;">
           ประกาศความเป็นส่วนตัวฉบับเต็ม
         </div>
-        <div style="font-size:0.8rem;color:#64748b;">
+        <div id="drawerSubtitle" style="font-size:0.8rem;color:#64748b;">
           โรงพยาบาลรามคำแหง 2 • พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562
         </div>
       </div>
@@ -951,42 +1217,46 @@
   </div>
   
   <div class="pdpa-drawer-body">
-    <div class="pdpa-drawer-intro">
+    <div id="drawerIntro" class="pdpa-drawer-intro">
       โรงพยาบาลรามคำแหง 2 ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและข้อมูลสุขภาพของท่าน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
     </div>
 
     <div class="pdpa-drawer-section">
-      <div class="pdpa-drawer-sec-h">1. การเก็บรวบรวมข้อมูลส่วนบุคคล</div>
-      <p>โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน</p>
+      <div id="drawerSec1Title" class="pdpa-drawer-sec-h">1. การเก็บรวบรวมข้อมูลส่วนบุคคล</div>
+      <p id="drawerSec1Content">โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน</p>
     </div>
 
     <div class="pdpa-drawer-section">
-      <div class="pdpa-drawer-sec-h">2. ฐานทางกฎหมายในการประมวลผล</div>
-      <p>การประมวลผลข้อมูลส่วนบุคคลและข้อมูลสุขภาพดำเนินการภายใต้ฐานทางกฎหมายที่เกี่ยวข้อง ดังนี้:</p>
-      <ul>
-        <li><b>ฐานความยินยอม (Consent):</b> สำหรับข้อมูลสุขภาพ ข้อมูลพฤติกรรม และข้อมูลอ่อนไหวที่ท่านให้ผ่านแบบประเมิน</li>
-        <li><b>ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest):</b> การวินิจฉัยทางการแพทย์และการดูแลรักษาพยาบาล</li>
-        <li><b>ฐานการปฏิบัติตามกฎหมาย (Legal Obligation):</b> พระราชบัญญัติสถานพยาบาลและกฎหมายที่เกี่ยวข้อง</li>
-      </ul>
+      <div id="drawerSec2Title" class="pdpa-drawer-sec-h">2. ฐานทางกฎหมายในการประมวลผล</div>
+      <div id="drawerSec2Content">
+        <p>การประมวลผลข้อมูลส่วนบุคคลและข้อมูลสุขภาพดำเนินการภายใต้ฐานทางกฎหมายที่เกี่ยวข้อง ดังนี้:</p>
+        <ul>
+          <li><b>ฐานความยินยอม (Consent):</b> สำหรับข้อมูลสุขภาพ ข้อมูลพฤติกรรม และข้อมูลอ่อนไหวที่ท่านให้ผ่านแบบประเมิน</li>
+          <li><b>ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest):</b> การวินิจฉัยทางการแพทย์และการดูแลรักษาพยาบาล</li>
+          <li><b>ฐานการปฏิบัติตามกฎหมาย (Legal Obligation):</b> พระราชบัญญัติสถานพยาบาลและกฎหมายที่เกี่ยวข้อง</li>
+        </ul>
+      </div>
     </div>
 
     <div class="pdpa-drawer-section">
-      <div class="pdpa-drawer-sec-h">3. ระยะเวลาการเก็บรักษา</div>
-      <p>ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามมาตรฐานความมั่นคงปลอดภัยสารสนเทศและตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด โดยจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น</p>
+      <div id="drawerSec3Title" class="pdpa-drawer-sec-h">3. ระยะเวลาการเก็บรักษา</div>
+      <p id="drawerSec3Content">ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามมาตรฐานความมั่นคงปลอดภัยสารสนเทศและตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด โดยจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น</p>
     </div>
 
     <div class="pdpa-drawer-section">
-      <div class="pdpa-drawer-sec-h">4. สิทธิของเจ้าของข้อมูลส่วนบุคคล</div>
-      <p>ท่านในฐานะเจ้าของข้อมูลส่วนบุคคลมีสิทธิตามกฎหมาย ดังนี้:</p>
-      <ul>
-        <li>สิทธิในการขอเข้าถึงและขอรับสำเนาข้อมูลส่วนบุคคล</li>
-        <li>สิทธิในการขอแก้ไขข้อมูลให้ถูกต้อง เป็นปัจจุบัน และสมบูรณ์</li>
-        <li>สิทธิในการคัดค้าน ขอให้ระงับ หรือขอลบ/ทำลายข้อมูล</li>
-        <li>สิทธิในการถอนความยินยอมได้ตลอดเวลา (ไม่กระทบการประมวลผลที่ได้กระทำไปแล้วโดยชอบ)</li>
-      </ul>
-      <p style="margin-top:8px;">
-        ท่านสามารถติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) ได้ที่อีเมล: <a href="mailto:PDPA@ram2-hosp.com" style="color:#0047cc;font-weight:600;">PDPA@ram2-hosp.com</a>
-      </p>
+      <div id="drawerSec4Title" class="pdpa-drawer-sec-h">4. สิทธิของเจ้าของข้อมูลส่วนบุคคล</div>
+      <div id="drawerSec4Content">
+        <p>ท่านในฐานะเจ้าของข้อมูลส่วนบุคคลมีสิทธิตามกฎหมาย ดังนี้:</p>
+        <ul>
+          <li>สิทธิในการขอเข้าถึงและขอรับสำเนาข้อมูลส่วนบุคคล</li>
+          <li>สิทธิในการขอแก้ไขข้อมูลให้ถูกต้อง เป็นปัจจุบัน และสมบูรณ์</li>
+          <li>สิทธิในการคัดค้าน ขอให้ระงับ หรือขอลบ/ทำลายข้อมูล</li>
+          <li>สิทธิในการถอนความยินยอมได้ตลอดเวลา (ไม่กระทบการประมวลผลที่ได้กระทำไปแล้วโดยชอบ)</li>
+        </ul>
+        <p style="margin-top:8px;">
+          ท่านสามารถติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) ได้ที่อีเมล: <a id="drawerDpoLink" href="mailto:PDPA@ram2-hosp.com" style="color:#0047cc;font-weight:600;">PDPA@ram2-hosp.com</a>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -994,6 +1264,200 @@
     <button type="button" class="pdpa-drawer-ack-btn" onclick="closePrivacyDrawer()">
       เข้าใจและปิดหน้าต่างนี้
     </button>
+  </div>
+</div>
+
+<!-- หน้าต่างแก้ไขข้อความ PDPA เฉพาะ (In-suite Quick PDPA Editor Dialog) -->
+<div id="pdpaEditorModal" class="pdpa-editor-overlay" onclick="handlePdpaEditorOverlayClick(event)">
+  <div class="pdpa-editor-modal" role="dialog" aria-labelledby="pdpaEditorTitle" onclick="event.stopPropagation()">
+    <div class="pdpa-editor-head">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">⚙️</span>
+        <div>
+          <div id="pdpaEditorTitle" style="font-weight:700;font-size:15px;line-height:1.3;">แก้ไขและปรับแต่งข้อความ PDPA</div>
+          <div style="font-size:11.5px;color:#dbeafe;">Child & Adolescent Screening Suite (บันทึกลงฐานข้อมูลทันที)</div>
+        </div>
+      </div>
+      <button type="button" class="pdpa-h-close" onclick="closePdpaSuiteEditor()" aria-label="ปิด">✕</button>
+    </div>
+
+    <div class="pdpa-editor-tabs">
+      <button type="button" class="pdpa-editor-tab active" data-tab="tabGeneral" onclick="switchPdpaEditorTab('tabGeneral')">🏢 ส่วนหัว & ฟอร์ม</button>
+      <button type="button" class="pdpa-editor-tab" data-tab="tabSections" onclick="switchPdpaEditorTab('tabSections')">📄 เนื้อหา 4 ข้อหลัก</button>
+      <button type="button" class="pdpa-editor-tab" data-tab="tabCheckboxes" onclick="switchPdpaEditorTab('tabCheckboxes')">☑️ กล่องยินยอม & ปุ่ม</button>
+      <button type="button" class="pdpa-editor-tab" data-tab="tabDrawer" onclick="switchPdpaEditorTab('tabDrawer')">📜 ประกาศฉบับเต็ม</button>
+    </div>
+
+    <div class="pdpa-editor-body">
+      <!-- Tab 1: General & Header -->
+      <div id="tabGeneral" class="pdpa-editor-pane active">
+        <div class="pdpa-editor-grid">
+          <div class="pdpa-field">
+            <label>หัวข้อแถบบนสุด (Header Title)</label>
+            <input type="text" id="editHeaderTitle" placeholder="RAM2 Preliminary Assessment">
+          </div>
+          <div class="pdpa-field">
+            <label>คำอธิบายแถบบนสุด (Header Subtitle)</label>
+            <input type="text" id="editHeaderSubtitle" placeholder="โรงพยาบาลรามคำแหง 2">
+          </div>
+        </div>
+        <div class="pdpa-field">
+          <label>หัวข้อเอกสารยินยอม (Main Document Title)</label>
+          <input type="text" id="editMainTitle" placeholder="หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล">
+        </div>
+        <div class="pdpa-field">
+          <label>คำโปรยย่อย (Sub-headline)</label>
+          <input type="text" id="editMainSubtitle" placeholder="โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน">
+        </div>
+        <div class="pdpa-editor-box">
+          <div style="font-weight:700;color:#0369a1;font-size:13px;">🏥 ข้อมูลแบบคัดกรองที่แสดงในการ์ด</div>
+          <div class="pdpa-field">
+            <label>ชื่อชุดแบบคัดกรอง</label>
+            <input type="text" id="editFormName" placeholder="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น">
+          </div>
+          <div class="pdpa-field">
+            <label>คำอธิบาย/รายชื่อเครื่องมือ</label>
+            <input type="text" id="editFormDesc" placeholder="Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: 4 Sections -->
+      <div id="tabSections" class="pdpa-editor-pane">
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อข้อที่ 1</label>
+            <input type="text" id="editSec1Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาข้อที่ 1 (วัตถุประสงค์)</label>
+            <textarea id="editSec1Content" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อข้อที่ 2</label>
+            <input type="text" id="editSec2Title">
+          </div>
+          <div class="pdpa-field">
+            <label>รายการประเภทข้อมูล (แยก 1 บรรทัดต่อ 1 ข้อความ)</label>
+            <textarea id="editSec2Items" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อข้อที่ 3</label>
+            <input type="text" id="editSec3Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาข้อที่ 3 (ข้อจำกัดของบริการ)</label>
+            <textarea id="editSec3Content" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อข้อที่ 4</label>
+            <input type="text" id="editSec4Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาข้อที่ 4 (การรักษาความลับและสิทธิ)</label>
+            <textarea id="editSec4Content" rows="3"></textarea>
+          </div>
+          <div class="pdpa-field">
+            <label>อีเมล DPO</label>
+            <input type="text" id="editDpoEmail" placeholder="PDPA@ram2-hosp.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Checkboxes & Buttons -->
+      <div id="tabCheckboxes" class="pdpa-editor-pane">
+        <div class="pdpa-field">
+          <label>ข้อความช่องติ๊กที่ 1 (การรับทราบและเข้าใจ)</label>
+          <textarea id="editCheckbox1" rows="2"></textarea>
+        </div>
+        <div class="pdpa-field">
+          <label>ข้อความช่องติ๊กที่ 2 (การยินยอมข้อมูลสุขภาพ - Sensitive Data)</label>
+          <textarea id="editCheckbox2" rows="2"></textarea>
+        </div>
+        <div class="pdpa-editor-grid">
+          <div class="pdpa-field">
+            <label>ข้อความบนปุ่มยืนยัน</label>
+            <input type="text" id="editSubmitBtnText">
+          </div>
+          <div class="pdpa-field">
+            <label>คำแนะนำด้านล่าง (Footer Note)</label>
+            <input type="text" id="editFooterNote">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Full Privacy Policy Drawer -->
+      <div id="tabDrawer" class="pdpa-editor-pane">
+        <div class="pdpa-editor-grid">
+          <div class="pdpa-field">
+            <label>หัวเรื่องประกาศฉบับเต็ม</label>
+            <input type="text" id="editDrawerTitle">
+          </div>
+          <div class="pdpa-field">
+            <label>คำบรรยายย่อย</label>
+            <input type="text" id="editDrawerSubtitle">
+          </div>
+        </div>
+        <div class="pdpa-field">
+          <label>บทนำ (Introduction)</label>
+          <textarea id="editDrawerIntro" rows="2"></textarea>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อที่ 1</label>
+            <input type="text" id="editDrawerSec1Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาที่ 1</label>
+            <textarea id="editDrawerSec1Content" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อที่ 2</label>
+            <input type="text" id="editDrawerSec2Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาที่ 2</label>
+            <textarea id="editDrawerSec2Content" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อที่ 3</label>
+            <input type="text" id="editDrawerSec3Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาที่ 3</label>
+            <textarea id="editDrawerSec3Content" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="pdpa-editor-box">
+          <div class="pdpa-field">
+            <label>หัวข้อที่ 4</label>
+            <input type="text" id="editDrawerSec4Title">
+          </div>
+          <div class="pdpa-field">
+            <label>เนื้อหาที่ 4</label>
+            <textarea id="editDrawerSec4Content" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pdpa-editor-foot">
+      <button type="button" class="pdpa-btn pdpa-btn-danger" onclick="resetPdpaSuiteEditorToDefault()">↺ คืนค่าเริ่มต้น</button>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="pdpa-btn pdpa-btn-secondary" onclick="closePdpaSuiteEditor()">ยกเลิก</button>
+        <button type="button" class="pdpa-btn pdpa-btn-primary" id="savePdpaEditorBtn" onclick="savePdpaSuiteEditor()">💾 บันทึกและนำไปใช้</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1005,7 +1469,10 @@
       </svg>
       <span>กลับระบบหลัก</span>
     </a>
-    <div class="top-nav-tag">โรงพยาบาลรามคำแหง 2 • FormLocal</div>
+    <div class="top-nav-tag">
+      <img src="/Ram2Logo.png" alt="โรงพยาบาลรามคำแหง 2" class="top-nav-logo">
+      <span>โรงพยาบาลรามคำแหง 2 • FormLocal</span>
+    </div>
   </div>
 
   <section class="hero noprint">
@@ -1043,10 +1510,19 @@
   <div class="card" id="patientCard" onclick="handleLockedFormClick(event)">
     <h2><span class="ic">📝</span>ข้อมูลผู้ป่วย</h2>
     <div class="grid2">
-      <div><label class="f" for="pName">ชื่อ–นามสกุล</label><input type="text" id="pName" autocomplete="off"></div>
-      <div><label class="f" for="pHn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="pHn" autocomplete="off"></div>
-      <div><label class="f" for="pDob">วันเกิด</label><input type="date" id="pDob"></div>
+      <div>
+        <label class="f" for="pName">
+          ชื่อ–นามสกุล <span style="color:#e11d48;font-size:12px;font-weight:700;">* (จำเป็นต้องระบุก่อนตอบคำถาม)</span>
+        </label>
+        <input type="text" id="pName" autocomplete="off" required placeholder="ระบุชื่อ–นามสกุลของเด็ก">
+      </div>
+      <div><label class="f" for="pHn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="pHn" autocomplete="off" placeholder="เช่น 66-xxxxx"></div>
+      <div><label class="f" for="pDob">วันเกิด</label><input type="date" id="pDob" required></div>
       <div><label class="f" for="pDate">วันที่ทำแบบสอบถาม</label><input type="date" id="pDate"></div>
+    </div>
+    <div id="pNameNotice" class="pname-empty-notice">
+      <span style="font-size:16px;">⚠️</span>
+      <span>กรุณากรอกชื่อ–นามสกุลของเด็ก เพื่อปลดล็อกและเริ่มทำแบบคัดกรอง</span>
     </div>
     <div class="agebox" id="ageBox"></div>
     <p class="hint" style="margin:8px 0 0">ข้อมูลนี้จะถูกกรอกให้อัตโนมัติในทุกแบบสอบถาม</p>
@@ -1055,6 +1531,15 @@
   <div class="card" id="protoCard" onclick="handleLockedFormClick(event)">
     <h2><span class="ic">🧭</span>แบบคัดกรองตามช่วงอายุ</h2>
     <div class="hint">เลือกแบบสอบถามที่ต้องการทำ — แบบที่ตรงกับอายุผู้ป่วยจะถูกเน้นไว้</div>
+    
+    <div id="protoNameLockBanner" class="proto-name-lock-banner" onclick="handleFocusPName(event)" title="คลิกเพื่อเลื่อนขึ้นไปกรอกชื่อเด็ก">
+      <span style="font-size:20px;">🔒</span>
+      <div>
+        <div style="font-weight:700;">แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุชื่อเด็ก</div>
+        <div style="font-size:12px;opacity:0.9;font-weight:400;margin-top:2px;">กรุณากรอกชื่อ–นามสกุลของเด็กด้านบนก่อน จึงจะสามารถเปิดทำแบบคัดกรองและกรอกคำตอบได้</div>
+      </div>
+    </div>
+
     <div class="proto" id="proto"></div>
     <div class="legend">
       <span><i style="background:var(--accent)"></i>ตรงช่วงอายุ</span>
@@ -1528,15 +2013,40 @@ $("newBtn").onclick = ()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -1544,11 +2054,15 @@ $("newBtn").onclick = ()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -1995,15 +2509,40 @@ $("newBtn").onclick=()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -2011,11 +2550,15 @@ $("newBtn").onclick=()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -2652,15 +3195,40 @@ $("newBtn").onclick=()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -2668,11 +3236,15 @@ $("newBtn").onclick=()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -3138,15 +3710,40 @@ $("newBtn").onclick=()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -3154,11 +3751,15 @@ $("newBtn").onclick=()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -3531,15 +4132,40 @@ $("newBtn").onclick=()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -3547,11 +4173,15 @@ $("newBtn").onclick=()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -3994,15 +4624,40 @@ $("newBtn").onclick=()=>{
     if(e.target.closest("#newBtn")) setTimeout(()=>apply(last),0);
     const pick=e.target.closest(".pick button"); if(pick) setTimeout(()=>apply(last),0);
   });
+  function getAnswers(){
+    const rows = [...document.querySelectorAll("#allAns tr")];
+    return rows.map(tr => {
+      const tds = [...tr.querySelectorAll("td")];
+      if(!tds.length) return null;
+      if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+        return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+      }
+      const no = tds[0]?.textContent.trim() || "";
+      const question = tds[1]?.textContent.trim() || "";
+      const answer = tds[2]?.textContent.trim() || "";
+      const score = tds[3]?.textContent.trim() || "";
+      const isFlag = !!(
+        tr.querySelector(".flag") ||
+        tr.querySelector(".flagp") ||
+        tds[2]?.classList.contains("flag") ||
+        tds[2]?.classList.contains("flagp") ||
+        tds[3]?.classList.contains("flag") ||
+        tds[3]?.classList.contains("flagp")
+      );
+      return { no, question, answer, score, isFlag };
+    }).filter(Boolean);
+  }
   function extract(){
     const s=txt("vScore"), tag=txt("vTag"), title=txt("vTitle");
+    let base = {};
     switch(TOOL){
-      case "mchat": return {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high")};
-      case "pddsq": return {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert")};
+      case "mchat": base = {text:`${s}/20 คะแนน – ความเสี่ยง${tag.replace("ความเสี่ยง","")}`, alert:g("verdict").classList.contains("high"), score:s, tag:tag}; break;
+      case "pddsq": base = {text:`${s}/40 คะแนน – ${tag==="HIGH ALERT"?"เสี่ยงต่อ PDDs":"ไม่ถึงเกณฑ์"}`, alert:shown("alert"), score:s, tag:tag}; break;
       case "sdq": {
         const probs=[...document.querySelectorAll("#subTbl tr")].filter(r=>/มีปัญหา|เสี่ยง/.test(r.querySelector(".tag")?.textContent||""))
           .map(r=>r.cells[0].firstChild.textContent.replace(/\s*\(.*$/,"").replace("ด้าน","")+" ("+r.querySelector(".tag").textContent+")");
-        return {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: คะแนนรวม ${s}/40 – ${tag}${probs.length?" • "+probs.join(", "):""}`, alert:shown("alert"), score:s, tag:tag};
+        break;
       }
       case "snap": {
         const parts=[...document.querySelectorAll(".dom")].map(d=>{
@@ -4010,11 +4665,15 @@ $("newBtn").onclick=()=>{
           const sc=d.querySelector(".score").firstChild.textContent.trim();
           return `${n} ${sc}${d.classList.contains("high")?" (ผ่านเกณฑ์)":""}`;
         });
-        return {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        base = {text:`ผู้ตอบ${txt("formChip")}: ${parts.join(", ")}`, alert:shown("alert")};
+        break;
       }
-      case "gad7": return {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert")};
-      case "phqa": return {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS")};
+      case "gad7": base = {text:`${s}/21 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alert"), score:s, title:title}; break;
+      case "phqa": base = {text:`${s}/27 คะแนน – ${title.replace(/^.*?:\s*/,"")}`, alert:shown("alertR"), sui:shown("alertS"), score:s, title:title}; break;
     }
+    const answers = getAnswers();
+    const flaggedAnswers = answers.filter(a => !a.isGroup && a.isFlag);
+    return Object.assign(base, { answers, flaggedAnswers });
   }
   const res=g("result");
   let wasShown=false;
@@ -4070,7 +4729,84 @@ function calcAge(){
   render();
 }
 ["pDob","pDate"].forEach(id=>$(id).addEventListener("change",calcAge));
-["pName","pHn"].forEach(id=>$(id).addEventListener("input",renderSummary));
+$("pName").addEventListener("input", () => {
+  updateNameLockUI();
+  renderSummary();
+  broadcastPrefill();
+});
+$("pHn").addEventListener("input", renderSummary);
+
+function isChildNameFilled(){
+  const val = $("pName") ? $("pName").value.trim() : "";
+  return val.length > 0;
+}
+
+let nameShakeTimer = null;
+function promptChildNameRequired(){
+  const pName = $("pName");
+  if(!pName) return;
+  const pCard = $("patientCard");
+  if(pCard){
+    pCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    pName.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  setTimeout(function(){
+    try { pName.focus(); } catch(err){}
+  }, 200);
+  pName.classList.remove("pname-shake");
+  void pName.offsetWidth;
+  pName.classList.add("pname-shake");
+  clearTimeout(nameShakeTimer);
+  nameShakeTimer = setTimeout(function(){
+    pName.classList.remove("pname-shake");
+  }, 1000);
+  showNameLockToast("กรุณากรอกชื่อ–นามสกุลของเด็กก่อนเริ่มทำแบบคัดกรอง");
+}
+
+function handleFocusPName(e){
+  if(e && typeof e.preventDefault === "function") e.preventDefault();
+  promptChildNameRequired();
+}
+
+function updateNameLockUI(){
+  const filled = isChildNameFilled();
+  const notice = $("pNameNotice");
+  const banner = $("protoNameLockBanner");
+  const proto = $("proto");
+  if(notice) notice.style.display = filled ? "none" : "flex";
+  if(banner) banner.style.display = filled ? "none" : "flex";
+  if(proto) proto.classList.toggle("needs-name", !filled);
+}
+
+function showNameLockToast(msg){
+  let toast = $("pdpaToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "pdpaToast";
+    toast.className = "pdpa-toast";
+    document.body.appendChild(toast);
+  }
+  toast.style.background = "#991b1b";
+  toast.style.borderColor = "#ef4444";
+  toast.innerHTML = `<span>⚠️</span><span>${msg || "กรุณากรอกชื่อ–นามสกุลของเด็กก่อนเริ่มทำแบบคัดกรอง"}</span>`;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){
+    if(toast){
+      toast.classList.remove("show");
+      toast.style.background = "";
+      toast.style.borderColor = "";
+    }
+  }, 3500);
+}
+
+function broadcastPrefill(){
+  const msg = prefillMsg();
+  Object.values(frames).forEach(f => {
+    try { f.contentWindow.postMessage(msg, "*"); } catch(e){}
+  });
+}
 
 function render(){
   $("proto").innerHTML=TOOLS.map(t=>{
@@ -4089,6 +4825,7 @@ function render(){
       <div class="go">›</div></button>`;
   }).join("");
   document.querySelectorAll(".item").forEach(el=>el.onclick=()=>openTool(el.dataset.id));
+  updateNameLockUI();
   renderSummary();
 }
 
@@ -4108,8 +4845,44 @@ function renderSummary(){
   $("sumInfo").textContent=bits.join("  •  ");
   $("sumList").innerHTML=ids.map(t=>{
     const r=results[t.id];
-    return `<div class="sumrow"><div>${MASCOTS[t.id].svg}</div><div><div class="n">${t.short} <span class="hint">${t.name}</span></div>
-      <div class="r ${r.sui?"sui":r.alert?"alert":""}">${esc(r.text)}${r.alert?" — HIGH ALERT":""}${r.sui?" — เสี่ยงทำร้ายตนเอง":""}</div></div></div>`;
+    let ansHtml = "";
+    if(Array.isArray(r.answers) && r.answers.length > 0){
+      const nonGroup = r.answers.filter(a => !a.isGroup);
+      const flagged = r.flaggedAnswers || r.answers.filter(a => !a.isGroup && a.isFlag);
+      ansHtml = `
+        <details style="margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;font-size:12.5px;">
+          <summary style="cursor:pointer;font-weight:600;color:#0284c7;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+            <span>📋 ดูคำตอบที่เลือก (${nonGroup.length} ข้อ)</span>
+            ${flagged.length ? `<span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:99px;font-size:11.5px;font-weight:700;">⚠️ ข้อเสี่ยง ${flagged.length} ข้อ</span>` : `<span style="color:#16a34a;font-size:11.5px;font-weight:600;">✓ ตอบครบ</span>`}
+          </summary>
+          <div style="margin-top:8px;overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:6px;overflow:hidden;">
+              <thead>
+                <tr style="background:#e2e8f0;color:#334155;text-align:left;">
+                  <th style="padding:5px 8px;width:35px;text-align:center;">ข้อ</th>
+                  <th style="padding:5px 8px;">คำถาม/พฤติกรรม</th>
+                  <th style="padding:5px 8px;width:110px;text-align:center;">คำตอบ</th>
+                  <th style="padding:5px 8px;width:45px;text-align:center;">คะแนน</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${r.answers.map(a => {
+                  if(a.isGroup) return `<tr style="background:#cbd5e1;"><td colspan="4" style="padding:5px 8px;font-weight:700;color:#0f172a;">${esc(a.groupTitle)}</td></tr>`;
+                  return `<tr style="border-bottom:1px solid #f1f5f9;background:${a.isFlag ? '#fff1f2' : '#ffffff'};">
+                    <td style="padding:5px 8px;text-align:center;font-weight:${a.isFlag?'700':'400'};color:${a.isFlag?'#e11d48':'inherit'}">${esc(a.no)}</td>
+                    <td style="padding:5px 8px;color:#1e293b;">${esc(a.question)}</td>
+                    <td style="padding:5px 8px;text-align:center;font-weight:${a.isFlag?'700':'500'};color:${a.isFlag?'#e11d48':'#0369a1'}">${esc(a.answer)}</td>
+                    <td style="padding:5px 8px;text-align:center;color:${a.isFlag?'#e11d48':'inherit'}">${esc(a.score || "-")}</td>
+                  </tr>`;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      `;
+    }
+    return `<div class="sumrow"><div>${MASCOTS[t.id].svg}</div><div style="flex:1"><div class="n">${t.short} <span class="hint">${t.name}</span></div>
+      <div class="r ${r.sui?"sui":r.alert?"alert":""}">${esc(r.text)}${r.alert?" — HIGH ALERT":""}${r.sui?" — เสี่ยงทำร้ายตนเอง":""}</div>${ansHtml}</div></div>`;
   }).join("");
 }
 
@@ -4382,6 +5155,11 @@ function showUnlockToast(){
 
 document.addEventListener("keydown", function(e){
   if(e.key === "Escape"){
+    const editor = $("pdpaEditorModal");
+    if(editor && editor.style.display === "flex"){
+      closePdpaSuiteEditor();
+      return;
+    }
     const drawer = $("pdpaDrawer");
     if(drawer && drawer.classList.contains("show")){
       closePrivacyDrawer();
@@ -4510,6 +5288,10 @@ function openTool(id){
     }
     return;
   }
+  if(!isChildNameFilled()){
+    promptChildNameRequired();
+    return;
+  }
   const t=TOOLS.find(x=>x.id===id);
   $("toolTitle").textContent=`${t.short} — ${t.name}`;
   $("toolMascot").innerHTML=MASCOTS[id].svg;
@@ -4517,7 +5299,149 @@ function openTool(id){
   if(!frames[id]){
     const f=document.createElement("iframe");
     f.title=t.short;
-    f.srcdoc=document.getElementById("tpl-"+id).textContent.replace(/<\\\/script/g,"</scr"+"ipt");
+    let docHtml = document.getElementById("tpl-"+id).textContent.replace(/<\\\/script/g,"</scr"+"ipt");
+    const lockSnippet = `<style>
+      .tool-cname-lock {
+        background: #fff1f2;
+        border: 1.5px solid #e11d48;
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #9f1239;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(225,29,72,0.1);
+      }
+      .cname-shake {
+        animation: cnameShake 0.45s ease-in-out !important;
+        border-color: #e11d48 !important;
+        background-color: #fff1f2 !important;
+        box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.22) !important;
+      }
+      @keyframes cnameShake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-6px); }
+        40%, 80% { transform: translateX(6px); }
+      }
+    </style>
+    <script>
+    (function(){
+      function updateCnameLock(){
+        const cn = document.getElementById("cname");
+        const qBox = document.getElementById("questions");
+        const subBtn = document.querySelector("button[type=submit]");
+        const isFilled = !!(cn && cn.value.trim().length > 0);
+        
+        let notice = document.getElementById("toolCnameLockNotice");
+        if(!notice && qBox){
+          notice = document.createElement("div");
+          notice.id = "toolCnameLockNotice";
+          notice.className = "tool-cname-lock";
+          notice.innerHTML = "<span style='font-size:18px'>🔒</span><div><div style='font-weight:700;'>ยังไม่สามารถตอบคำถามได้</div><div style='font-size:12px;font-weight:400;margin-top:2px;'>กรุณาระบุชื่อ–นามสกุลของเด็กด้านบนให้ครบถ้วนก่อน จึงจะสามารถเลือกคำตอบได้ (คลิกที่นี่เพื่อไปกรอกชื่อ)</div></div>";
+          notice.onclick = function(){
+            if(cn){
+              cn.scrollIntoView({behavior:'smooth', block:'center'});
+              cn.focus();
+              cn.classList.add("cname-shake");
+              setTimeout(function(){ cn.classList.remove("cname-shake"); }, 800);
+            }
+          };
+          qBox.parentNode.insertBefore(notice, qBox);
+        }
+        
+        if(notice) notice.style.display = isFilled ? "none" : "flex";
+        if(qBox){
+          qBox.style.pointerEvents = isFilled ? "auto" : "none";
+          qBox.style.opacity = isFilled ? "1" : "0.5";
+          qBox.style.userSelect = isFilled ? "auto" : "none";
+          qBox.style.transition = "opacity 0.2s ease";
+        }
+        if(subBtn){
+          subBtn.disabled = !isFilled;
+          subBtn.style.opacity = isFilled ? "1" : "0.5";
+          subBtn.style.cursor = isFilled ? "pointer" : "not-allowed";
+        }
+      }
+
+      const cnameEl = document.getElementById("cname");
+      if(cnameEl){
+        cnameEl.addEventListener("input", function(){
+          updateCnameLock();
+          try { parent.postMessage({ type: "cname_sync", cname: cnameEl.value }, "*"); } catch(e){}
+        });
+      }
+
+      document.addEventListener("click", function(e){
+        const qClosest = e.target.closest("#questions");
+        if(qClosest && (!cnameEl || !cnameEl.value.trim())){
+          e.preventDefault();
+          e.stopPropagation();
+          if(cnameEl){
+            cnameEl.scrollIntoView({behavior:'smooth', block:'center'});
+            cnameEl.focus();
+            cnameEl.classList.remove("cname-shake");
+            void cnameEl.offsetWidth;
+            cnameEl.classList.add("cname-shake");
+            setTimeout(function(){ cnameEl.classList.remove("cname-shake"); }, 800);
+          }
+        }
+      }, true);
+
+      // Observe result display in iframe as additional safeguard
+      const resEl = document.getElementById("result");
+      if(resEl){
+        new MutationObserver(function(){
+          if(resEl.style.display === "block"){
+            setTimeout(function(){
+              const rows = [...document.querySelectorAll("#allAns tr")];
+              const ansList = rows.map(function(tr){
+                const tds = [...tr.querySelectorAll("td")];
+                if(!tds.length) return null;
+                if(tds.length === 1 || tds[0].classList.contains("grp") || tds[0].getAttribute("colspan")){
+                  return { isGroup: true, groupTitle: tds[0].textContent.trim() };
+                }
+                return {
+                  no: tds[0]?.textContent.trim() || "",
+                  question: tds[1]?.textContent.trim() || "",
+                  answer: tds[2]?.textContent.trim() || "",
+                  score: tds[3]?.textContent.trim() || "",
+                  isFlag: !!(tr.querySelector(".flag") || tr.querySelector(".flagp") || tds[2]?.classList.contains("flag") || tds[2]?.classList.contains("flagp") || tds[3]?.classList.contains("flag") || tds[3]?.classList.contains("flagp"))
+                };
+              }).filter(Boolean);
+              if(ansList.length > 0){
+                try {
+                  parent.postMessage({
+                    type: "result_answers",
+                    answers: ansList,
+                    flaggedAnswers: ansList.filter(function(a){ return !a.isGroup && a.isFlag; })
+                  }, "*");
+                } catch(e){}
+              }
+            }, 60);
+          }
+        }).observe(resEl, { attributes: true, attributeFilter: ["style"] });
+      }
+
+      window.addEventListener("message", function(e){
+        if(e.data && e.data.type === "prefill"){
+          setTimeout(updateCnameLock, 40);
+        }
+      });
+
+      setTimeout(updateCnameLock, 60);
+    })();
+    ` + "<" + `/script>`;
+
+    if(docHtml.includes("</body>")){
+      docHtml = docHtml.replace("</body>", lockSnippet + "</body>");
+    } else {
+      docHtml += lockSnippet;
+    }
+    f.srcdoc = docHtml;
     f.addEventListener("load",()=>f.contentWindow.postMessage(prefillMsg(),"*"));
     $("frames").appendChild(f); frames[id]=f;
   } else frames[id].contentWindow.postMessage(prefillMsg(),"*");
@@ -4544,13 +5468,364 @@ if(mainBackBtn){
   });
 }
 
+const DEFAULT_SUITE_PDPA_CONFIG = {
+  headerTitle: 'RAM2 Preliminary Assessment',
+  headerSubtitle: 'โรงพยาบาลรามคำแหง 2',
+  mainTitle: 'หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล',
+  mainSubtitle: 'โปรดอ่านรายละเอียดก่อนเริ่มทำแบบประเมิน',
+  formName: 'ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น',
+  formDesc: 'Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)',
+  sec1Title: '1. วัตถุประสงค์ในการเก็บข้อมูล',
+  sec1Content: 'โรงพยาบาลรามคำแหง 2 ประสงค์จะเก็บรวบรวมและประมวลผลข้อมูลที่ท่านให้ผ่านแบบสอบถาม เพื่อคำนวณและแสดงผลการประเมินเบื้องต้นตามเกณฑ์ของแบบประเมินที่ท่านเลือก รวมถึงให้ข้อมูลประกอบการพิจารณาว่าควรได้รับการประเมินเพิ่มเติมหรือไม่',
+  sec2Title: '2. ประเภทข้อมูลที่อาจเก็บรวบรวม',
+  sec2Items: [
+    'ข้อมูลทั่วไปที่จำเป็น เช่น อายุหรือช่วงอายุ',
+    'คำตอบเกี่ยวกับอาการ พฤติกรรม พัฒนาการ หรือสุขภาพ ตามหัวข้อที่เลือก',
+    'ผลการประเมินที่คำนวณจากคำตอบ',
+    'ข้อมูลติดต่อ เฉพาะกรณีที่มีการร้องขอและแจ้งวัตถุประสงค์ไว้โดยชัดเจน',
+    'ข้อมูลทางเทคนิคที่จำเป็นต่อการรักษาความปลอดภัยของระบบ ตามที่ระบุในประกาศความเป็นส่วนตัว',
+  ],
+  sec3Title: '3. ข้อจำกัดของบริการ',
+  sec3Content: 'ระบบนี้เป็นเพียงเครื่องมือคัดกรองและประเมินเบื้องต้น ไม่ใช่การวินิจฉัยโรคหรือการรักษาพยาบาล ผลการประเมินไม่สามารถยืนยันว่าท่านมีหรือไม่มีโรคได้',
+  sec4Title: '4. การรักษาความลับและสิทธิของท่าน',
+  sec4Content: 'โรงพยาบาลจะจำกัดการเข้าถึงข้อมูลตามสิทธิและหน้าที่ที่เกี่ยวข้อง และดำเนินการตามประกาศความเป็นส่วนตัว',
+  dpoEmail: 'PDPA@ram2-hosp.com',
+  checkbox1: 'ข้าพเจ้าได้อ่านและรับทราบประกาศความเป็นส่วนตัว รวมถึงวัตถุประสงค์และข้อจำกัดของแบบประเมินแล้ว',
+  checkbox2: 'ข้าพเจ้ายินยอมโดยชัดแจ้งให้โรงพยาบาลรามคำแหง 2 เก็บรวบรวม ใช้ และประมวลผลข้อมูลสุขภาพที่ข้าพเจ้าให้ผ่านแบบประเมินนี้ เพื่อวัตถุประสงค์ที่ระบุไว้ข้างต้นและในประกาศความเป็นส่วนตัว',
+  submitBtnText: 'ยินยอมและเริ่มทำแบบประเมิน',
+  footerNote: 'หากยังไม่ประสงค์ให้ความยินยอม สามารถย่อหน้าต่างนี้ไว้ก่อนได้ (แบบฟอร์มจะถูกล็อกจนกว่าจะยินยอม)',
+  drawerTitle: 'ประกาศความเป็นส่วนตัวฉบับเต็ม',
+  drawerSubtitle: 'โรงพยาบาลรามคำแหง 2 • พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562',
+  drawerIntro: 'โรงพยาบาลรามคำแหง 2 ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและข้อมูลสุขภาพของท่าน ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)',
+  drawerSec1Title: '1. การเก็บรวบรวมข้อมูลส่วนบุคคล',
+  drawerSec1Content: 'โรงพยาบาลจะเก็บรวบรวมข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ที่ได้แจ้งไว้ ทั้งข้อมูลทั่วไปและข้อมูลสุขภาพ (Sensitive Data) โดยได้รับความยินยอมโดยชัดแจ้งจากท่าน',
+  drawerSec2Title: '2. ฐานทางกฎหมายในการประมวลผล',
+  drawerSec2Content: 'การประมวลผลข้อมูลส่วนบุคคลและข้อมูลสุขภาพดำเนินการภายใต้ฐานทางกฎหมายที่เกี่ยวข้อง: ฐานความยินยอม (Consent) สำหรับข้อมูลสุขภาพและพฤติกรรม, ฐานประโยชน์สำคัญต่อชีวิต (Vital Interest) สำหรับการวินิจฉัยและการรักษาพยาบาล, และฐานการปฏิบัติตามกฎหมาย (Legal Obligation)',
+  drawerSec3Title: '3. ระยะเวลาการเก็บรักษา',
+  drawerSec3Content: 'ข้อมูลจะถูกจัดเก็บรักษาไว้อย่างปลอดภัยตามมาตรฐานความมั่นคงปลอดภัยสารสนเทศและตามระยะเวลาที่กฎหมายและมาตรฐานทางการแพทย์กำหนด โดยจะทำลายหรือทำให้เป็นข้อมูลนิรนามเมื่อสิ้นสุดความจำเป็น',
+  drawerSec4Title: '4. สิทธิของเจ้าของข้อมูลส่วนบุคคล',
+  drawerSec4Content: 'ท่านมีสิทธิในการขอเข้าถึง ขอรับสำเนา ขอแก้ไข คัดค้าน ระงับ หรือขอลบ/ทำลายข้อมูล รวมถึงถอนความยินยอมได้ตลอดเวลา โดยติดต่อเจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO)',
+};
+
+let currentPdpaSuiteConfig = Object.assign({}, DEFAULT_SUITE_PDPA_CONFIG);
+
+function applyPdpaSuiteConfig(cfg){
+  if(!cfg) return;
+  currentPdpaSuiteConfig = Object.assign({}, DEFAULT_SUITE_PDPA_CONFIG, cfg);
+
+  if($("pdpaHeaderTitle")) $("pdpaHeaderTitle").textContent = currentPdpaSuiteConfig.headerTitle || DEFAULT_SUITE_PDPA_CONFIG.headerTitle;
+  if($("pdpaHeaderSubtitle")) $("pdpaHeaderSubtitle").textContent = currentPdpaSuiteConfig.headerSubtitle || DEFAULT_SUITE_PDPA_CONFIG.headerSubtitle;
+  if($("pdpaMainTitle")) $("pdpaMainTitle").textContent = currentPdpaSuiteConfig.mainTitle || DEFAULT_SUITE_PDPA_CONFIG.mainTitle;
+  if($("pdpaMainSubtitle")) $("pdpaMainSubtitle").textContent = currentPdpaSuiteConfig.mainSubtitle || DEFAULT_SUITE_PDPA_CONFIG.mainSubtitle;
+  if($("pdpaFormName")) $("pdpaFormName").textContent = currentPdpaSuiteConfig.formName || DEFAULT_SUITE_PDPA_CONFIG.formName;
+  if($("pdpaFormDesc")) $("pdpaFormDesc").textContent = currentPdpaSuiteConfig.formDesc || DEFAULT_SUITE_PDPA_CONFIG.formDesc;
+  if($("pdpaSec1Title")) $("pdpaSec1Title").textContent = currentPdpaSuiteConfig.sec1Title || DEFAULT_SUITE_PDPA_CONFIG.sec1Title;
+  if($("pdpaSec1Content")) $("pdpaSec1Content").textContent = currentPdpaSuiteConfig.sec1Content || DEFAULT_SUITE_PDPA_CONFIG.sec1Content;
+  if($("pdpaSec2Title")) $("pdpaSec2Title").textContent = currentPdpaSuiteConfig.sec2Title || DEFAULT_SUITE_PDPA_CONFIG.sec2Title;
+
+  const ul = $("pdpaSec2List");
+  if(ul){
+    const items = Array.isArray(currentPdpaSuiteConfig.sec2Items) && currentPdpaSuiteConfig.sec2Items.length > 0
+      ? currentPdpaSuiteConfig.sec2Items
+      : DEFAULT_SUITE_PDPA_CONFIG.sec2Items;
+    ul.innerHTML = items.map(it => `<li>${it}</li>`).join("");
+  }
+
+  if($("pdpaSec3Title")) $("pdpaSec3Title").textContent = currentPdpaSuiteConfig.sec3Title || DEFAULT_SUITE_PDPA_CONFIG.sec3Title;
+  if($("pdpaSec3Content")) $("pdpaSec3Content").textContent = currentPdpaSuiteConfig.sec3Content || DEFAULT_SUITE_PDPA_CONFIG.sec3Content;
+  if($("pdpaSec4Title")) $("pdpaSec4Title").textContent = currentPdpaSuiteConfig.sec4Title || DEFAULT_SUITE_PDPA_CONFIG.sec4Title;
+  if($("pdpaSec4Content")){
+    const email = currentPdpaSuiteConfig.dpoEmail || DEFAULT_SUITE_PDPA_CONFIG.dpoEmail;
+    $("pdpaSec4Content").innerHTML = (currentPdpaSuiteConfig.sec4Content || DEFAULT_SUITE_PDPA_CONFIG.sec4Content) +
+      ` ท่านสามารถติดต่อ DPO ผ่าน <a id="pdpaDpoLink" href="mailto:${email}" style="color:#0047cc;font-weight:600;">${email}</a> เพื่อสอบถามหรือใช้สิทธิตามกฎหมาย รวมถึงถอนความยินยอมในกรณีที่การประมวลผลอาศัยความยินยอมเป็นฐานกฎหมาย`;
+  }
+
+  if($("pdpaCbLabel1")) $("pdpaCbLabel1").textContent = currentPdpaSuiteConfig.checkbox1 || DEFAULT_SUITE_PDPA_CONFIG.checkbox1;
+  if($("pdpaCbLabel2")) $("pdpaCbLabel2").textContent = currentPdpaSuiteConfig.checkbox2 || DEFAULT_SUITE_PDPA_CONFIG.checkbox2;
+  if($("pdpaAcceptBtn")) $("pdpaAcceptBtn").textContent = currentPdpaSuiteConfig.submitBtnText || DEFAULT_SUITE_PDPA_CONFIG.submitBtnText;
+
+  // Drawer
+  if($("drawerTitle")) $("drawerTitle").textContent = currentPdpaSuiteConfig.drawerTitle || DEFAULT_SUITE_PDPA_CONFIG.drawerTitle;
+  if($("drawerSubtitle")) $("drawerSubtitle").textContent = currentPdpaSuiteConfig.drawerSubtitle || DEFAULT_SUITE_PDPA_CONFIG.drawerSubtitle;
+  if($("drawerIntro")) $("drawerIntro").textContent = currentPdpaSuiteConfig.drawerIntro || DEFAULT_SUITE_PDPA_CONFIG.drawerIntro;
+  if($("drawerSec1Title")) $("drawerSec1Title").textContent = currentPdpaSuiteConfig.drawerSec1Title || DEFAULT_SUITE_PDPA_CONFIG.drawerSec1Title;
+  if($("drawerSec1Content")) $("drawerSec1Content").textContent = currentPdpaSuiteConfig.drawerSec1Content || DEFAULT_SUITE_PDPA_CONFIG.drawerSec1Content;
+  if($("drawerSec2Title")) $("drawerSec2Title").textContent = currentPdpaSuiteConfig.drawerSec2Title || DEFAULT_SUITE_PDPA_CONFIG.drawerSec2Title;
+  if($("drawerSec3Title")) $("drawerSec3Title").textContent = currentPdpaSuiteConfig.drawerSec3Title || DEFAULT_SUITE_PDPA_CONFIG.drawerSec3Title;
+  if($("drawerSec3Content")) $("drawerSec3Content").textContent = currentPdpaSuiteConfig.drawerSec3Content || DEFAULT_SUITE_PDPA_CONFIG.drawerSec3Content;
+  if($("drawerSec4Title")) $("drawerSec4Title").textContent = currentPdpaSuiteConfig.drawerSec4Title || DEFAULT_SUITE_PDPA_CONFIG.drawerSec4Title;
+  if($("drawerDpoLink")){
+    const email = currentPdpaSuiteConfig.dpoEmail || DEFAULT_SUITE_PDPA_CONFIG.dpoEmail;
+    $("drawerDpoLink").textContent = email;
+    $("drawerDpoLink").href = "mailto:" + email;
+  }
+}
+
+async function loadPdpaSuiteConfig(){
+  try {
+    const res = await fetch("/api/screening/pdpa-config");
+    if(res.ok){
+      const json = await res.json();
+      if(json.success && json.data){
+        currentPdpaSuiteConfig = Object.assign({}, DEFAULT_SUITE_PDPA_CONFIG, json.data);
+        applyPdpaSuiteConfig(currentPdpaSuiteConfig);
+        try { localStorage.setItem("suite_pdpa_custom_config", JSON.stringify(currentPdpaSuiteConfig)); } catch(_) {}
+        return;
+      }
+    }
+  } catch(e){
+    console.warn("Could not fetch PDPA config from server, checking local storage:", e);
+  }
+  try {
+    const local = localStorage.getItem("suite_pdpa_custom_config");
+    if(local){
+      currentPdpaSuiteConfig = Object.assign({}, DEFAULT_SUITE_PDPA_CONFIG, JSON.parse(local));
+      applyPdpaSuiteConfig(currentPdpaSuiteConfig);
+    }
+  } catch(_) {}
+}
+
+let isUserAdmin = false;
+function checkAdminAccess(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get("role") === "ADMIN" || params.get("admin") === "1"){
+    isUserAdmin = true;
+  }
+  const editBtn = $("pdpaEditHeaderBtn");
+  if(editBtn){
+    editBtn.style.display = isUserAdmin ? "inline-flex" : "none";
+  }
+}
+
+function openPdpaSuiteEditor(e){
+  if(e){
+    try { if(typeof e.preventDefault === "function") e.preventDefault(); } catch(_) {}
+    try { if(typeof e.stopPropagation === "function") e.stopPropagation(); } catch(_) {}
+  }
+  if(!isUserAdmin) return;
+  const modal = $("pdpaEditorModal");
+  if(!modal) return;
+
+  const cfg = currentPdpaSuiteConfig || DEFAULT_SUITE_PDPA_CONFIG;
+  $("editHeaderTitle").value = cfg.headerTitle || "";
+  $("editHeaderSubtitle").value = cfg.headerSubtitle || "";
+  $("editMainTitle").value = cfg.mainTitle || "";
+  $("editMainSubtitle").value = cfg.mainSubtitle || "";
+  $("editFormName").value = cfg.formName || "";
+  $("editFormDesc").value = cfg.formDesc || "";
+
+  $("editSec1Title").value = cfg.sec1Title || "";
+  $("editSec1Content").value = cfg.sec1Content || "";
+  $("editSec2Title").value = cfg.sec2Title || "";
+  $("editSec2Items").value = Array.isArray(cfg.sec2Items) ? cfg.sec2Items.join("\n") : "";
+  $("editSec3Title").value = cfg.sec3Title || "";
+  $("editSec3Content").value = cfg.sec3Content || "";
+  $("editSec4Title").value = cfg.sec4Title || "";
+  $("editSec4Content").value = cfg.sec4Content || "";
+  $("editDpoEmail").value = cfg.dpoEmail || "";
+
+  $("editCheckbox1").value = cfg.checkbox1 || "";
+  $("editCheckbox2").value = cfg.checkbox2 || "";
+  $("editSubmitBtnText").value = cfg.submitBtnText || "";
+  $("editFooterNote").value = cfg.footerNote || "";
+
+  $("editDrawerTitle").value = cfg.drawerTitle || "";
+  $("editDrawerSubtitle").value = cfg.drawerSubtitle || "";
+  $("editDrawerIntro").value = cfg.drawerIntro || "";
+  $("editDrawerSec1Title").value = cfg.drawerSec1Title || "";
+  $("editDrawerSec1Content").value = cfg.drawerSec1Content || "";
+  $("editDrawerSec2Title").value = cfg.drawerSec2Title || "";
+  $("editDrawerSec2Content").value = cfg.drawerSec2Content || "";
+  $("editDrawerSec3Title").value = cfg.drawerSec3Title || "";
+  $("editDrawerSec3Content").value = cfg.drawerSec3Content || "";
+  $("editDrawerSec4Title").value = cfg.drawerSec4Title || "";
+  $("editDrawerSec4Content").value = cfg.drawerSec4Content || "";
+
+  modal.style.display = "flex";
+}
+
+function closePdpaSuiteEditor(){
+  const modal = $("pdpaEditorModal");
+  if(modal) modal.style.display = "none";
+}
+
+function handlePdpaEditorOverlayClick(e){
+  if(e.target === $("pdpaEditorModal")){
+    closePdpaSuiteEditor();
+  }
+}
+
+function switchPdpaEditorTab(tabKey){
+  document.querySelectorAll(".pdpa-editor-tab").forEach(tab => {
+    tab.classList.toggle("active", tab.getAttribute("data-tab") === tabKey);
+  });
+  document.querySelectorAll(".pdpa-editor-pane").forEach(pane => {
+    pane.classList.toggle("active", pane.id === tabKey);
+  });
+}
+
+async function savePdpaSuiteEditor(){
+  const saveBtn = $("savePdpaEditorBtn");
+  if(saveBtn){
+    saveBtn.disabled = true;
+    saveBtn.textContent = "กำลังบันทึก...";
+  }
+
+  const items = ($("editSec2Items").value || "")
+    .split("\n")
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  const newConfig = {
+    headerTitle: $("editHeaderTitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.headerTitle,
+    headerSubtitle: $("editHeaderSubtitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.headerSubtitle,
+    mainTitle: $("editMainTitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.mainTitle,
+    mainSubtitle: $("editMainSubtitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.mainSubtitle,
+    formName: $("editFormName").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.formName,
+    formDesc: $("editFormDesc").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.formDesc,
+
+    sec1Title: $("editSec1Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec1Title,
+    sec1Content: $("editSec1Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec1Content,
+    sec2Title: $("editSec2Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec2Title,
+    sec2Items: items.length > 0 ? items : DEFAULT_SUITE_PDPA_CONFIG.sec2Items,
+    sec3Title: $("editSec3Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec3Title,
+    sec3Content: $("editSec3Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec3Content,
+    sec4Title: $("editSec4Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec4Title,
+    sec4Content: $("editSec4Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.sec4Content,
+    dpoEmail: $("editDpoEmail").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.dpoEmail,
+
+    checkbox1: $("editCheckbox1").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.checkbox1,
+    checkbox2: $("editCheckbox2").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.checkbox2,
+    submitBtnText: $("editSubmitBtnText").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.submitBtnText,
+    footerNote: $("editFooterNote").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.footerNote,
+
+    drawerTitle: $("editDrawerTitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerTitle,
+    drawerSubtitle: $("editDrawerSubtitle").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSubtitle,
+    drawerIntro: $("editDrawerIntro").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerIntro,
+    drawerSec1Title: $("editDrawerSec1Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec1Title,
+    drawerSec1Content: $("editDrawerSec1Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec1Content,
+    drawerSec2Title: $("editDrawerSec2Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec2Title,
+    drawerSec2Content: $("editDrawerSec2Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec2Content,
+    drawerSec3Title: $("editDrawerSec3Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec3Title,
+    drawerSec3Content: $("editDrawerSec3Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec3Content,
+    drawerSec4Title: $("editDrawerSec4Title").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec4Title,
+    drawerSec4Content: $("editDrawerSec4Content").value.trim() || DEFAULT_SUITE_PDPA_CONFIG.drawerSec4Content,
+  };
+
+  try {
+    localStorage.setItem("suite_pdpa_custom_config", JSON.stringify(newConfig));
+  } catch(_) {}
+
+  try {
+    const res = await fetch("/api/screening/pdpa-config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newConfig),
+    });
+    if(res.ok){
+      const json = await res.json();
+      if(json.success && json.data){
+        applyPdpaSuiteConfig(json.data);
+      } else {
+        applyPdpaSuiteConfig(newConfig);
+      }
+    } else {
+      applyPdpaSuiteConfig(newConfig);
+    }
+  } catch(e){
+    console.warn("Could not save to backend API, saved locally:", e);
+    applyPdpaSuiteConfig(newConfig);
+  }
+
+  if(isEmbedded){
+    window.parent.postMessage({ type: "pdpa_config_updated_from_child", config: newConfig }, "*");
+  }
+
+  if(saveBtn){
+    saveBtn.disabled = false;
+    saveBtn.textContent = "💾 บันทึกและนำไปใช้";
+  }
+
+  closePdpaSuiteEditor();
+
+  let toast = $("pdpaToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "pdpaToast";
+    toast.className = "pdpa-toast";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = "<span>⚙️</span><span>บันทึกการตั้งค่าข้อความ PDPA เรียบร้อยแล้ว</span>";
+  toast.classList.add("show");
+  setTimeout(() => { if(toast) toast.classList.remove("show"); }, 3000);
+}
+
+function resetPdpaSuiteEditorToDefault(){
+  if(confirm("ต้องการคืนค่าข้อความทั้งหมดกลับเป็นค่าเริ่มต้นมาตรฐานของโรงพยาบาลหรือไม่?")){
+    const cfg = DEFAULT_SUITE_PDPA_CONFIG;
+    $("editHeaderTitle").value = cfg.headerTitle;
+    $("editHeaderSubtitle").value = cfg.headerSubtitle;
+    $("editMainTitle").value = cfg.mainTitle;
+    $("editMainSubtitle").value = cfg.mainSubtitle;
+    $("editFormName").value = cfg.formName;
+    $("editFormDesc").value = cfg.formDesc;
+
+    $("editSec1Title").value = cfg.sec1Title;
+    $("editSec1Content").value = cfg.sec1Content;
+    $("editSec2Title").value = cfg.sec2Title;
+    $("editSec2Items").value = cfg.sec2Items.join("\n");
+    $("editSec3Title").value = cfg.sec3Title;
+    $("editSec3Content").value = cfg.sec3Content;
+    $("editSec4Title").value = cfg.sec4Title;
+    $("editSec4Content").value = cfg.sec4Content;
+    $("editDpoEmail").value = cfg.dpoEmail;
+
+    $("editCheckbox1").value = cfg.checkbox1;
+    $("editCheckbox2").value = cfg.checkbox2;
+    $("editSubmitBtnText").value = cfg.submitBtnText;
+    $("editFooterNote").value = cfg.footerNote;
+
+    $("editDrawerTitle").value = cfg.drawerTitle;
+    $("editDrawerSubtitle").value = cfg.drawerSubtitle;
+    $("editDrawerIntro").value = cfg.drawerIntro;
+    $("editDrawerSec1Title").value = cfg.drawerSec1Title;
+    $("editDrawerSec1Content").value = cfg.drawerSec1Content;
+    $("editDrawerSec2Title").value = cfg.drawerSec2Title;
+    $("editDrawerSec2Content").value = cfg.drawerSec2Content;
+    $("editDrawerSec3Title").value = cfg.drawerSec3Title;
+    $("editDrawerSec3Content").value = cfg.drawerSec3Content;
+    $("editDrawerSec4Title").value = cfg.drawerSec4Title;
+    $("editDrawerSec4Content").value = cfg.drawerSec4Content;
+  }
+}
+
 window.addEventListener("message",e=>{
   const d=e.data; if(!d) return;
+  if(d.type === "set_user_role"){
+    isUserAdmin = (d.role === "ADMIN");
+    const editBtn = $("pdpaEditHeaderBtn");
+    if(editBtn){
+      editBtn.style.display = isUserAdmin ? "inline-flex" : "none";
+    }
+    return;
+  }
+  if(d.type === "cname_sync" && typeof d.cname === "string"){
+    if($("pName") && $("pName").value !== d.cname){
+      $("pName").value = d.cname;
+      updateNameLockUI();
+      renderSummary();
+    }
+    return;
+  }
   if(d.type === "pdpa_accepted"){
     pdpaConsentAccepted = true;
     unlockForm();
     closeStandalonePdpaModal();
     showUnlockToast();
+    return;
+  }
+  if(d.type === "pdpa_config_updated" && d.config){
+    applyPdpaSuiteConfig(d.config);
     return;
   }
   if(d.type === "child_screening_save_success"){
@@ -4568,9 +5843,31 @@ window.addEventListener("message",e=>{
     }
     return;
   }
+  if(d.type === "result_answers" && Array.isArray(d.answers)){
+    const id = Object.keys(frames).find(k => frames[k].contentWindow === e.source);
+    if(id){
+      if(!results[id]) results[id] = {};
+      results[id].answers = d.answers;
+      results[id].flaggedAnswers = d.flaggedAnswers || d.answers.filter(a => !a.isGroup && a.isFlag);
+      renderSummary();
+      render();
+    }
+    return;
+  }
   if(d.type!=="result") return;
   const id=Object.keys(frames).find(k=>frames[k].contentWindow===e.source); if(!id) return;
-  results[id]={text:d.text, alert:!!d.alert, sui:!!d.sui};
+  const prevAnswers = results[id]?.answers || [];
+  const prevFlagged = results[id]?.flaggedAnswers || [];
+  results[id] = Object.assign(results[id] || {}, {
+    text: d.text,
+    alert: !!d.alert,
+    sui: !!d.sui,
+    score: d.score,
+    tag: d.tag,
+    title: d.title,
+    answers: (Array.isArray(d.answers) && d.answers.length > 0) ? d.answers : prevAnswers,
+    flaggedAnswers: (Array.isArray(d.flaggedAnswers) && d.flaggedAnswers.length > 0) ? d.flaggedAnswers : prevFlagged
+  }, d);
   render();
 });
 
@@ -4580,7 +5877,9 @@ $("resetAll").onclick=()=>{
   for(const k in frames) delete frames[k];
   for(const k in results) delete results[k];
   $("pName").value=""; $("pHn").value=""; $("pDob").value=""; $("pDate").value=todayStr;
-  calcAge(); window.scrollTo({top:0});
+  calcAge();
+  updateNameLockUI();
+  window.scrollTo({top:0});
 
   pdpaConsentAccepted = false;
   lockForm();
@@ -4596,6 +5895,9 @@ $("resetAll").onclick=()=>{
 };
 
 calcAge();
+updateNameLockUI();
+checkAdminAccess();
+loadPdpaSuiteConfig();
 if(!pdpaConsentAccepted){
   lockForm();
 }

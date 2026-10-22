@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Form, Input, Button, Typography, Alert, Space, theme } from 'antd';
-import { UserOutlined, LockOutlined, FormOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../../store/authStore';
 import { LoginPayload } from '../../../types/auth';
@@ -56,28 +56,22 @@ export const LoginPage: React.FC = () => {
         <Space direction="vertical" size="large" style={{ width: '100%', textAlign: 'center' }}>
           {/* Logo / Brand Header */}
           <div>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
-                backgroundColor: token.colorPrimary,
-                color: '#fff',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 28,
-                marginBottom: 16,
-                boxShadow: `0 4px 12px ${token.colorPrimary}40`,
-              }}
-            >
-              <FormOutlined />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <img
+                src="/Ram2Logo.png"
+                alt="โรงพยาบาลรามคำแหง 2"
+                style={{
+                  height: 54,
+                  maxWidth: '85%',
+                  objectFit: 'contain',
+                }}
+              />
             </div>
-            <Title level={3} style={{ margin: 0, fontWeight: 600 }}>
+            <Title level={3} style={{ margin: 0, fontWeight: 700, color: '#0047cc' }}>
               FormLocal
             </Title>
-            <Text type="secondary" style={{ fontSize: 14 }}>
-              ระบบสร้างและจัดการแบบฟอร์มภายในองค์กร
+            <Text type="secondary" style={{ fontSize: 13.5 }}>
+              ระบบสร้างและจัดการแบบฟอร์ม • โรงพยาบาลรามคำแหง 2
             </Text>
           </div>
 

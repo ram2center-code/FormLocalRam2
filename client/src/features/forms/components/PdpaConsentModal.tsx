@@ -87,39 +87,55 @@ export const PdpaConsentModal: React.FC<PdpaConsentModalProps> = ({
         <div
           style={{
             background: '#0047cc',
-            padding: '16px 24px',
+            padding: '14px 22px',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             gap: 12,
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
           }}
         >
-          <div
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: 'rgba(255, 255, 255, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 18,
+                color: '#ffffff',
+                flexShrink: 0,
+              }}
+            >
+              <SafetyCertificateOutlined />
+            </div>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3, letterSpacing: '0.2px' }}>
+                {displayHeaderTitle}
+              </div>
+              <div style={{ fontSize: 12.5, color: '#e0e7ff', marginTop: 2 }}>
+                {displayHeaderSubtitle}
+              </div>
+            </div>
+          </div>
+          <img
+            src="/Ram2Logo.png"
+            alt="RAM2"
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 18,
-              color: '#ffffff',
+              height: 28,
+              maxWidth: 90,
+              objectFit: 'contain',
+              background: '#ffffff',
+              padding: '2px 6px',
+              borderRadius: 6,
               flexShrink: 0,
             }}
-          >
-            <SafetyCertificateOutlined />
-          </div>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3, letterSpacing: '0.2px' }}>
-              {displayHeaderTitle}
-            </div>
-            <div style={{ fontSize: 12.5, color: '#e0e7ff', marginTop: 2 }}>
-              {displayHeaderSubtitle}
-            </div>
-          </div>
+          />
         </div>
 
         {/* 2. Scrollable Body Content */}

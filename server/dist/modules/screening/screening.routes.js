@@ -10,6 +10,9 @@ router.post('/', optionalAuthenticate, validate({ body: createScreeningRecordSch
 router.get('/', authenticate, ScreeningController.getAll);
 // สถิติภาพรวม
 router.get('/stats', authenticate, ScreeningController.getStats);
+// ข้อความและนโยบาย PDPA สำหรับ Suite คัดกรอง
+router.get('/pdpa-config', ScreeningController.getPdpaConfig);
+router.put('/pdpa-config', optionalAuthenticate, ScreeningController.updatePdpaConfig);
 // รายละเอียดผลการคัดกรองรายบุคคล
 router.get('/:id', authenticate, ScreeningController.getById);
 // ลบประวัติ

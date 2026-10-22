@@ -12,9 +12,7 @@ import {
   Table,
   Tag,
   Input,
-  Modal,
   Popconfirm,
-  Descriptions,
   DatePicker,
   Select,
 } from 'antd';
@@ -35,6 +33,8 @@ import {
   WarningOutlined,
   HistoryOutlined,
   SafetyCertificateOutlined,
+  SettingOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -44,8 +44,13 @@ import {
   getScreeningRecordsApi,
   deleteScreeningRecordApi,
   ChildScreeningRecordItem,
+  PdpaSuiteConfig,
+  getPdpaConfigApi,
 } from '../api/screeningApi';
 import { PdpaConsentModal } from '../../forms/components/PdpaConsentModal';
+import { PdpaSuiteConfigModal } from '../components/PdpaSuiteConfigModal';
+import { ChildScreeningResultViewModal } from '../components/ChildScreeningResultViewModal';
+import { useAuthStore } from '../../../store/authStore';
 
 const { Title, Text, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
@@ -72,6 +77,9 @@ const formatThaiDate = (val?: string | null, includeTime = false) => {
 };
 
 export const ChildScreeningPage: React.FC = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'ADMIN';
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -96,6 +104,15 @@ export const ChildScreeningPage: React.FC = () => {
   // ในหน้าจัดการหลักของเจ้าหน้าที่ จะไม่แสดง Modal อัตโนมัติ (จะแสดงเมื่อกดเปิดแท็บใหม่)
   const [pdpaConsentAccepted, setPdpaConsentAccepted] = useState(true);
   const [pdpaModalOpen, setPdpaModalOpen] = useState(false);
+  const [pdpaConfigModalOpen, setPdpaConfigModalOpen] = useState(false);
+  const [pdpaConfig, setPdpaConfig] = useState<PdpaSuiteConfig | null>(null);
+
+  // โหลดการตั้งค่า PDPA ล่าสุด
+  useEffect(() => {
+    getPdpaConfigApi()
+      .then((cfg) => setPdpaConfig(cfg))
+      .catch((e) => console.warn('Could not load PDPA config for page:', e));
+  }, []);
 
   // ข้อมูลผลการประเมินปัจจุบันที่ส่งมาจาก iframe
   const [currentScreening, setCurrentScreening] = useState<{
@@ -118,7 +135,9 @@ export const ChildScreeningPage: React.FC = () => {
   const [toolFilter, setToolFilter] = useState<string>('ALL');
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const [selectedRecord, setSelectedRecord] = useState<ChildScreeningRecordItem | null>(null);
+  const [selectedToolForModal, setSelectedToolForModal] = useState<string | undefined>(undefined);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [modalViewMode, setModalViewMode] = useState<'summary' | 'detailed'>('summary');
 
   // ดึงรายการประวัติการคัดกรองจากฐานข้อมูล
   const { data: records = [], isLoading: isRecordsLoading, refetch: refetchRecords } = useQuery({
@@ -272,8 +291,14 @@ export const ChildScreeningPage: React.FC = () => {
       } else if (d.type === 'pdpa_accepted_from_child') {
         setPdpaConsentAccepted(true);
         setPdpaModalOpen(false);
+      } else if (d.type === 'pdpa_config_updated_from_child' && d.config) {
+        setPdpaConfig(d.config);
       } else if (d.type === 'child_screening_request_save') {
         setCurrentScreening(d);
+        if (!d.patientName?.trim()) {
+          message.error('กรุณาระบุชื่อ–นามสกุลของเด็กก่อนบันทึกข้อมูล');
+          return;
+        }
         if (!d.screenings || Object.keys(d.screenings).length === 0) {
           message.warning('ยังไม่มีผลการคัดกรองอย่างน้อย 1 ชุด กรุณาทำแบบประเมินก่อนบันทึก');
           return;
@@ -299,6 +324,10 @@ export const ChildScreeningPage: React.FC = () => {
 
   // สั่งบันทึกจากปุ่มใน Tool Bar ฝั่ง React
   const handleSaveFromToolbar = () => {
+    if (!currentScreening?.patientName?.trim()) {
+      message.error('กรุณาระบุชื่อ–นามสกุลของเด็กก่อนบันทึกข้อมูล');
+      return;
+    }
     if (!currentScreening?.screenings || Object.keys(currentScreening.screenings).length === 0) {
       message.warning('ยังไม่มีผลการประเมินที่ทำเสร็จ กรุณาเลือกทำแบบคัดกรองอย่างน้อย 1 รายการ');
       return;
@@ -354,14 +383,19 @@ export const ChildScreeningPage: React.FC = () => {
       setCurrentScreening(null);
       setPdpaConsentAccepted(true);
       setPdpaModalOpen(false);
-      iframeRef.current.src = '/tools/child-screening-suite.html';
+      iframeRef.current.src = isAdmin
+        ? '/tools/child-screening-suite.html?role=ADMIN'
+        : '/tools/child-screening-suite.html';
       message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว');
     }
   };
 
   // เปิดแท็บใหม่
   const handleOpenNewTab = () => {
-    window.open('/tools/child-screening-suite.html', '_blank');
+    const url = isAdmin
+      ? '/tools/child-screening-suite.html?role=ADMIN'
+      : '/tools/child-screening-suite.html';
+    window.open(url, '_blank');
   };
 
   // จำนวนแบบคัดกรองที่ประเมินเสร็จแล้ว
@@ -440,11 +474,19 @@ export const ChildScreeningPage: React.FC = () => {
                     <div>
                       <div style={{ fontWeight: 700 }}>{conf.badge}</div>
                       <div>{item?.text || 'ไม่มีรายละเอียดสรุปผล'}</div>
+                      <div style={{ fontSize: 11, color: '#93c5fd', marginTop: 4 }}>
+                        👆 คลิกเพื่อเปิดดูหน้ารายงานผลฉบับสมบูรณ์
+                      </div>
                     </div>
                   }
                 >
                   <Tag
                     color={isSui ? 'purple' : isAlert ? 'red' : 'blue'}
+                    onClick={() => {
+                      setSelectedRecord(record);
+                      setSelectedToolForModal(k);
+                      setDetailModalOpen(true);
+                    }}
                     style={{
                       borderRadius: 8,
                       fontWeight: 600,
@@ -453,7 +495,8 @@ export const ChildScreeningPage: React.FC = () => {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
-                      cursor: 'help',
+                      cursor: 'pointer',
+                      transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                     }}
                   >
                     <span>{conf.badge}</span>
@@ -510,26 +553,50 @@ export const ChildScreeningPage: React.FC = () => {
     {
       title: 'จัดการ',
       key: 'actions',
-      width: 120,
+      width: 210,
       fixed: 'right' as const,
       render: (_: any, record: ChildScreeningRecordItem) => (
-        <Space size={4}>
-          <Tooltip title="ดูผลประเมินละเอียดและพิมพ์รายงาน">
+        <Space size={6}>
+          <Tooltip title="เปิดดูหน้ารายงานสรุปผลการคัดกรองทางการแพทย์">
             <Button
               type="primary"
               size="small"
               icon={<EyeOutlined />}
               onClick={() => {
                 setSelectedRecord(record);
+                setSelectedToolForModal(undefined);
+                setModalViewMode('summary');
                 setDetailModalOpen(true);
               }}
               style={{
                 borderRadius: 6,
                 background: '#2c7aa0',
                 borderColor: '#2c7aa0',
+                fontWeight: 600,
               }}
             >
               ดูผล
+            </Button>
+          </Tooltip>
+          <Tooltip title="เปิดดูข้อคำถามและคำตอบทีละข้ออย่างละเอียด">
+            <Button
+              size="small"
+              icon={<FileTextOutlined />}
+              onClick={() => {
+                setSelectedRecord(record);
+                setSelectedToolForModal(undefined);
+                setModalViewMode('detailed');
+                setDetailModalOpen(true);
+              }}
+              style={{
+                borderRadius: 6,
+                color: '#0284c7',
+                borderColor: '#bae6fd',
+                background: '#f0f9ff',
+                fontWeight: 600,
+              }}
+            >
+              คำตอบละเอียด
             </Button>
           </Tooltip>
           <Popconfirm
@@ -660,6 +727,23 @@ export const ChildScreeningPage: React.FC = () => {
                       </Button>
                     )}
                   </Tooltip>
+
+                  {isAdmin && (
+                    <Tooltip title="ปรับแต่งและแก้ไขข้อความ PDPA และนโยบายความเป็นส่วนตัวของแบบประเมินนี้ (เฉพาะ Admin)">
+                      <Button
+                        icon={<SettingOutlined />}
+                        onClick={() => setPdpaConfigModalOpen(true)}
+                        style={{
+                          borderColor: '#0284c7',
+                          color: '#0284c7',
+                          fontWeight: 600,
+                        }}
+                      >
+                        ตั้งค่า PDPA
+                      </Button>
+                    </Tooltip>
+                  )}
+
                   <Tooltip title="บันทึกผลการคัดกรองคนไข้รายนี้ลงฐานข้อมูล FormLocal">
                     <Button
                       type="primary"
@@ -943,7 +1027,7 @@ export const ChildScreeningPage: React.FC = () => {
           <Spin spinning={iframeLoading} tip="กำลังโหลดชุดคัดกรองเด็กและวัยรุ่น..." style={{ height: '100%' }}>
             <iframe
               ref={iframeRef}
-              src="/tools/child-screening-suite.html"
+              src={isAdmin ? '/tools/child-screening-suite.html?role=ADMIN' : '/tools/child-screening-suite.html'}
               title="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"
               style={{
                 width: '100%',
@@ -956,6 +1040,10 @@ export const ChildScreeningPage: React.FC = () => {
                 setIframeLoading(false);
                 if (iframeRef.current && iframeRef.current.contentWindow) {
                   iframeRef.current.contentWindow.postMessage({ type: 'pdpa_accepted' }, '*');
+                  iframeRef.current.contentWindow.postMessage(
+                    { type: 'set_user_role', role: user?.role || 'USER' },
+                    '*'
+                  );
                 }
               }}
             />
@@ -1188,175 +1276,43 @@ export const ChildScreeningPage: React.FC = () => {
         </div>
       )}
 
-      {/* Modal ดูรายละเอียดผลการคัดกรองย้อนหลัง */}
-      <Modal
-        title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 10,
-                background: '#e3effa',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#2c7aa0',
-                fontSize: 20,
-              }}
-            >
-              <SmileOutlined />
-            </div>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>
-                ผลการคัดกรอง: {selectedRecord?.patientName || 'ไม่ระบุชื่อ'}
-              </div>
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                HN: {selectedRecord?.hn || 'ไม่มี HN'} • วันที่ประเมิน:{' '}
-                {selectedRecord ? formatThaiDate(selectedRecord.assessmentDate, true) : '-'}
-              </Text>
-            </div>
-          </div>
-        }
+      {/* หน้ารายงานผลการคัดกรองฉบับสมบูรณ์ (High-Fidelity Full Screening Report View) */}
+      <ChildScreeningResultViewModal
         open={detailModalOpen}
-        onCancel={() => setDetailModalOpen(false)}
-        width={760}
-        footer={[
-          <Button key="close" onClick={() => setDetailModalOpen(false)}>
-            ปิดหน้าต่าง
-          </Button>,
-          <Button
-            key="print"
-            type="primary"
-            icon={<PrinterOutlined />}
-            onClick={() => window.print()}
-            style={{ background: '#2c7aa0', borderColor: '#2c7aa0' }}
-          >
-            พิมพ์รายงาน
-          </Button>,
-        ]}
-      >
-        {selectedRecord && (
-          <div style={{ padding: '10px 0' }}>
-            <Descriptions bordered size="small" column={{ xs: 1, sm: 2 }}>
-              <Descriptions.Item label="ชื่อผู้ป่วย">
-                <strong>{selectedRecord.patientName || '-'}</strong>
-              </Descriptions.Item>
-              <Descriptions.Item label="HN">
-                <Tag color="cyan">{selectedRecord.hn || '-'}</Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="วันเกิด">
-                {selectedRecord.birthDate ? formatThaiDate(selectedRecord.birthDate) : '-'}
-              </Descriptions.Item>
-              <Descriptions.Item label="อายุ ณ วันคัดกรอง">
-                {selectedRecord.ageYears !== null && selectedRecord.ageYears !== undefined
-                  ? `${selectedRecord.ageYears} ปี ${selectedRecord.ageMonths || 0} เดือน (${selectedRecord.totalAgeMonths || 0} เดือน)`
-                  : '-'}
-              </Descriptions.Item>
-              <Descriptions.Item label="วันที่ประเมิน">
-                {formatThaiDate(selectedRecord.assessmentDate, true)}
-              </Descriptions.Item>
-              <Descriptions.Item label="ผู้ตรวจประเมิน">
-                {selectedRecord.examinerName || '-'}
-              </Descriptions.Item>
-              {selectedRecord.notes && (
-                <Descriptions.Item label="หมายเหตุ" span={2}>
-                  {selectedRecord.notes}
-                </Descriptions.Item>
-              )}
-            </Descriptions>
-
-            <div style={{ marginTop: 20 }}>
-              <Text strong style={{ fontSize: 15, color: '#1e293b' }}>
-                📋 ผลการคัดกรองแต่ละแบบประเมิน:
-              </Text>
-              <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {selectedRecord.screenings &&
-                  Object.entries(selectedRecord.screenings).map(([key, item]: any) => {
-                    const conf = TOOL_CONFIG[key] || { name: key.toUpperCase(), color: '#2c7aa0', badge: key.toUpperCase() };
-                    return (
-                      <Card
-                        key={key}
-                        size="small"
-                        style={{
-                          borderRadius: 12,
-                          border: item?.sui
-                            ? '1.5px solid #d3adf7'
-                            : item?.alert
-                            ? '1.5px solid #ffa39e'
-                            : '1px solid #e2e8f0',
-                          background: item?.sui ? '#f9f0ff' : item?.alert ? '#fff1f0' : '#ffffff',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            gap: 8,
-                          }}
-                        >
-                          <div>
-                            <Tag color="blue" style={{ fontWeight: 700, borderRadius: 6 }}>
-                              {conf.badge}
-                            </Tag>
-                            <span style={{ fontWeight: 600, fontSize: 14 }}>{conf.name}</span>
-                            <div style={{ fontSize: 13, marginTop: 4, color: '#334155' }}>
-                              ผล: <strong>{item?.text}</strong>
-                            </div>
-                          </div>
-                          <Space>
-                            {item?.sui && (
-                              <Tag color="purple" style={{ borderRadius: 99, fontWeight: 700 }}>
-                                ⚠️ เสี่ยงทำร้ายตนเอง
-                              </Tag>
-                            )}
-                            {item?.alert && (
-                              <Tag color="red" style={{ borderRadius: 99, fontWeight: 700 }}>
-                                🚨 HIGH ALERT
-                              </Tag>
-                            )}
-                            {!item?.alert && !item?.sui && (
-                              <Tag color="green" style={{ borderRadius: 99, fontWeight: 600 }}>
-                                ✓ ปกติ / ความเสี่ยงต่ำ
-                              </Tag>
-                            )}
-                          </Space>
-                        </div>
-                      </Card>
-                    );
-                  })}
-              </div>
-            </div>
-
-            <div
-              style={{
-                marginTop: 24,
-                paddingTop: 16,
-                borderTop: '1px dashed #cbd5e1',
-                textAlign: 'right',
-                color: '#64748b',
-                fontSize: 13,
-              }}
-            >
-              ลงชื่อแพทย์/ผู้ประเมิน: .............................................................. วันที่: ....../....../..........
-            </div>
-          </div>
-        )}
-      </Modal>
+        onClose={() => setDetailModalOpen(false)}
+        record={selectedRecord}
+        initialToolId={selectedToolForModal}
+        initialViewMode={modalViewMode}
+      />
 
       {/* หน้าต่างขอความยินยอม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA Consent Modal) */}
       <PdpaConsentModal
         open={pdpaModalOpen}
         onAccept={handleAcceptPdpa}
         onDecline={handleDeclinePdpa}
-        headerTitle="RAM2 Preliminary Assessment"
-        headerSubtitle="โรงพยาบาลรามคำแหง 2"
-        pdpaTitle="หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล"
-        formTitle="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"
-        formDescription="Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)"
+        headerTitle={pdpaConfig?.headerTitle || "RAM2 Preliminary Assessment"}
+        headerSubtitle={pdpaConfig?.headerSubtitle || "โรงพยาบาลรามคำแหง 2"}
+        pdpaTitle={pdpaConfig?.mainTitle || "หนังสือให้ความยินยอมในการเก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล"}
+        formTitle={pdpaConfig?.formName || "ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"}
+        formDescription={pdpaConfig?.formDesc || "Child & Adolescent Screening Suite (M-CHAT-R, PDDSQ 4-18, SDQ, SNAP-IV, GAD-7, PHQ-A)"}
       />
+
+      {/* หน้าต่างแก้ไขและปรับแต่งข้อความ PDPA เฉพาะสำหรับ Suite คัดกรอง (เฉพาะ Admin) */}
+      {isAdmin && (
+        <PdpaSuiteConfigModal
+          open={pdpaConfigModalOpen}
+          onClose={() => setPdpaConfigModalOpen(false)}
+          onSaved={(newCfg) => {
+            setPdpaConfig(newCfg);
+            if (iframeRef.current && iframeRef.current.contentWindow) {
+              iframeRef.current.contentWindow.postMessage(
+                { type: 'pdpa_config_updated', config: newCfg },
+                '*'
+              );
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

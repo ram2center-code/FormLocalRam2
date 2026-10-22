@@ -92,4 +92,36 @@ export class ScreeningController {
             });
         }
     }
+    static async getPdpaConfig(_req, res) {
+        try {
+            const config = await ScreeningService.getPdpaConfig();
+            res.status(200).json({
+                success: true,
+                data: config,
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message || 'เกิดข้อผิดพลาดในการดึงการตั้งค่า PDPA',
+            });
+        }
+    }
+    static async updatePdpaConfig(req, res) {
+        try {
+            const user = req.user;
+            const config = await ScreeningService.updatePdpaConfig(req.body, user?.id);
+            res.status(200).json({
+                success: true,
+                message: 'บันทึกการตั้งค่าข้อความ PDPA เรียบร้อยแล้ว',
+                data: config,
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message || 'เกิดข้อผิดพลาดในการบันทึกการตั้งค่า PDPA',
+            });
+        }
+    }
 }

@@ -177,33 +177,50 @@ export const MainLayout: React.FC = () => {
           height: 64,
           display: 'flex',
           alignItems: 'center',
-          padding: '0 20px',
-          gap: 12,
+          padding: collapsed && !isTabletOrMobile ? '0 8px' : '0 16px',
+          gap: 10,
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
           cursor: 'pointer',
+          justifyContent: collapsed && !isTabletOrMobile ? 'center' : 'flex-start',
         }}
         onClick={() => navigate('/dashboard')}
+        title="FormLocal • โรงพยาบาลรามคำแหง 2"
       >
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 8,
-            backgroundColor: token.colorPrimary,
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 20,
-            flexShrink: 0,
-          }}
-        >
-          <FormOutlined />
-        </div>
-        {(!collapsed || isTabletOrMobile) && (
-          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            <div style={{ fontWeight: 700, fontSize: 17, lineHeight: 1.2 }}>FormLocal</div>
-            <div style={{ fontSize: 11, color: token.colorTextSecondary }}>Internal Builder</div>
+        {collapsed && !isTabletOrMobile ? (
+          <img
+            src="/Ram2Logo.png"
+            alt="RAM2"
+            style={{
+              height: 28,
+              maxWidth: 48,
+              objectFit: 'contain',
+            }}
+          />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden' }}>
+            <img
+              src="/Ram2Logo.png"
+              alt="โรงพยาบาลรามคำแหง 2"
+              style={{
+                height: 38,
+                maxWidth: 110,
+                objectFit: 'contain',
+                flexShrink: 0,
+              }}
+            />
+            <div
+              style={{
+                borderLeft: `1.5px solid ${token.colorBorderSecondary}`,
+                paddingLeft: 10,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: 16, lineHeight: 1.2, color: '#0047cc', letterSpacing: '0.2px' }}>
+                FormLocal
+              </div>
+              <div style={{ fontSize: 11, color: token.colorTextSecondary }}>รพ.รามคำแหง 2</div>
+            </div>
           </div>
         )}
       </div>
