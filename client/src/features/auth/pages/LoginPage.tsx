@@ -146,7 +146,7 @@ export const LoginPage: React.FC = () => {
           </Form>
 
           {/* Quick Account Hint for Dev/Testing */}
-          <div
+          {/* <div
             style={{
               padding: '12px 14px',
               backgroundColor: '#fafafa',
@@ -162,7 +162,7 @@ export const LoginPage: React.FC = () => {
             </Text>
             <div>• <b>Admin:</b> admin / ChangeMe123!</div>
             <div>• <b>User:</b> user1 / ChangeMe123!</div>
-          </div>
+          </div> */}
         </Space>
       </Card>
 
