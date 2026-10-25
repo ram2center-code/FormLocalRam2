@@ -15,6 +15,9 @@ import {
   Popconfirm,
   DatePicker,
   Select,
+  Popover,
+  Modal,
+  QRCode,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -23,7 +26,6 @@ import {
   ExportOutlined,
   ReloadOutlined,
   SmileOutlined,
-  SaveOutlined,
   SearchOutlined,
   EyeOutlined,
   DeleteOutlined,
@@ -35,6 +37,9 @@ import {
   SafetyCertificateOutlined,
   SettingOutlined,
   FileTextOutlined,
+  PhoneOutlined,
+  QrcodeOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -118,6 +123,7 @@ export const ChildScreeningPage: React.FC = () => {
   const [currentScreening, setCurrentScreening] = useState<{
     hn?: string;
     patientName?: string;
+    phoneNumber?: string;
     birthDate?: string;
     assessmentDate?: string;
     ageYears?: number | null;
@@ -128,6 +134,24 @@ export const ChildScreeningPage: React.FC = () => {
     hasSuicideRisk?: boolean;
     completedCount?: number;
   } | null>(null);
+  const [currentRecordId, setCurrentRecordId] = useState<string | null>(null);
+
+  // States สำหรับ QR Code Modal แชร์ให้คนไข้
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [qrCopied, setQrCopied] = useState(false);
+  const suiteProductionUrl = 'https://formlocalram2.vercel.app/tools/child-screening-suite.html';
+
+  const downloadSuiteQRCode = () => {
+    const canvas = document.getElementById('child-suite-qrcode')?.querySelector<HTMLCanvasElement>('canvas');
+    if (canvas) {
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'QRCode-ChildScreeningSuite-RAM2.png';
+      a.click();
+      message.success('ดาวน์โหลดรูปภาพ QR Code เรียบร้อยแล้ว');
+    }
+  };
 
   // States สำหรับแท็บประวัติ
   const [searchText, setSearchText] = useState('');
@@ -148,12 +172,13 @@ export const ChildScreeningPage: React.FC = () => {
   // กรองข้อมูลบน Table ตามเงื่อนไขการค้นหา
   const filteredRecords = useMemo(() => {
     return records.filter((r) => {
-      // ค้นหาตาม HN หรือชื่อ-นามสกุล
+      // ค้นหาตาม HN, ชื่อ-นามสกุล หรือ เบอร์โทรศัพท์
       if (searchText.trim()) {
         const q = searchText.trim().toLowerCase();
         const matchHn = (r.hn || '').toLowerCase().includes(q);
         const matchName = (r.patientName || '').toLowerCase().includes(q);
-        if (!matchHn && !matchName) return false;
+        const matchPhone = (r.phoneNumber || '').toLowerCase().includes(q);
+        if (!matchHn && !matchName && !matchPhone) return false;
       }
 
       // กรองสถานะความเสี่ยง
@@ -200,6 +225,7 @@ export const ChildScreeningPage: React.FC = () => {
       'วันที่ประเมิน',
       'HN',
       'ชื่อผู้ป่วย',
+      'เบอร์โทรศัพท์',
       'วันเกิด',
       'อายุ (ปี)',
       'อายุ (เดือน)',
@@ -220,6 +246,7 @@ export const ChildScreeningPage: React.FC = () => {
         `"${formatThaiDate(r.assessmentDate, true)}"`,
         `"${r.hn || ''}"`,
         `"${r.patientName || ''}"`,
+        `"${r.phoneNumber || ''}"`,
         `"${r.birthDate ? formatThaiDate(r.birthDate) : ''}"`,
         r.ageYears ?? '',
         r.ageMonths ?? '',
@@ -243,23 +270,26 @@ export const ChildScreeningPage: React.FC = () => {
     message.success(`ส่งออกข้อมูลเรียบร้อยแล้ว (${filteredRecords.length} รายการ)`);
   };
 
-  // Mutation: บันทึกลงฐานข้อมูล
+  // Mutation: บันทึกลงฐานข้อมูล (Auto-save)
   const saveMutation = useMutation({
     mutationFn: createScreeningRecordApi,
-    onSuccess: () => {
-      message.success('บันทึกผลการคัดกรองลงฐานข้อมูลเรียบร้อยแล้ว!');
+    onSuccess: (data: any) => {
+      const savedId = data?.id || data?.data?.id;
+      if (savedId) {
+        setCurrentRecordId(savedId);
+      }
       queryClient.invalidateQueries({ queryKey: ['child-screenings'] });
 
-      // ส่งข้อความยืนยันไปยัง iframe เพื่อเปลี่ยนสถานะปุ่ม
+      // ส่งข้อความยืนยันไปยัง iframe เพื่อให้สถานะ auto-save ตรงกัน
       if (iframeRef.current && iframeRef.current.contentWindow) {
         iframeRef.current.contentWindow.postMessage(
-          { type: 'child_screening_save_success' },
+          { type: 'child_screening_save_success', recordId: savedId },
           '*'
         );
       }
     },
     onError: (err: any) => {
-      message.error(err.message || 'บันทึกข้อมูลไม่สำเร็จ');
+      console.warn('Child screening auto-save error:', err);
     },
   });
 
@@ -284,6 +314,9 @@ export const ChildScreeningPage: React.FC = () => {
 
       if (d.type === 'child_screening_update') {
         setCurrentScreening(d);
+      } else if (d.type === 'child_screening_reset') {
+        setCurrentRecordId(null);
+        setCurrentScreening(null);
       } else if (d.type === 'navigate_back') {
         navigate('/department-forms');
       } else if (d.type === 'pdpa_request_modal') {
@@ -295,17 +328,17 @@ export const ChildScreeningPage: React.FC = () => {
         setPdpaConfig(d.config);
       } else if (d.type === 'child_screening_request_save') {
         setCurrentScreening(d);
-        if (!d.patientName?.trim()) {
-          message.error('กรุณาระบุชื่อ–นามสกุลของเด็กก่อนบันทึกข้อมูล');
+        if (!d.patientName?.trim() || !d.birthDate) {
           return;
         }
         if (!d.screenings || Object.keys(d.screenings).length === 0) {
-          message.warning('ยังไม่มีผลการคัดกรองอย่างน้อย 1 ชุด กรุณาทำแบบประเมินก่อนบันทึก');
           return;
         }
         saveMutation.mutate({
+          recordId: currentRecordId || d.recordId || null,
           hn: d.hn,
           patientName: d.patientName,
+          phoneNumber: d.phoneNumber,
           birthDate: d.birthDate,
           assessmentDate: d.assessmentDate,
           ageYears: d.ageYears,
@@ -320,31 +353,7 @@ export const ChildScreeningPage: React.FC = () => {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [saveMutation]);
-
-  // สั่งบันทึกจากปุ่มใน Tool Bar ฝั่ง React
-  const handleSaveFromToolbar = () => {
-    if (!currentScreening?.patientName?.trim()) {
-      message.error('กรุณาระบุชื่อ–นามสกุลของเด็กก่อนบันทึกข้อมูล');
-      return;
-    }
-    if (!currentScreening?.screenings || Object.keys(currentScreening.screenings).length === 0) {
-      message.warning('ยังไม่มีผลการประเมินที่ทำเสร็จ กรุณาเลือกทำแบบคัดกรองอย่างน้อย 1 รายการ');
-      return;
-    }
-    saveMutation.mutate({
-      hn: currentScreening.hn,
-      patientName: currentScreening.patientName,
-      birthDate: currentScreening.birthDate,
-      assessmentDate: currentScreening.assessmentDate,
-      ageYears: currentScreening.ageYears,
-      ageMonths: currentScreening.ageMonths,
-      totalAgeMonths: currentScreening.totalAgeMonths,
-      screenings: currentScreening.screenings,
-      hasAlert: currentScreening.hasAlert,
-      hasSuicideRisk: currentScreening.hasSuicideRisk,
-    });
-  };
+  }, [saveMutation, currentRecordId]);
 
   // สั่งพิมพ์รายงานผลจาก iframe
   const handlePrint = () => {
@@ -380,22 +389,18 @@ export const ChildScreeningPage: React.FC = () => {
   const handleReload = () => {
     if (iframeRef.current) {
       setIframeLoading(true);
+      setCurrentRecordId(null);
       setCurrentScreening(null);
       setPdpaConsentAccepted(true);
       setPdpaModalOpen(false);
-      iframeRef.current.src = isAdmin
-        ? '/tools/child-screening-suite.html?role=ADMIN'
-        : '/tools/child-screening-suite.html';
+      iframeRef.current.src = '/tools/child-screening-suite.html';
       message.success('รีเซ็ตแบบประเมินเรียบร้อยแล้ว');
     }
   };
 
   // เปิดแท็บใหม่
   const handleOpenNewTab = () => {
-    const url = isAdmin
-      ? '/tools/child-screening-suite.html?role=ADMIN'
-      : '/tools/child-screening-suite.html';
-    window.open(url, '_blank');
+    window.open('/tools/child-screening-suite.html', '_blank');
   };
 
   // จำนวนแบบคัดกรองที่ประเมินเสร็จแล้ว
@@ -423,7 +428,7 @@ export const ChildScreeningPage: React.FC = () => {
     {
       title: 'HN / ข้อมูลผู้ป่วย',
       key: 'patient',
-      width: 220,
+      width: 230,
       sorter: (a: ChildScreeningRecordItem, b: ChildScreeningRecordItem) =>
         (a.patientName || '').localeCompare(b.patientName || ''),
       render: (_: any, record: ChildScreeningRecordItem) => (
@@ -442,6 +447,12 @@ export const ChildScreeningPage: React.FC = () => {
                 : '-'}
             </Text>
           </div>
+          {record.phoneNumber && (
+            <div style={{ fontSize: 12, color: '#0369a1', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+              <span>📞</span>
+              <span>{record.phoneNumber}</span>
+            </div>
+          )}
           {record.birthDate && (
             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
               วันเกิด: {formatThaiDate(record.birthDate)}
@@ -744,21 +755,30 @@ export const ChildScreeningPage: React.FC = () => {
                     </Tooltip>
                   )}
 
-                  <Tooltip title="บันทึกผลการคัดกรองคนไข้รายนี้ลงฐานข้อมูล FormLocal">
-                    <Button
-                      type="primary"
-                      icon={<SaveOutlined />}
-                      loading={saveMutation.isPending}
-                      onClick={handleSaveFromToolbar}
+                  {completedCount > 0 && (
+                    <Tag
+                      color={saveMutation.isPending ? 'processing' : 'success'}
                       style={{
-                        background: completedCount > 0 ? '#16a34a' : '#2c7aa0',
-                        borderColor: completedCount > 0 ? '#16a34a' : '#2c7aa0',
+                        padding: '4px 10px',
+                        fontSize: 13,
                         fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        borderRadius: 6,
                       }}
                     >
-                      💾 บันทึกลงฐานข้อมูล {completedCount > 0 && `(${completedCount} ชุด)`}
-                    </Button>
-                  </Tooltip>
+                      {saveMutation.isPending ? (
+                        <>
+                          <ReloadOutlined spin /> กำลังบันทึกข้อมูลอัตโนมัติ...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircleOutlined /> บันทึกข้อมูลอัตโนมัติแล้ว ({completedCount} ชุด)
+                        </>
+                      )}
+                    </Tag>
+                  )}
                   <Tooltip title="รีโหลดหรือเริ่มทำแบบประเมินสำหรับคนไข้คนใหม่">
                     <Button icon={<ReloadOutlined />} onClick={handleReload}>
                       เริ่มผู้ป่วยใหม่
@@ -769,11 +789,45 @@ export const ChildScreeningPage: React.FC = () => {
                       เปิดแท็บใหม่
                     </Button>
                   </Tooltip>
+                  <Tooltip title="แชร์ QR Code และลิงก์สำหรับคนไข้ / ผู้ปกครอง (สแกนทำออนไลน์บนมือถือ)">
+                    <Button
+                      icon={<QrcodeOutlined />}
+                      onClick={() => setQrModalOpen(true)}
+                      style={{ color: '#0047cc', borderColor: '#bfdbfe', background: '#eff6ff', fontWeight: 600 }}
+                    >
+                      QR Code คนไข้
+                    </Button>
+                  </Tooltip>
                   <Tooltip title="พิมพ์แบบสรุปผลการคัดกรองสำหรับแนบแฟ้มเวชระเบียน">
                     <Button icon={<PrinterOutlined />} onClick={handlePrint}>
                       พิมพ์สรุปผล
                     </Button>
                   </Tooltip>
+                  <Popover
+                    placement="bottomRight"
+                    title={<div style={{ fontWeight: 700, color: '#1e3a8a' }}>📞 ข้อมูลติดต่อ โรงพยาบาลรามคำแหง 2</div>}
+                    content={
+                      <div style={{ maxWidth: 300, fontSize: 13 }}>
+                        <div style={{ marginBottom: 8, color: '#475569' }}>
+                          ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div><b>☎️ Call Center:</b> <a href="tel:020323888" style={{ color: '#0047cc', fontWeight: 600 }}>02-032-3888</a></div>
+                          <div><b>📱 สายด่วน / ฉุกเฉิน:</b> <a href="tel:0957719739" style={{ color: '#0047cc', fontWeight: 600 }}>095-771-9739</a></div>
+                          <div><b>💬 LINE:</b> <a href="https://line.me/R/ti/p/@ram2hospital" target="_blank" rel="noreferrer" style={{ color: '#059669', fontWeight: 600 }}>@ram2hospital</a></div>
+                          <div><b>✉️ อีเมล:</b> <a href="mailto:information@ram2-hosp.com" style={{ color: '#0284c7' }}>information@ram2-hosp.com</a></div>
+                        </div>
+                        <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed #e2e8f0', fontSize: 11, color: '#64748b' }}>
+                          📍 222 ถ.รามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กทม. 10240
+                        </div>
+                      </div>
+                    }
+                    trigger="click"
+                  >
+                    <Button icon={<PhoneOutlined />} style={{ color: '#0047cc', borderColor: '#bfdbfe' }}>
+                      ติดต่อเรา
+                    </Button>
+                  </Popover>
                   {/* <Button
                     type="primary"
                     icon={<FullscreenOutlined />}
@@ -902,20 +956,30 @@ export const ChildScreeningPage: React.FC = () => {
                 ยินยอม PDPA
               </Button>
             )}
-            <Button
-              type="primary"
-              shape="round"
-              icon={<SaveOutlined />}
-              loading={saveMutation.isPending}
-              onClick={handleSaveFromToolbar}
-              style={{
-                background: completedCount > 0 ? '#16a34a' : '#2c7aa0',
-                borderColor: completedCount > 0 ? '#16a34a' : '#2c7aa0',
-                fontWeight: 600,
-              }}
-            >
-              บันทึกลง Database {completedCount > 0 && `(${completedCount})`}
-            </Button>
+            {completedCount > 0 && (
+              <Tag
+                color={saveMutation.isPending ? 'processing' : 'success'}
+                style={{
+                  padding: '4px 12px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  borderRadius: 20,
+                }}
+              >
+                {saveMutation.isPending ? (
+                  <>
+                    <ReloadOutlined spin /> กำลังบันทึกอัตโนมัติ...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircleOutlined /> บันทึกอัตโนมัติแล้ว ({completedCount} ชุด)
+                  </>
+                )}
+              </Tag>
+            )}
             <Button
               shape="round"
               icon={<PrinterOutlined />}
@@ -923,6 +987,39 @@ export const ChildScreeningPage: React.FC = () => {
             >
               พิมพ์สรุปผล
             </Button>
+            <Button
+              shape="round"
+              icon={<QrcodeOutlined />}
+              onClick={() => setQrModalOpen(true)}
+              style={{ color: '#0047cc', borderColor: '#bfdbfe', background: '#eff6ff', fontWeight: 600 }}
+            >
+              QR Code คนไข้
+            </Button>
+            <Popover
+              placement="bottom"
+              title={<div style={{ fontWeight: 700, color: '#1e3a8a' }}>📞 ข้อมูลติดต่อ โรงพยาบาลรามคำแหง 2</div>}
+              content={
+                <div style={{ maxWidth: 300, fontSize: 13 }}>
+                  <div style={{ marginBottom: 8, color: '#475569' }}>
+                    ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div><b>☎️ Call Center:</b> <a href="tel:020323888" style={{ color: '#0047cc', fontWeight: 600 }}>02-032-3888</a></div>
+                    <div><b>📱 สายด่วน / ฉุกเฉิน:</b> <a href="tel:0957719739" style={{ color: '#0047cc', fontWeight: 600 }}>095-771-9739</a></div>
+                    <div><b>💬 LINE:</b> <a href="https://line.me/R/ti/p/@ram2hospital" target="_blank" rel="noreferrer" style={{ color: '#059669', fontWeight: 600 }}>@ram2hospital</a></div>
+                    <div><b>✉️ อีเมล:</b> <a href="mailto:information@ram2-hosp.com" style={{ color: '#0284c7' }}>information@ram2-hosp.com</a></div>
+                  </div>
+                  <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed #e2e8f0', fontSize: 11, color: '#64748b' }}>
+                    📍 222 ถ.รามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กทม. 10240
+                  </div>
+                </div>
+              }
+              trigger="click"
+            >
+              <Button shape="round" icon={<PhoneOutlined />}>
+                ติดต่อเรา
+              </Button>
+            </Popover>
             <Button
               type="primary"
               danger
@@ -1027,7 +1124,7 @@ export const ChildScreeningPage: React.FC = () => {
           <Spin spinning={iframeLoading} tip="กำลังโหลดชุดคัดกรองเด็กและวัยรุ่น..." style={{ height: '100%' }}>
             <iframe
               ref={iframeRef}
-              src={isAdmin ? '/tools/child-screening-suite.html?role=ADMIN' : '/tools/child-screening-suite.html'}
+              src="/tools/child-screening-suite.html"
               title="ชุดแบบคัดกรองพัฒนาการ พฤติกรรม และอารมณ์เด็กและวัยรุ่น"
               style={{
                 width: '100%',
@@ -1164,11 +1261,11 @@ export const ChildScreeningPage: React.FC = () => {
             >
               <Space wrap size={10}>
                 <Input
-                  placeholder="ค้นหา HN หรือ ชื่อผู้ป่วย..."
+                  placeholder="ค้นหา HN, ชื่อผู้ป่วย หรือ เบอร์โทร..."
                   prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  style={{ width: 240, borderRadius: 8 }}
+                  style={{ width: 260, borderRadius: 8 }}
                   allowClear
                 />
 
@@ -1313,6 +1410,79 @@ export const ChildScreeningPage: React.FC = () => {
           }}
         />
       )}
+
+      {/* หน้าต่าง QR Code และลิงก์สำหรับแชร์ให้คนไข้/ผู้ปกครอง */}
+      <Modal
+        open={qrModalOpen}
+        onCancel={() => setQrModalOpen(false)}
+        footer={null}
+        centered
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0047cc' }}>
+            <QrcodeOutlined style={{ fontSize: 20 }} />
+            <span style={{ fontWeight: 700 }}>QR Code และลิงก์สำหรับคนไข้ / ผู้ปกครอง</span>
+          </div>
+        }
+        width={440}
+      >
+        <div style={{ textAlign: 'center', padding: '16px 8px 8px' }}>
+          <div
+            id="child-suite-qrcode"
+            style={{
+              background: '#ffffff',
+              padding: 16,
+              borderRadius: 16,
+              border: '1.5px solid #bfdbfe',
+              boxShadow: '0 4px 14px rgba(0, 71, 204, 0.08)',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: 16,
+            }}
+          >
+            <QRCode value={suiteProductionUrl} size={180} bordered={false} />
+            <Button
+              type="link"
+              icon={<DownloadOutlined />}
+              onClick={downloadSuiteQRCode}
+              style={{ marginTop: 8, fontSize: 13, color: '#0047cc', fontWeight: 600 }}
+            >
+              บันทึกภาพ QR Code (สำหรับปริ้นต์สแตนดี้)
+            </Button>
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <Tag color="green" style={{ padding: '4px 12px', fontSize: 12, borderRadius: 20 }}>
+              🌐 ลิงก์ออนไลน์ทางการ (Vercel Production)
+            </Tag>
+          </div>
+
+          <div style={{ fontSize: 13, color: '#475569', marginBottom: 10 }}>
+            ผู้ปกครองหรือคนไข้สามารถใช้กล้องมือถือส่องเพื่อทำแบบคัดกรองได้ทันที:
+          </div>
+
+          <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+            <Input value={suiteProductionUrl} readOnly style={{ fontSize: 12, backgroundColor: '#f8fafc' }} />
+            <Button
+              type="primary"
+              icon={qrCopied ? <CheckCircleOutlined /> : <CopyOutlined />}
+              onClick={() => {
+                navigator.clipboard.writeText(suiteProductionUrl);
+                setQrCopied(true);
+                message.success('คัดลอกลิงก์เรียบร้อยแล้ว!');
+                setTimeout(() => setQrCopied(false), 2000);
+              }}
+              style={{ background: '#0047cc', borderColor: '#0047cc' }}
+            >
+              {qrCopied ? 'คัดลอกแล้ว' : 'คัดลอก'}
+            </Button>
+          </div>
+
+          <div style={{ fontSize: 12, color: '#64748b', background: '#f1f5f9', padding: '10px 14px', borderRadius: 10, textAlign: 'left' }}>
+            💡 <b>หมายเหตุ:</b> ผลการคัดกรองที่ผู้ปกครองตอบผ่านลิงก์นี้ จะถูกบันทึกส่งตรงเข้าฐานข้อมูลโรงพยาบาลอัตโนมัติ แพทย์สามารถเปิดดูประวัติได้ทันที
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

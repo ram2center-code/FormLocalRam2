@@ -176,6 +176,7 @@ model ChildScreeningRecord {
   id              String    @id @default(cuid())
   hn              String?
   patientName     String?
+  phoneNumber     String?
   birthDate       DateTime?
   assessmentDate  DateTime  @default(now())
   ageYears        Int?
@@ -192,6 +193,7 @@ model ChildScreeningRecord {
   updatedAt       DateTime  @updatedAt
 
   @@index([hn])
+  @@index([phoneNumber])
   @@index([assessmentDate])
   @@index([hasAlert])
   @@index([hasSuicideRisk])

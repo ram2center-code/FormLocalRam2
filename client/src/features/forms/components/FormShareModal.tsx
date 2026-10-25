@@ -82,21 +82,38 @@ export const FormShareModal: React.FC<FormShareModalProps> = ({
     enabled: open,
   });
 
-  const lanIp =
-    netInfo?.primaryIp ||
-    (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
-      ? window.location.hostname
-      : '172.18.124.75');
-  const port = window.location.port ? `:${window.location.port}` : '';
-  const lanShareUrl = formId ? `http://${lanIp}${port}/forms/${formId}/view` : '';
-  const localShareUrl = formId ? `${window.location.origin}/forms/${formId}/view` : '';
-
   // 2. ดึงรายละเอียดฟอร์มเพื่อดูการตั้งค่าและรายชื่อที่แชร์อยู่เดิม
   const { data: formDetail, isLoading: isLoadingForm } = useQuery({
     queryKey: ['form-share-detail', formId],
     queryFn: () => getFormByIdApi(formId!, true),
     enabled: !!formId && open,
   });
+
+  const isChildScreeningSuite =
+    formId === 'form_child_screening_suite' ||
+    formId?.includes('screening_suite') ||
+    formDetail?.id === 'form_child_screening_suite' ||
+    formDetail?.id?.includes('screening_suite') ||
+    formDetail?.title?.includes('คัดกรองพัฒนาการ');
+
+  const suiteProductionUrl = 'https://formlocalram2.vercel.app/tools/child-screening-suite.html';
+
+  const lanIp =
+    netInfo?.primaryIp ||
+    (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? window.location.hostname
+      : '172.18.124.75');
+  const port = window.location.port ? `:${window.location.port}` : '';
+  const lanShareUrl = isChildScreeningSuite
+    ? suiteProductionUrl
+    : formId
+      ? `http://${lanIp}${port}/forms/${formId}/view`
+      : '';
+  const localShareUrl = isChildScreeningSuite
+    ? suiteProductionUrl
+    : formId
+      ? `${window.location.origin}/forms/${formId}/view`
+      : '';
 
   // 3. ดึงรายชื่อผู้ใช้ที่สามารถแชร์ให้ได้ (Lookup)
   const { data: availableUsers = [], isLoading: isLoadingUsers } = useQuery<UserLookupItem[]>({
@@ -283,12 +300,14 @@ export const FormShareModal: React.FC<FormShareModalProps> = ({
 
                 <div style={{ flex: 1, minWidth: 260 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                    <Tag color="cyan" icon={<WifiOutlined />}>
-                      เปิดใช้งานบน iPad ผ่าน Wi-Fi เดียวกัน
+                    <Tag color={isChildScreeningSuite ? "green" : "cyan"} icon={isChildScreeningSuite ? <GlobalOutlined /> : <WifiOutlined />}>
+                      {isChildScreeningSuite ? 'ลิงก์ออนไลน์ทางการสำหรับประชาชน (Vercel)' : 'เปิดใช้งานบน iPad ผ่าน Wi-Fi เดียวกัน'}
                     </Tag>
                   </div>
                   <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 8 }}>
-                    หยิบกล้อง iPad หรือ iPhone ส่อง QR Code หรือคัดลอกลิงก์ด้านล่างไปเปิดบน Safari/Chrome:
+                    {isChildScreeningSuite
+                      ? 'สแกน QR Code หรือคัดลอกลิงก์เพื่อส่งให้คนไข้/ผู้ปกครองทำแบบคัดกรองออนไลน์ผ่านมือถือได้ทันที:'
+                      : 'หยิบกล้อง iPad หรือ iPhone ส่อง QR Code หรือคัดลอกลิงก์ด้านล่างไปเปิดบน Safari/Chrome:'}
                   </Text>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <Input value={lanShareUrl} readOnly style={{ backgroundColor: '#fff', fontSize: 12 }} />

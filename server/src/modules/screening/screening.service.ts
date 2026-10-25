@@ -29,10 +29,40 @@ export class ScreeningService {
       });
     }
 
+    // หากมี recordId ส่งมาและมีข้อมูลอยู่ ให้ทำการอัปเดตแทนการสร้างใหม่ เพื่อป้องกันข้อมูลซ้ำซ้อนในรอบประเมินเดียวกัน
+    if (input.recordId) {
+      const existing = await prisma.childScreeningRecord.findUnique({
+        where: { id: input.recordId },
+      });
+      if (existing) {
+        const updated = await prisma.childScreeningRecord.update({
+          where: { id: input.recordId },
+          data: {
+            hn: input.hn?.trim() || null,
+            patientName: input.patientName?.trim() || null,
+            phoneNumber: input.phoneNumber?.trim() || null,
+            birthDate: parsedBirthDate,
+            assessmentDate: parsedAssessmentDate,
+            ageYears: input.ageYears ?? null,
+            ageMonths: input.ageMonths ?? null,
+            totalAgeMonths: input.totalAgeMonths ?? null,
+            screenings: input.screenings as any,
+            hasAlert,
+            hasSuicideRisk,
+            examinerId: examinerId || existing.examinerId,
+            examinerName: examinerName || existing.examinerName,
+            notes: input.notes?.trim() || existing.notes,
+          },
+        });
+        return updated;
+      }
+    }
+
     const record = await prisma.childScreeningRecord.create({
       data: {
         hn: input.hn?.trim() || null,
         patientName: input.patientName?.trim() || null,
+        phoneNumber: input.phoneNumber?.trim() || null,
         birthDate: parsedBirthDate,
         assessmentDate: parsedAssessmentDate,
         ageYears: input.ageYears ?? null,
@@ -61,6 +91,7 @@ export class ScreeningService {
             answers: {
               hn: input.hn?.trim() || null,
               patientName: input.patientName?.trim() || null,
+              phoneNumber: input.phoneNumber?.trim() || null,
               birthDate: input.birthDate || null,
               assessmentDate: input.assessmentDate || null,
               ageYears: input.ageYears ?? null,
@@ -104,6 +135,7 @@ export class ScreeningService {
       where.OR = [
         { hn: { contains: q, mode: 'insensitive' } },
         { patientName: { contains: q, mode: 'insensitive' } },
+        { phoneNumber: { contains: q, mode: 'insensitive' } },
       ];
     }
 

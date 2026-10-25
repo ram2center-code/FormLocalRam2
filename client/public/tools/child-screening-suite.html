@@ -16,7 +16,7 @@
   html,body{height:100%}
   body{margin:0;color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;font-size:17px;line-height:1.6;
     background:var(--bg) radial-gradient(#e6e1d8 1.2px,transparent 1.2px) 0 0/22px 22px}
-  .wrap{max-width:800px;margin:0 auto;padding:20px 16px 60px}
+  .wrap{max-width:800px;margin:0 auto;padding:20px 16px 36px}
 
   /* top navigation */
   .top-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
@@ -70,7 +70,7 @@
   .card h2{font-size:1.2rem;margin:0 0 4px;display:flex;align-items:center;gap:10px}
   .card h2 .ic{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--accent-soft)}
   label.f{display:block;font-weight:600;margin:0 0 6px 0;color:var(--ink);font-size:0.95rem}
-  input[type=text],input[type=date],input[type=number]{width:100%;min-height:46px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fffdfa;box-sizing:border-box;-webkit-appearance:none;appearance:none}
+  input[type=text],input[type=date],input[type=number],input[type=tel]{width:100%;min-height:46px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fffdfa;box-sizing:border-box;-webkit-appearance:none;appearance:none}
   input[type=date]{display:block;line-height:1.4}
   input:focus{outline:none;border-color:#9cc3d6;box-shadow:0 0 0 3px #e3f0f6}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px 16px}
@@ -210,6 +210,55 @@
     .noprint,.hero,#protoCard,#patientCard{display:none!important}
     .printonly{display:block}
     .card{border:1px solid #ccc;box-shadow:none;break-inside:avoid}
+  }
+
+  /* Site Footer 100% Width */
+  .site-footer{
+    width:100%;
+    margin-top:40px;
+    background:linear-gradient(180deg, #f8fafc 0%, #edf4fc 100%);
+    border-top:1px solid #bfdbfe;
+    box-shadow:0 -4px 20px rgba(0,71,204,0.03);
+    position:relative;
+  }
+  .site-footer-accent{
+    height:4px;
+    background:linear-gradient(90deg, #0047cc 0%, #38bdf8 50%, #0047cc 100%);
+    width:100%;
+  }
+  .site-footer-inner{
+    max-width:1080px;
+    margin:0 auto;
+    padding:28px 24px 32px;
+    box-sizing:border-box;
+  }
+  .footer-contact-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#ffffff;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #cbd5e1;
+    text-decoration:none;
+    color:#0f172a;
+    box-shadow:0 2px 6px rgba(0,0,0,0.03);
+    transition:all 0.18s ease;
+    min-width:0;
+  }
+  .footer-contact-item:hover{
+    transform:translateY(-2px);
+    border-color:#93c5fd;
+    box-shadow:0 6px 16px rgba(0,71,204,0.09);
+    text-decoration:none;
+  }
+  .contact-grid-4{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:12px}
+  @media (max-width: 768px){
+    .contact-grid-4{grid-template-columns:repeat(2, minmax(0, 1fr))!important;gap:10px}
+  }
+  @media (max-width: 480px){
+    .contact-grid-4{grid-template-columns:1fr!important}
+    .site-footer-inner{padding:20px 16px 24px}
   }
 
   /* PDPA Modal Styles - Replicating PdpaConsentModal Ant Design styling */
@@ -1092,9 +1141,6 @@
         </div>
       </div>
       <div class="pdpa-h-actions">
-        <button type="button" id="pdpaEditHeaderBtn" class="pdpa-h-edit-btn" onclick="openPdpaSuiteEditor(event)" title="แก้ไขข้อความ PDPA สำหรับแบบฟอร์มนี้ (เฉพาะ Admin)" style="display: none;">
-          ⚙️ แก้ไขข้อความ
-        </button>
         <button type="button" class="pdpa-h-close" onclick="minimizePdpaModal(event)" title="ย่อหน้าต่างนี้ไว้ชั่วคราว (ต้องกดยินยอมก่อนเริ่มกรอกแบบฟอร์ม)" aria-label="ย่อหน้าต่าง">✕</button>
       </div>
     </div>
@@ -1461,7 +1507,8 @@
   </div>
 </div>
 
-<div class="wrap" id="hub">
+<div id="hub">
+<div class="wrap">
   <div class="top-nav noprint">
     <a href="/department-forms" class="back-link-btn" id="mainBackBtn" onclick="return goBack(event);" title="กลับไปยังคลังฟอร์ม / ระบบหลัก">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1510,19 +1557,25 @@
   <div class="card" id="patientCard" onclick="handleLockedFormClick(event)">
     <h2><span class="ic">📝</span>ข้อมูลผู้ป่วย</h2>
     <div class="grid2">
-      <div>
+      <div style="grid-column: 1 / -1;">
         <label class="f" for="pName">
           ชื่อ–นามสกุล <span style="color:#e11d48;font-size:12px;font-weight:700;">* (จำเป็นต้องระบุก่อนตอบคำถาม)</span>
         </label>
         <input type="text" id="pName" autocomplete="off" required placeholder="ระบุชื่อ–นามสกุลของเด็ก">
       </div>
       <div><label class="f" for="pHn">HN <span class="hint">(ถ้ามี)</span></label><input type="text" id="pHn" autocomplete="off" placeholder="เช่น 66-xxxxx"></div>
-      <div><label class="f" for="pDob">วันเกิด</label><input type="date" id="pDob" required></div>
+      <div><label class="f" for="pPhone">เบอร์โทรศัพท์ติดต่อ <span class="hint">(ผู้ปกครอง)</span></label><input type="tel" id="pPhone" autocomplete="tel" placeholder="เช่น 0812345678" maxlength="15"></div>
+      <div>
+        <label class="f" for="pDob">
+          วันเกิด <span style="color:#e11d48;font-size:12px;font-weight:700;">* (จำเป็นต้องระบุก่อนตอบคำถาม)</span>
+        </label>
+        <input type="date" id="pDob" required>
+      </div>
       <div><label class="f" for="pDate">วันที่ทำแบบสอบถาม</label><input type="date" id="pDate"></div>
     </div>
     <div id="pNameNotice" class="pname-empty-notice">
       <span style="font-size:16px;">⚠️</span>
-      <span>กรุณากรอกชื่อ–นามสกุลของเด็ก เพื่อปลดล็อกและเริ่มทำแบบคัดกรอง</span>
+      <span>กรุณากรอกชื่อ–นามสกุลและวันเกิดของเด็ก เพื่อปลดล็อกและเริ่มทำแบบคัดกรอง</span>
     </div>
     <div class="agebox" id="ageBox"></div>
     <p class="hint" style="margin:8px 0 0">ข้อมูลนี้จะถูกกรอกให้อัตโนมัติในทุกแบบสอบถาม</p>
@@ -1532,11 +1585,11 @@
     <h2><span class="ic">🧭</span>แบบคัดกรองตามช่วงอายุ</h2>
     <div class="hint">เลือกแบบสอบถามที่ต้องการทำ — แบบที่ตรงกับอายุผู้ป่วยจะถูกเน้นไว้</div>
     
-    <div id="protoNameLockBanner" class="proto-name-lock-banner" onclick="handleFocusPName(event)" title="คลิกเพื่อเลื่อนขึ้นไปกรอกชื่อเด็ก">
+    <div id="protoNameLockBanner" class="proto-name-lock-banner" onclick="handleFocusPName(event)" title="คลิกเพื่อเลื่อนขึ้นไปกรอกข้อมูลเด็ก">
       <span style="font-size:20px;">🔒</span>
       <div>
-        <div style="font-weight:700;">แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุชื่อเด็ก</div>
-        <div style="font-size:12px;opacity:0.9;font-weight:400;margin-top:2px;">กรุณากรอกชื่อ–นามสกุลของเด็กด้านบนก่อน จึงจะสามารถเปิดทำแบบคัดกรองและกรอกคำตอบได้</div>
+        <div style="font-weight:700;">แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุชื่อและวันเกิดเด็ก</div>
+        <div style="font-size:12px;opacity:0.9;font-weight:400;margin-top:2px;">กรุณากรอกชื่อ–นามสกุล และวันเกิดของเด็กด้านบนก่อน จึงจะสามารถเปิดทำแบบคัดกรองและกรอกคำตอบได้</div>
       </div>
     </div>
 
@@ -1552,25 +1605,91 @@
   <div class="card" id="sumCard" hidden>
     <h2><span class="ic">📋</span>สรุปผลการคัดกรอง</h2>
     <div class="hint" id="sumInfo" style="margin-bottom:6px"></div>
+    <div id="sumAutoSaveBadge" style="display:none;font-size:12px;font-weight:600;color:#16a34a;align-items:center;gap:6px;margin-bottom:12px;padding:4px 10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;width:fit-content;"><span>✓</span><span>บันทึกผลลงฐานข้อมูลอัตโนมัติแล้ว</span></div>
     <div id="sumList"></div>
     <div class="printonly" style="margin-top:18px">ลงชื่อแพทย์ ........................................................ &nbsp; วันที่ ....................</div>
   </div>
 
   <div class="row noprint">
-    <button class="ghost" id="saveDbBtn" hidden style="background:#2c7aa0;color:#fff;border-color:#2c7aa0;font-weight:700;">💾 บันทึกผลลงฐานข้อมูล</button>
     <button class="ghost" id="printSum" hidden onclick="window.print()">🖨️ พิมพ์สรุปผลทั้งหมด</button>
     <button class="ghost" id="resetAll">🔄 เริ่มผู้ป่วยรายใหม่</button>
   </div>
 
-  <footer>ระบบบันทึกและประมวลผลข้อมูลการคัดกรองเด็กและวัยรุ่น • โรงพยาบาลรามคำแหง 2 • FormLocal</footer>
-</div>
+  </div> <!-- /.wrap -->
+
+  <!-- Full-Width Footer 100% -->
+  <footer id="mainFooter" class="site-footer noprint">
+    <div class="site-footer-accent"></div>
+    <div class="site-footer-inner" id="mainContactCard">
+      <!-- Header row: Logo, Hospital Info, 24-hr badge -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <img src="/Ram2Logo.png" alt="โรงพยาบาลรามคำแหง 2" style="height:48px;max-height:52px;width:auto;object-fit:contain;flex-shrink:0;">
+          <div style="border-left:2px solid #cbd5e1;padding-left:14px;">
+            <div style="font-weight:700;font-size:16.5px;color:#1e3a8a;letter-spacing:-0.2px;">โรงพยาบาลรามคำแหง 2 (RAM2 Hospital)</div>
+            <div style="font-size:13px;color:#475569;margin-top:2px;">ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น • ยินดีให้คำปรึกษาและนัดหมายแพทย์</div>
+          </div>
+        </div>
+        <div style="font-size:12px;background:#dbeafe;color:#1e40af;font-weight:700;padding:6px 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 1px 4px rgba(30,64,175,0.08);border:1px solid #bfdbfe;">
+          <span style="display:inline-block;width:8px;height:8px;background:#16a34a;border-radius:50%;box-shadow:0 0 0 2px #bbf7d0;"></span> เปิดบริการ 24 ชั่วโมง
+        </div>
+      </div>
+
+      <!-- 4 Contact Cards Grid in 1 Row -->
+      <div class="contact-grid-4" style="margin-bottom:20px;">
+        <a href="tel:020323888" class="footer-contact-item">
+          <div style="width:40px;height:40px;background:#eff6ff;color:#0047cc;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">☎️</div>
+          <div style="min-width:0;overflow:hidden;">
+            <div style="font-size:11.5px;color:#64748b;font-weight:500;white-space:nowrap;">Call Center กลาง</div>
+            <div style="font-weight:700;color:#0047cc;font-size:14.5px;white-space:nowrap;">02-032-3888</div>
+          </div>
+        </a>
+
+        <a href="tel:0957719739" class="footer-contact-item">
+          <div style="width:40px;height:40px;background:#eff6ff;color:#0047cc;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📱</div>
+          <div style="min-width:0;overflow:hidden;">
+            <div style="font-size:11.5px;color:#64748b;font-weight:500;white-space:nowrap;">สายด่วน / แผนกฉุกเฉิน</div>
+            <div style="font-weight:700;color:#0047cc;font-size:14.5px;white-space:nowrap;">095-771-9739</div>
+          </div>
+        </a>
+
+        <a href="https://line.me/R/ti/p/@ram2" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
+          <div style="width:40px;height:40px;background:#f0fdf4;color:#16a34a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;">💬</div>
+          <div style="min-width:0;overflow:hidden;">
+            <div style="font-size:11.5px;color:#64748b;font-weight:500;white-space:nowrap;">LINE Official</div>
+            <div style="font-weight:700;color:#059669;font-size:14.5px;white-space:nowrap;">@ram2</div>
+          </div>
+        </a>
+
+        <a href="mailto:information@ram2-hosp.com" class="footer-contact-item" title="information@ram2-hosp.com">
+          <div style="width:40px;height:40px;background:#f0f9ff;color:#0284c7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✉️</div>
+          <div style="min-width:0;overflow:hidden;">
+            <div style="font-size:11.5px;color:#64748b;font-weight:500;white-space:nowrap;">อีเมลสอบถามข้อมูล</div>
+            <div style="font-weight:700;color:#0284c7;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.2px;">information@ram2-hosp.com</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Address & System Copyright bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:12.5px;color:#64748b;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span>📍</span>
+          <span><b>ที่อยู่:</b> 222 ถนนรามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กรุงเทพมหานคร 10240</span>
+        </div>
+        <div>
+          ระบบบันทึกและประมวลผลข้อมูลการคัดกรองเด็กและวัยรุ่น • โรงพยาบาลรามคำแหง 2 • FormLocal
+        </div>
+      </div>
+    </div>
+  </footer>
+</div> <!-- /#hub -->
 
 <div id="toolView" class="noprint">
   <div class="topbar">
     <button id="backBtn">← หน้าหลัก</button>
     <div class="tm" id="toolMascot"></div>
     <div class="tt" id="toolTitle"></div>
-    <button id="toolSaveDbBtn" style="margin-left:auto;background:#2c7aa0;color:#fff;font-weight:700;display:none;align-items:center;gap:6px;border:0;border-radius:12px;padding:8px 16px;cursor:pointer;font-family:inherit;font-size:0.92rem;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.1);">💾 บันทึกผลลงฐานข้อมูล</button>
+    <div id="toolAutoSaveBadge" style="margin-left:auto;font-size:12px;font-weight:600;display:none;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;box-shadow:0 1px 3px rgba(0,0,0,0.05);"><span>✓</span><span>บันทึกอัตโนมัติแล้ว</span></div>
   </div>
   <div id="frames"></div>
 </div>
@@ -4728,17 +4847,46 @@ function calcAge(){
     (due.length?`แบบคัดกรองที่แนะนำ: <b>${due.join(", ")}</b>`:`ไม่มีแบบคัดกรองในช่วงอายุนี้ตาม protocol`)+`</span>`;
   render();
 }
-["pDob","pDate"].forEach(id=>$(id).addEventListener("change",calcAge));
+["pDob","pDate"].forEach(id=>$(id).addEventListener("change", () => {
+  calcAge();
+  updateNameLockUI();
+  broadcastPrefill();
+  scheduleAutoSave(800);
+}));
+$("pDob").addEventListener("input", () => {
+  calcAge();
+  updateNameLockUI();
+  broadcastPrefill();
+  scheduleAutoSave(800);
+});
 $("pName").addEventListener("input", () => {
   updateNameLockUI();
   renderSummary();
   broadcastPrefill();
+  scheduleAutoSave(800);
 });
-$("pHn").addEventListener("input", renderSummary);
+$("pHn").addEventListener("input", () => {
+  renderSummary();
+  scheduleAutoSave(800);
+});
+if($("pPhone")){
+  $("pPhone").addEventListener("input", () => {
+    scheduleAutoSave(800);
+  });
+}
 
 function isChildNameFilled(){
   const val = $("pName") ? $("pName").value.trim() : "";
   return val.length > 0;
+}
+
+function isChildDobFilled(){
+  const val = $("pDob") ? $("pDob").value : "";
+  return Boolean(val);
+}
+
+function isRequiredPatientInfoFilled(){
+  return isChildNameFilled() && isChildDobFilled();
 }
 
 let nameShakeTimer = null;
@@ -4764,19 +4912,79 @@ function promptChildNameRequired(){
   showNameLockToast("กรุณากรอกชื่อ–นามสกุลของเด็กก่อนเริ่มทำแบบคัดกรอง");
 }
 
+let dobShakeTimer = null;
+function promptChildDobRequired(){
+  const pDob = $("pDob");
+  if(!pDob) return;
+  const pCard = $("patientCard");
+  if(pCard){
+    pCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    pDob.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  setTimeout(function(){
+    try { pDob.focus(); } catch(err){}
+  }, 200);
+  pDob.classList.remove("pname-shake");
+  void pDob.offsetWidth;
+  pDob.classList.add("pname-shake");
+  clearTimeout(dobShakeTimer);
+  dobShakeTimer = setTimeout(function(){
+    pDob.classList.remove("pname-shake");
+  }, 1000);
+  showNameLockToast("กรุณาระบุวันเกิดของเด็กก่อนเริ่มทำแบบคัดกรอง");
+}
+
+function promptRequiredPatientInfo(){
+  if(!isChildNameFilled()){
+    promptChildNameRequired();
+  } else if(!isChildDobFilled()){
+    promptChildDobRequired();
+  }
+}
+
 function handleFocusPName(e){
   if(e && typeof e.preventDefault === "function") e.preventDefault();
-  promptChildNameRequired();
+  promptRequiredPatientInfo();
 }
 
 function updateNameLockUI(){
-  const filled = isChildNameFilled();
+  const nameFilled = isChildNameFilled();
+  const dobFilled = isChildDobFilled();
+  const allFilled = nameFilled && dobFilled;
+
   const notice = $("pNameNotice");
   const banner = $("protoNameLockBanner");
   const proto = $("proto");
-  if(notice) notice.style.display = filled ? "none" : "flex";
-  if(banner) banner.style.display = filled ? "none" : "flex";
-  if(proto) proto.classList.toggle("needs-name", !filled);
+
+  if(notice){
+    notice.style.display = allFilled ? "none" : "flex";
+    if(!nameFilled && !dobFilled){
+      notice.innerHTML = `<span style="font-size:16px;">⚠️</span><span>กรุณากรอกชื่อ–นามสกุลและวันเกิดของเด็ก เพื่อปลดล็อกและเริ่มทำแบบคัดกรอง</span>`;
+    } else if(!nameFilled){
+      notice.innerHTML = `<span style="font-size:16px;">⚠️</span><span>กรุณากรอกชื่อ–นามสกุลของเด็ก เพื่อปลดล็อกและเริ่มทำแบบคัดกรอง</span>`;
+    } else if(!dobFilled){
+      notice.innerHTML = `<span style="font-size:16px;">⚠️</span><span>กรุณาระบุวันเกิดของเด็ก เพื่อคำนวณอายุและเริ่มทำแบบคัดกรอง</span>`;
+    }
+  }
+
+  if(banner){
+    banner.style.display = allFilled ? "none" : "flex";
+    const bannerTitle = banner.querySelector("div > div:first-child");
+    const bannerDesc = banner.querySelector("div > div:last-child");
+    if(!nameFilled && !dobFilled){
+      if(bannerTitle) bannerTitle.textContent = "แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุชื่อและวันเกิดเด็ก";
+      if(bannerDesc) bannerDesc.textContent = "กรุณากรอกชื่อ–นามสกุล และวันเกิดของเด็กด้านบนก่อน จึงจะสามารถเปิดทำแบบคัดกรองและกรอกคำตอบได้";
+    } else if(!nameFilled){
+      if(bannerTitle) bannerTitle.textContent = "แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุชื่อเด็ก";
+      if(bannerDesc) bannerDesc.textContent = "กรุณากรอกชื่อ–นามสกุลของเด็กด้านบนก่อน จึงจะสามารถเปิดทำแบบคัดกรองและกรอกคำตอบได้";
+    } else if(!dobFilled){
+      if(bannerTitle) bannerTitle.textContent = "แบบคัดกรองถูกระงับชั่วคราว — จำเป็นต้องระบุวันเกิดเด็ก";
+      if(bannerDesc) bannerDesc.textContent = "กรุณาระบุวันเกิดของเด็กด้านบนก่อน เพื่อคำนวณช่วงอายุและเปิดทำแบบคัดกรอง";
+    }
+  }
+
+  if(proto) proto.classList.toggle("needs-name", !allFilled);
 }
 
 function showNameLockToast(msg){
@@ -4832,8 +5040,8 @@ function render(){
 function renderSummary(){
   const ids=TOOLS.filter(t=>results[t.id]);
   $("sumCard").hidden=!ids.length; $("printSum").hidden=!ids.length;
-  if($("saveDbBtn")) $("saveDbBtn").hidden=!ids.length;
-  if($("toolSaveDbBtn")) $("toolSaveDbBtn").style.display = ids.length ? "inline-flex" : "none";
+  if($("sumAutoSaveBadge")) $("sumAutoSaveBadge").style.display = ids.length ? "inline-flex" : "none";
+  if($("toolAutoSaveBadge")) $("toolAutoSaveBadge").style.display = ids.length ? "inline-flex" : "none";
   broadcastScreeningUpdate();
   if(!ids.length) return;
   const bits=[];
@@ -4896,6 +5104,7 @@ function getPayload(isRequestSave){
     type: isRequestSave ? "child_screening_request_save" : "child_screening_update",
     hn: $("pHn").value,
     patientName: $("pName").value,
+    phoneNumber: $("pPhone") ? $("pPhone").value.trim() : "",
     birthDate: $("pDob").value,
     assessmentDate: $("pDate").value,
     ageYears: ageMonths !== null ? Math.floor(ageMonths / 12) : null,
@@ -4914,25 +5123,56 @@ function broadcastScreeningUpdate(){
   }
 }
 
-async function handleSaveScreeningToDb(){
-  const btn = $("saveDbBtn");
-  const toolBtn = $("toolSaveDbBtn");
-  const btns = [btn, toolBtn].filter(Boolean);
+let currentSavedRecordId = null;
+let isAutoSaving = false;
+let pendingAutoSave = false;
+let autoSaveDebounceTimer = null;
 
+function updateAutoSaveUI(status){
+  const sumBadge = $("sumAutoSaveBadge");
+  const toolBadge = $("toolAutoSaveBadge");
+  const badges = [sumBadge, toolBadge].filter(Boolean);
+
+  badges.forEach(b => {
+    if(status === "saving"){
+      b.style.display = "inline-flex";
+      b.style.background = "#eff6ff";
+      b.style.color = "#1d4ed8";
+      b.style.borderColor = "#bfdbfe";
+      b.innerHTML = `<span style="display:inline-block;">⏳</span><span>กำลังบันทึกข้อมูลอัตโนมัติ...</span>`;
+    } else if(status === "saved"){
+      b.style.display = "inline-flex";
+      b.style.background = "#f0fdf4";
+      b.style.color = "#16a34a";
+      b.style.borderColor = "#bbf7d0";
+      b.innerHTML = `<span>✓</span><span>บันทึกข้อมูลอัตโนมัติแล้ว</span>`;
+    } else if(status === "error"){
+      b.style.display = "inline-flex";
+      b.style.background = "#fef2f2";
+      b.style.color = "#dc2626";
+      b.style.borderColor = "#fecaca";
+      b.innerHTML = `<span>⚠️</span><span>บันทึกอัตโนมัติไม่สำเร็จ (จะลองใหม่)</span>`;
+    } else if(status === "hide"){
+      b.style.display = "none";
+    }
+  });
+}
+
+async function autoSaveScreening(){
   const ids = TOOLS.filter(t => results[t.id]);
-  if(!ids.length){
-    alert("ยังไม่มีผลการคัดกรองอย่างน้อย 1 รายการ กรุณาทำแบบประเมินก่อนบันทึก");
+  if(!ids.length) return;
+  if(!isChildNameFilled() || !isChildDobFilled()) return;
+
+  if(isAutoSaving){
+    pendingAutoSave = true;
     return;
   }
+  isAutoSaving = true;
+  updateAutoSaveUI("saving");
 
-  const origTexts = new Map();
-  btns.forEach(b => {
-    origTexts.set(b, b.innerHTML);
-    b.disabled = true;
-    b.innerHTML = "⏳ กำลังบันทึกลงฐานข้อมูล...";
+  const payload = Object.assign(getPayload(true), {
+    recordId: currentSavedRecordId
   });
-
-  const payload = getPayload(true);
 
   // แจ้ง parent window หากฝังอยู่ใน iframe
   if(window.parent && window.parent !== window){
@@ -4941,105 +5181,107 @@ async function handleSaveScreeningToDb(){
     } catch(_) {}
   }
 
-  const bodyData = {
-    hn: payload.hn ? payload.hn.trim() : null,
-    patientName: payload.patientName ? payload.patientName.trim() : null,
-    birthDate: payload.birthDate || null,
-    assessmentDate: payload.assessmentDate || null,
-    ageYears: payload.ageYears ?? null,
-    ageMonths: payload.ageMonths ?? null,
-    totalAgeMonths: payload.totalAgeMonths ?? null,
-    screenings: payload.screenings || {},
-    hasAlert: Boolean(payload.hasAlert),
-    hasSuicideRisk: Boolean(payload.hasSuicideRisk),
-  };
-
-  let savedSuccess = false;
-
-  // วิธีที่ 1: บันทึกผ่าน Backend API (/api/screening)
+  // บันทึกลงฐานข้อมูล (ผ่าน Backend API หรือ Supabase direct)
   try {
-    const res = await fetch("/api/screening", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData),
-    });
-    if(res.ok){
-      const data = await res.json().catch(() => ({}));
-      if(data.success !== false) savedSuccess = true;
-    }
-  } catch(err){
-    console.warn("Backend /api/screening save failed, attempting Supabase REST fallback...", err);
-  }
+    const bodyData = {
+      recordId: currentSavedRecordId,
+      hn: payload.hn ? payload.hn.trim() : null,
+      patientName: payload.patientName ? payload.patientName.trim() : null,
+      phoneNumber: payload.phoneNumber ? payload.phoneNumber.trim() : null,
+      birthDate: payload.birthDate || null,
+      assessmentDate: payload.assessmentDate || null,
+      ageYears: payload.ageYears ?? null,
+      ageMonths: payload.ageMonths ?? null,
+      totalAgeMonths: payload.totalAgeMonths ?? null,
+      screenings: payload.screenings || {},
+      hasAlert: Boolean(payload.hasAlert),
+      hasSuicideRisk: Boolean(payload.hasSuicideRisk),
+    };
 
-  // วิธีที่ 2: หาก Backend ไม่สำเร็จ ให้ Fallback ตรงไปยัง Supabase REST API
-  if(!savedSuccess){
+    let savedSuccess = false;
+    let savedId = currentSavedRecordId;
+
     try {
-      const nowIso = new Date().toISOString();
-      const sbRecord = {
-        id: "scr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
-        hn: bodyData.hn,
-        patientName: bodyData.patientName,
-        birthDate: bodyData.birthDate ? new Date(bodyData.birthDate).toISOString() : null,
-        assessmentDate: bodyData.assessmentDate ? new Date(bodyData.assessmentDate).toISOString() : nowIso,
-        ageYears: bodyData.ageYears,
-        ageMonths: bodyData.ageMonths,
-        totalAgeMonths: bodyData.totalAgeMonths,
-        screenings: bodyData.screenings,
-        hasAlert: bodyData.hasAlert,
-        hasSuicideRisk: bodyData.hasSuicideRisk,
-        createdAt: nowIso,
-        updatedAt: nowIso,
-      };
-
-      const sbRes = await fetch("https://pgokdsqumwbitqtptuom.supabase.co/rest/v1/ChildScreeningRecord", {
+      const res = await fetch("/api/screening", {
         method: "POST",
-        headers: {
-          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
-          "Content-Type": "application/json",
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify(sbRecord),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
       });
-
-      if(sbRes.ok){
-        savedSuccess = true;
-      } else {
-        const sbErr = await sbRes.text().catch(() => "");
-        throw new Error(sbErr || "Supabase status " + sbRes.status);
+      if(res.ok){
+        const data = await res.json().catch(() => ({}));
+        if(data.success !== false){
+          savedSuccess = true;
+          if(data.data && data.data.id) savedId = data.data.id;
+        }
       }
-    } catch(sbErr){
-      console.error("Supabase direct REST save error:", sbErr);
-      btns.forEach(b => {
-        b.disabled = false;
-        b.innerHTML = origTexts.get(b) || "💾 บันทึกผลลงฐานข้อมูล";
-      });
-      alert("บันทึกลงฐานข้อมูลไม่สำเร็จ: " + (sbErr.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ"));
-      return;
+    } catch(err){
+      console.warn("Backend /api/screening auto-save failed:", err);
+    }
+
+    if(!savedSuccess && !isEmbedded){
+      try {
+        const nowIso = new Date().toISOString();
+        const sbRecord = {
+          id: savedId || ("scr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7)),
+          hn: bodyData.hn,
+          patientName: bodyData.patientName,
+          phoneNumber: bodyData.phoneNumber,
+          birthDate: bodyData.birthDate ? new Date(bodyData.birthDate).toISOString() : null,
+          assessmentDate: bodyData.assessmentDate ? new Date(bodyData.assessmentDate).toISOString() : nowIso,
+          ageYears: bodyData.ageYears,
+          ageMonths: bodyData.ageMonths,
+          totalAgeMonths: bodyData.totalAgeMonths,
+          screenings: bodyData.screenings,
+          hasAlert: bodyData.hasAlert,
+          hasSuicideRisk: bodyData.hasSuicideRisk,
+          updatedAt: nowIso,
+        };
+        if(!savedId) sbRecord.createdAt = nowIso;
+
+        const sbRes = await fetch("https://pgokdsqumwbitqtptuom.supabase.co/rest/v1/ChildScreeningRecord" + (savedId ? `?id=eq.${savedId}` : ""), {
+          method: savedId ? "PATCH" : "POST",
+          headers: {
+            "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnb2tkc3F1bXdiaXRxdHB0dW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTgxMzAsImV4cCI6MjEwNzk3NDEzMH0.Gz5Ucovs16irYvWcog4CjIUe48etY7GqahrtUyxySLA",
+            "Content-Type": "application/json",
+            "Prefer": "return=representation"
+          },
+          body: JSON.stringify(sbRecord),
+        });
+        if(sbRes.ok){
+          const sbData = await sbRes.json().catch(() => ([]));
+          if(Array.isArray(sbData) && sbData[0] && sbData[0].id){
+            savedId = sbData[0].id;
+          }
+          savedSuccess = true;
+        }
+      } catch(sbErr){
+        console.error("Supabase direct REST auto-save error:", sbErr);
+      }
+    }
+
+    if(savedId){
+      currentSavedRecordId = savedId;
+    }
+    updateAutoSaveUI("saved");
+  } catch(e){
+    console.error("Auto-save error:", e);
+    updateAutoSaveUI("error");
+  } finally {
+    isAutoSaving = false;
+    if(pendingAutoSave){
+      pendingAutoSave = false;
+      setTimeout(autoSaveScreening, 300);
     }
   }
-
-  // แสดงผลสำเร็จ
-  btns.forEach(b => {
-    b.innerHTML = "✓ บันทึกผลลงฐานข้อมูลสำเร็จแล้ว";
-    b.style.background = "#2e7d4f";
-    b.style.borderColor = "#2e7d4f";
-  });
-  setTimeout(() => {
-    btns.forEach(b => {
-      b.disabled = false;
-      b.innerHTML = origTexts.get(b) || "💾 บันทึกผลลงฐานข้อมูล";
-      b.style.background = "#2c7aa0";
-      b.style.borderColor = "#2c7aa0";
-    });
-  }, 3500);
 }
 
-if($("saveDbBtn")){
-  $("saveDbBtn").onclick = handleSaveScreeningToDb;
-}
-if($("toolSaveDbBtn")){
-  $("toolSaveDbBtn").onclick = handleSaveScreeningToDb;
+function scheduleAutoSave(delay = 400){
+  const ids = TOOLS.filter(t => results[t.id]);
+  if(!ids.length) return;
+  if(!isChildNameFilled() || !isChildDobFilled()) return;
+  clearTimeout(autoSaveDebounceTimer);
+  autoSaveDebounceTimer = setTimeout(autoSaveScreening, delay);
 }
 
 let pdpaConsentAccepted = false;
@@ -5052,7 +5294,7 @@ function lockForm(){
   if(lockBanner) lockBanner.style.display = "flex";
 
   // ปิดกั้นการพิมพ์ลงในช่องข้อมูลผู้ป่วยทั้งหมดจนกว่าจะยินยอม PDPA
-  ["pName", "pHn", "pDob", "pDate"].forEach(id => {
+  ["pName", "pHn", "pPhone", "pDob", "pDate"].forEach(id => {
     const el = $(id);
     if(el){
       el.disabled = true;
@@ -5070,7 +5312,7 @@ function unlockForm(){
   if(miniPill) miniPill.style.display = "none";
 
   // ปลดล็อกให้กรอกข้อมูลได้ตามปกติ
-  ["pName", "pHn", "pDob", "pDate"].forEach(id => {
+  ["pName", "pHn", "pPhone", "pDob", "pDate"].forEach(id => {
     const el = $(id);
     if(el){
       el.disabled = false;
@@ -5278,7 +5520,7 @@ function handleDeclineStandalonePdpa(){
   }
 }
 
-function prefillMsg(){ return {type:"prefill", cname:$("pName").value, hn:$("pHn").value, dob:$("pDob").value, date:$("pDate").value}; }
+function prefillMsg(){ return {type:"prefill", cname:$("pName").value, hn:$("pHn").value, phone:($("pPhone")?$("pPhone").value:""), dob:$("pDob").value, date:$("pDate").value}; }
 function openTool(id){
   if(!pdpaConsentAccepted){
     if(isEmbedded){
@@ -5290,6 +5532,10 @@ function openTool(id){
   }
   if(!isChildNameFilled()){
     promptChildNameRequired();
+    return;
+  }
+  if(!isChildDobFilled()){
+    promptChildDobRequired();
     return;
   }
   const t=TOOLS.find(x=>x.id===id);
@@ -5332,28 +5578,48 @@ function openTool(id){
     (function(){
       function updateCnameLock(){
         const cn = document.getElementById("cname");
+        const dob = document.getElementById("dob");
         const qBox = document.getElementById("questions");
         const subBtn = document.querySelector("button[type=submit]");
-        const isFilled = !!(cn && cn.value.trim().length > 0);
+        const isNameFilled = !!(cn && cn.value.trim().length > 0);
+        const isDobFilled = !!(dob && dob.value);
+        const isFilled = isNameFilled && isDobFilled;
         
         let notice = document.getElementById("toolCnameLockNotice");
         if(!notice && qBox){
           notice = document.createElement("div");
           notice.id = "toolCnameLockNotice";
           notice.className = "tool-cname-lock";
-          notice.innerHTML = "<span style='font-size:18px'>🔒</span><div><div style='font-weight:700;'>ยังไม่สามารถตอบคำถามได้</div><div style='font-size:12px;font-weight:400;margin-top:2px;'>กรุณาระบุชื่อ–นามสกุลของเด็กด้านบนให้ครบถ้วนก่อน จึงจะสามารถเลือกคำตอบได้ (คลิกที่นี่เพื่อไปกรอกชื่อ)</div></div>";
+          notice.innerHTML = "<span style='font-size:18px'>🔒</span><div><div style='font-weight:700;'>ยังไม่สามารถตอบคำถามได้</div><div class='lock-desc' style='font-size:12px;font-weight:400;margin-top:2px;'>กรุณาระบุชื่อ–นามสกุลและวันเกิดของเด็กด้านบนให้ครบถ้วนก่อน จึงจะสามารถเลือกคำตอบได้ (คลิกที่นี่เพื่อไปกรอกข้อมูล)</div></div>";
           notice.onclick = function(){
-            if(cn){
+            if(!isNameFilled && cn){
               cn.scrollIntoView({behavior:'smooth', block:'center'});
               cn.focus();
               cn.classList.add("cname-shake");
               setTimeout(function(){ cn.classList.remove("cname-shake"); }, 800);
+            } else if(!isDobFilled && dob){
+              dob.scrollIntoView({behavior:'smooth', block:'center'});
+              dob.focus();
+              dob.classList.add("cname-shake");
+              setTimeout(function(){ dob.classList.remove("cname-shake"); }, 800);
             }
           };
           qBox.parentNode.insertBefore(notice, qBox);
         }
         
-        if(notice) notice.style.display = isFilled ? "none" : "flex";
+        if(notice){
+          notice.style.display = isFilled ? "none" : "flex";
+          const desc = notice.querySelector('.lock-desc');
+          if(desc){
+            if(!isNameFilled && !isDobFilled){
+              desc.textContent = "กรุณาระบุชื่อ–นามสกุลและวันเกิดของเด็กด้านบนให้ครบถ้วนก่อน จึงจะสามารถเลือกคำตอบได้ (คลิกที่นี่เพื่อไปกรอกข้อมูล)";
+            } else if(!isNameFilled){
+              desc.textContent = "กรุณาระบุชื่อ–นามสกุลของเด็กด้านบนให้ครบถ้วนก่อน จึงจะสามารถเลือกคำตอบได้ (คลิกที่นี่เพื่อไปกรอกชื่อ)";
+            } else if(!isDobFilled){
+              desc.textContent = "กรุณาระบุวันเกิดของเด็กด้านบนให้ครบถ้วนก่อน เพื่อคำนวณอายุและเลือกคำตอบได้ (คลิกที่นี่เพื่อไประบุวันเกิด)";
+            }
+          }
+        }
         if(qBox){
           qBox.style.pointerEvents = isFilled ? "auto" : "none";
           qBox.style.opacity = isFilled ? "1" : "0.5";
@@ -5374,28 +5640,134 @@ function openTool(id){
           try { parent.postMessage({ type: "cname_sync", cname: cnameEl.value }, "*"); } catch(e){}
         });
       }
+      const dobEl = document.getElementById("dob");
+      if(dobEl){
+        dobEl.addEventListener("input", function(){
+          updateCnameLock();
+          try { parent.postMessage({ type: "dob_sync", dob: dobEl.value }, "*"); } catch(e){}
+        });
+        dobEl.addEventListener("change", function(){
+          updateCnameLock();
+          try { parent.postMessage({ type: "dob_sync", dob: dobEl.value }, "*"); } catch(e){}
+        });
+      }
 
       document.addEventListener("click", function(e){
         const qClosest = e.target.closest("#questions");
-        if(qClosest && (!cnameEl || !cnameEl.value.trim())){
-          e.preventDefault();
-          e.stopPropagation();
-          if(cnameEl){
-            cnameEl.scrollIntoView({behavior:'smooth', block:'center'});
-            cnameEl.focus();
-            cnameEl.classList.remove("cname-shake");
-            void cnameEl.offsetWidth;
-            cnameEl.classList.add("cname-shake");
-            setTimeout(function(){ cnameEl.classList.remove("cname-shake"); }, 800);
+        if(qClosest){
+          if(!cnameEl || !cnameEl.value.trim()){
+            e.preventDefault();
+            e.stopPropagation();
+            if(cnameEl){
+              cnameEl.scrollIntoView({behavior:'smooth', block:'center'});
+              cnameEl.focus();
+              cnameEl.classList.remove("cname-shake");
+              void cnameEl.offsetWidth;
+              cnameEl.classList.add("cname-shake");
+              setTimeout(function(){ cnameEl.classList.remove("cname-shake"); }, 800);
+            }
+          } else if(dobEl && !dobEl.value){
+            e.preventDefault();
+            e.stopPropagation();
+            dobEl.scrollIntoView({behavior:'smooth', block:'center'});
+            dobEl.focus();
+            dobEl.classList.remove("cname-shake");
+            void dobEl.offsetWidth;
+            dobEl.classList.add("cname-shake");
+            setTimeout(function(){ dobEl.classList.remove("cname-shake"); }, 800);
           }
         }
       }, true);
+
+      function injectToolContactCard(){
+        if(document.getElementById("toolContactCard")) return;
+        const resEl = document.getElementById("result");
+        if(!resEl) return;
+        const cCard = document.createElement("div");
+        cCard.id = "toolContactCard";
+        cCard.className = "card contact-card";
+        cCard.style.cssText = "margin-top:16px;width:100%;box-sizing:border-box;background:linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);border:1.5px solid #bfdbfe;border-radius:14px;padding:16px 20px;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.03);";
+        cCard.innerHTML = `
+          <style>
+            .tool-contact-grid {
+              display: grid;
+              grid-template-columns: repeat(4, minmax(0, 1fr));
+              gap: 8px;
+            }
+            @media (max-width: 680px) {
+              .tool-contact-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+              }
+            }
+            @media (max-width: 420px) {
+              .tool-contact-grid {
+                grid-template-columns: 1fr !important;
+              }
+            }
+          </style>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+              <div style="width:36px;height:36px;background:#0047cc;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📞</div>
+              <div style="min-width:0;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span style="font-weight:700;font-size:15px;color:#1e3a8a;">ติดต่อเรา • โรงพยาบาลรามคำแหง 2</span>
+                  <span style="font-size:11px;background:#dbeafe;color:#1e40af;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
+                    <span style="display:inline-block;width:6px;height:6px;background:#16a34a;border-radius:50%;"></span> บริการ 24 ชม.
+                  </span>
+                </div>
+                <div style="font-size:12px;color:#475569;margin-top:2px;">ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น • ยินดีให้คำปรึกษาและนัดหมายแพทย์</div>
+              </div>
+            </div>
+          </div>
+          <div class="tool-contact-grid" style="font-size:13px;">
+            <a href="tel:020323888" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
+              <span style="font-size:18px;flex-shrink:0;">☎️</span>
+              <div style="min-width:0;overflow:hidden;">
+                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">Call Center</div>
+                <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">02-032-3888</div>
+              </div>
+            </a>
+            <a href="tel:0957719739" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
+              <span style="font-size:18px;flex-shrink:0;">📱</span>
+              <div style="min-width:0;overflow:hidden;">
+                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">สายด่วน / ฉุกเฉิน</div>
+                <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">095-771-9739</div>
+              </div>
+            </a>
+            <a href="https://line.me/R/ti/p/@ram2" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
+              <span style="font-size:18px;font-weight:800;color:#06c755;flex-shrink:0;">💬</span>
+              <div style="min-width:0;overflow:hidden;">
+                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">LINE Official</div>
+                <div style="font-weight:700;color:#059669;font-size:13.5px;white-space:nowrap;">@ram2</div>
+              </div>
+            </a>
+            <a href="mailto:information@ram2-hosp.com" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 6px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;" title="information@ram2-hosp.com">
+              <span style="font-size:18px;flex-shrink:0;">✉️</span>
+              <div style="min-width:0;overflow:hidden;">
+                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">อีเมลติดต่อ</div>
+                <div style="font-weight:700;color:#0284c7;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px;">information@ram2-hosp.com</div>
+              </div>
+            </a>
+          </div>
+          <div style="margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;">
+            <span>📍</span>
+            <span><b>โรงพยาบาลรามคำแหง 2:</b> 222 ถนนรามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กรุงเทพฯ 10240</span>
+          </div>
+        `;
+        const rowBtn = resEl.querySelector(".row.noprint") || document.querySelector(".row.noprint");
+        if(rowBtn && rowBtn.parentNode){
+          rowBtn.parentNode.insertBefore(cCard, rowBtn);
+        } else {
+          resEl.appendChild(cCard);
+        }
+      }
 
       // Observe result display in iframe as additional safeguard
       const resEl = document.getElementById("result");
       if(resEl){
         new MutationObserver(function(){
           if(resEl.style.display === "block"){
+            injectToolContactCard();
             setTimeout(function(){
               const rows = [...document.querySelectorAll("#allAns tr")];
               const ansList = rows.map(function(tr){
@@ -5585,17 +5957,8 @@ async function loadPdpaSuiteConfig(){
   } catch(_) {}
 }
 
-let isUserAdmin = false;
-function checkAdminAccess(){
-  const params = new URLSearchParams(window.location.search);
-  if(params.get("role") === "ADMIN" || params.get("admin") === "1"){
-    isUserAdmin = true;
-  }
-  const editBtn = $("pdpaEditHeaderBtn");
-  if(editBtn){
-    editBtn.style.display = isUserAdmin ? "inline-flex" : "none";
-  }
-}
+// PDPA custom text is loaded via loadPdpaSuiteConfig()
+// Edit functionality is restricted to FormLocal authenticated Admin interface only
 
 function openPdpaSuiteEditor(e){
   if(e){
@@ -5801,17 +6164,18 @@ function resetPdpaSuiteEditorToDefault(){
 
 window.addEventListener("message",e=>{
   const d=e.data; if(!d) return;
-  if(d.type === "set_user_role"){
-    isUserAdmin = (d.role === "ADMIN");
-    const editBtn = $("pdpaEditHeaderBtn");
-    if(editBtn){
-      editBtn.style.display = isUserAdmin ? "inline-flex" : "none";
-    }
-    return;
-  }
   if(d.type === "cname_sync" && typeof d.cname === "string"){
     if($("pName") && $("pName").value !== d.cname){
       $("pName").value = d.cname;
+      updateNameLockUI();
+      renderSummary();
+    }
+    return;
+  }
+  if(d.type === "dob_sync" && typeof d.dob === "string"){
+    if($("pDob") && $("pDob").value !== d.dob){
+      $("pDob").value = d.dob;
+      calcAge();
       updateNameLockUI();
       renderSummary();
     }
@@ -5829,18 +6193,8 @@ window.addEventListener("message",e=>{
     return;
   }
   if(d.type === "child_screening_save_success"){
-    const btn = $("saveDbBtn");
-    if(btn){
-      const orig = btn.innerHTML;
-      btn.innerHTML = "✓ บันทึกสำเร็จแล้ว";
-      btn.style.background = "#2e7d4f";
-      btn.style.borderColor = "#2e7d4f";
-      setTimeout(()=>{
-        btn.innerHTML = orig;
-        btn.style.background = "#2c7aa0";
-        btn.style.borderColor = "#2c7aa0";
-      }, 3000);
-    }
+    if(d.recordId) currentSavedRecordId = d.recordId;
+    updateAutoSaveUI("saved");
     return;
   }
   if(d.type === "result_answers" && Array.isArray(d.answers)){
@@ -5851,6 +6205,7 @@ window.addEventListener("message",e=>{
       results[id].flaggedAnswers = d.flaggedAnswers || d.answers.filter(a => !a.isGroup && a.isFlag);
       renderSummary();
       render();
+      scheduleAutoSave(200);
     }
     return;
   }
@@ -5869,6 +6224,7 @@ window.addEventListener("message",e=>{
     flaggedAnswers: (Array.isArray(d.flaggedAnswers) && d.flaggedAnswers.length > 0) ? d.flaggedAnswers : prevFlagged
   }, d);
   render();
+  scheduleAutoSave(200);
 });
 
 
@@ -5876,10 +6232,16 @@ $("resetAll").onclick=()=>{
   Object.values(frames).forEach(f=>f.remove());
   for(const k in frames) delete frames[k];
   for(const k in results) delete results[k];
-  $("pName").value=""; $("pHn").value=""; $("pDob").value=""; $("pDate").value=todayStr;
+  $("pName").value=""; $("pHn").value=""; if($("pPhone")) $("pPhone").value=""; $("pDob").value=""; $("pDate").value=todayStr;
+  currentSavedRecordId = null;
+  updateAutoSaveUI("hide");
   calcAge();
   updateNameLockUI();
   window.scrollTo({top:0});
+
+  if(isEmbedded){
+    try { window.parent.postMessage({ type: "child_screening_reset" }, "*"); } catch(_) {}
+  }
 
   pdpaConsentAccepted = false;
   lockForm();
@@ -5896,7 +6258,6 @@ $("resetAll").onclick=()=>{
 
 calcAge();
 updateNameLockUI();
-checkAdminAccess();
 loadPdpaSuiteConfig();
 if(!pdpaConsentAccepted){
   lockForm();

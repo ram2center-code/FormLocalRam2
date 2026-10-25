@@ -213,7 +213,10 @@ export const DepartmentFormsPage: React.FC = () => {
 
   // คัดลอกลิงก์ฟอร์ม
   const handleCopyLink = (formId: string, formTitle: string) => {
-    const url = `${window.location.origin}/forms/${formId}/fill`;
+    const isSpecialSuite = formId === 'form_child_screening_suite' || formId.includes('screening_suite');
+    const url = isSpecialSuite
+      ? 'https://formlocalram2.vercel.app/tools/child-screening-suite.html'
+      : `${window.location.origin}/forms/${formId}/fill`;
     navigator.clipboard.writeText(url);
     message.success(`คัดลอกลิงก์สำหรับ "${formTitle}" แล้ว`);
   };

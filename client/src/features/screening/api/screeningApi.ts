@@ -18,6 +18,7 @@ export interface ChildScreeningRecordItem {
   id: string;
   hn?: string | null;
   patientName?: string | null;
+  phoneNumber?: string | null;
   birthDate?: string | null;
   assessmentDate: string;
   ageYears?: number | null;
@@ -34,8 +35,10 @@ export interface ChildScreeningRecordItem {
 }
 
 export interface CreateScreeningRecordPayload {
+  recordId?: string | null;
   hn?: string | null;
   patientName?: string | null;
+  phoneNumber?: string | null;
   birthDate?: string | null;
   assessmentDate?: string | null;
   ageYears?: number | null;
@@ -60,7 +63,7 @@ export const createScreeningRecordApi = async (
   payload: CreateScreeningRecordPayload
 ): Promise<ChildScreeningRecordItem> => {
   const user = getCurrentUser();
-  const id = generateId('scr');
+  const id = payload.recordId || generateId('scr');
   const now = new Date().toISOString();
 
   let hasAlert = Boolean(payload.hasAlert);
@@ -79,8 +82,10 @@ export const createScreeningRecordApi = async (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        recordId: payload.recordId || null,
         hn: payload.hn?.trim() || null,
         patientName: payload.patientName?.trim() || null,
+        phoneNumber: payload.phoneNumber?.trim() || null,
         birthDate: payload.birthDate || null,
         assessmentDate: payload.assessmentDate || null,
         ageYears: payload.ageYears ?? null,
@@ -107,10 +112,10 @@ export const createScreeningRecordApi = async (
   const parsedBirth = safeIsoDate(payload.birthDate);
   const parsedAssessment = safeIsoDate(payload.assessmentDate) || now;
 
-  const record = {
-    id,
+  const record: any = {
     hn: payload.hn?.trim() || null,
     patientName: payload.patientName?.trim() || null,
+    phoneNumber: payload.phoneNumber?.trim() || null,
     birthDate: parsedBirth,
     assessmentDate: parsedAssessment,
     ageYears: payload.ageYears ?? null,
@@ -122,9 +127,24 @@ export const createScreeningRecordApi = async (
     examinerId: user?.id || null,
     examinerName: user?.fullName || user?.username || null,
     notes: payload.notes?.trim() || null,
-    createdAt: now,
     updatedAt: now,
   };
+
+  if (payload.recordId) {
+    const { data, error } = await supabase
+      .from('ChildScreeningRecord')
+      .update(record)
+      .eq('id', payload.recordId)
+      .select()
+      .single();
+
+    if (!error && data) {
+      return data as ChildScreeningRecordItem;
+    }
+  }
+
+  record.id = id;
+  record.createdAt = now;
 
   const { data, error } = await supabase
     .from('ChildScreeningRecord')
@@ -156,7 +176,7 @@ export const getScreeningRecordsApi = async (params?: {
 
   if (params?.search) {
     const q = params.search.trim();
-    query = query.or(`hn.ilike.%${q}%,patientName.ilike.%${q}%`);
+    query = query.or(`hn.ilike.%${q}%,patientName.ilike.%${q}%,phoneNumber.ilike.%${q}%`);
   }
 
   if (params?.hasAlert !== undefined) {

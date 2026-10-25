@@ -451,6 +451,7 @@ export const ChildScreeningResultViewModal: React.FC<ChildScreeningResultViewMod
 
     const patientName = record.patientName || 'ไม่ระบุชื่อ';
     const hnStr = record.hn ? `HN: ${record.hn}` : 'ไม่มี HN';
+    const phoneStr = record.phoneNumber ? `โทร: <b>${record.phoneNumber}</b>` : '';
     const ageStr =
       record.ageYears !== null && record.ageYears !== undefined
         ? `อายุ: ${record.ageYears} ปี ${record.ageMonths || 0} เดือน`
@@ -462,6 +463,7 @@ export const ChildScreeningResultViewModal: React.FC<ChildScreeningResultViewMod
     const infoBits = [
       `ชื่อ: <b>${patientName}</b>`,
       hnStr,
+      phoneStr,
       ageStr,
       dateStr,
     ].filter(Boolean);
@@ -888,6 +890,43 @@ export const ChildScreeningResultViewModal: React.FC<ChildScreeningResultViewMod
       <div style="color:#64748b;font-size:13px;">
         (................................................................) ว. ...............
       </div>
+    </div>
+  </div>
+
+  <!-- ข้อมูลติดต่อโรงพยาบาลรามคำแหง 2 -->
+  <div class="card" style="margin-top:16px;background:linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);border:1.5px solid #bfdbfe;border-radius:12px;padding:14px 16px;text-align:left;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        <span style="font-size:18px;flex-shrink:0;">📞</span>
+        <div style="min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-weight:700;font-size:14px;color:#1e3a8a;">ติดต่อเรา • โรงพยาบาลรามคำแหง 2</span>
+            <span style="font-size:10.5px;background:#dbeafe;color:#1e40af;font-weight:600;padding:2px 7px;border-radius:12px;white-space:nowrap;">บริการ 24 ชม.</span>
+          </div>
+          <div style="font-size:11.5px;color:#475569;margin-top:2px;">ศูนย์กุมารเวชกรรมและสุขภาพจิตเด็กและวัยรุ่น • ยินดีให้คำปรึกษาและนัดหมายแพทย์</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:6px;font-size:12px;">
+      <div style="background:#fff;padding:8px 8px;border-radius:8px;border:1px solid #cbd5e1;min-width:0;overflow:hidden;">
+        <div style="font-size:10.5px;color:#64748b;white-space:nowrap;">Call Center กลาง</div>
+        <div style="font-weight:700;color:#0047cc;font-size:13px;white-space:nowrap;">02-032-3888</div>
+      </div>
+      <div style="background:#fff;padding:8px 8px;border-radius:8px;border:1px solid #cbd5e1;min-width:0;overflow:hidden;">
+        <div style="font-size:10.5px;color:#64748b;white-space:nowrap;">สายด่วน / ฉุกเฉิน</div>
+        <div style="font-weight:700;color:#0047cc;font-size:13px;white-space:nowrap;">095-771-9739</div>
+      </div>
+      <div style="background:#fff;padding:8px 8px;border-radius:8px;border:1px solid #cbd5e1;min-width:0;overflow:hidden;">
+        <div style="font-size:10.5px;color:#64748b;white-space:nowrap;">LINE Official</div>
+        <div style="font-weight:700;color:#059669;font-size:13px;white-space:nowrap;">@ram2</div>
+      </div>
+      <div style="background:#fff;padding:8px 6px;border-radius:8px;border:1px solid #cbd5e1;min-width:0;overflow:hidden;" title="information@ram2-hosp.com">
+        <div style="font-size:10.5px;color:#64748b;white-space:nowrap;">อีเมล</div>
+        <div style="font-weight:700;color:#0284c7;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px;">information@ram2-hosp.com</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #cbd5e1;font-size:11.5px;color:#64748b;">
+      📍 222 ถนนรามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กรุงเทพฯ 10240
     </div>
   </div>
 
