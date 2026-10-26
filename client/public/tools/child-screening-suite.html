@@ -5687,73 +5687,60 @@ function openTool(id){
         cCard.id = "toolContactCard";
         cCard.className = "card contact-card";
         cCard.style.cssText = "margin-top:16px;width:100%;box-sizing:border-box;background:linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);border:1.5px solid #bfdbfe;border-radius:14px;padding:16px 20px;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.03);";
-        cCard.innerHTML = `
-          <style>
-            .tool-contact-grid {
-              display: grid;
-              grid-template-columns: repeat(4, minmax(0, 1fr));
-              gap: 8px;
-            }
-            @media (max-width: 680px) {
-              .tool-contact-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-              }
-            }
-            @media (max-width: 420px) {
-              .tool-contact-grid {
-                grid-template-columns: 1fr !important;
-              }
-            }
-          </style>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-              <div style="width:36px;height:36px;background:#0047cc;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📞</div>
-              <div style="min-width:0;">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                  <span style="font-weight:700;font-size:15px;color:#1e3a8a;">ติดต่อเรา • โรงพยาบาลรามคำแหง 2</span>
-                  <span style="font-size:11px;background:#dbeafe;color:#1e40af;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
-                    <span style="display:inline-block;width:6px;height:6px;background:#16a34a;border-radius:50%;"></span> บริการ 24 ชม.
-                  </span>
-                </div>
-                <div style="font-size:12px;color:#475569;margin-top:2px;">ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น • ยินดีให้คำปรึกษาและนัดหมายแพทย์</div>
-              </div>
-            </div>
-          </div>
-          <div class="tool-contact-grid" style="font-size:13px;">
-            <a href="tel:020323888" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
-              <span style="font-size:18px;flex-shrink:0;">☎️</span>
-              <div style="min-width:0;overflow:hidden;">
-                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">Call Center</div>
-                <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">02-032-3888</div>
-              </div>
-            </a>
-            <a href="tel:0957719739" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
-              <span style="font-size:18px;flex-shrink:0;">📱</span>
-              <div style="min-width:0;overflow:hidden;">
-                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">สายด่วน / ฉุกเฉิน</div>
-                <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">095-771-9739</div>
-              </div>
-            </a>
-            <a href="https://line.me/R/ti/p/@ram2" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">
-              <span style="font-size:18px;font-weight:800;color:#06c755;flex-shrink:0;">💬</span>
-              <div style="min-width:0;overflow:hidden;">
-                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">LINE Official</div>
-                <div style="font-weight:700;color:#059669;font-size:13.5px;white-space:nowrap;">@ram2</div>
-              </div>
-            </a>
-            <a href="mailto:information@ram2-hosp.com" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 6px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;" title="information@ram2-hosp.com">
-              <span style="font-size:18px;flex-shrink:0;">✉️</span>
-              <div style="min-width:0;overflow:hidden;">
-                <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">อีเมลติดต่อ</div>
-                <div style="font-weight:700;color:#0284c7;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px;">information@ram2-hosp.com</div>
-              </div>
-            </a>
-          </div>
-          <div style="margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;">
-            <span>📍</span>
-            <span><b>โรงพยาบาลรามคำแหง 2:</b> 222 ถนนรามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กรุงเทพฯ 10240</span>
-          </div>
-        `;
+        cCard.innerHTML = 
+          "<style>" +
+          "  .tool-contact-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }" +
+          "  @media (max-width: 680px) { .tool-contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }" +
+          "  @media (max-width: 420px) { .tool-contact-grid { grid-template-columns: 1fr !important; } }" +
+          "</style>" +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;">' +
+          '  <div style="display:flex;align-items:center;gap:10px;min-width:0;">' +
+          '    <div style="width:36px;height:36px;background:#0047cc;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📞</div>' +
+          '    <div style="min-width:0;">' +
+          '      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+          '        <span style="font-weight:700;font-size:15px;color:#1e3a8a;">ติดต่อเรา • โรงพยาบาลรามคำแหง 2</span>' +
+          '        <span style="font-size:11px;background:#dbeafe;color:#1e40af;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">' +
+          '          <span style="display:inline-block;width:6px;height:6px;background:#16a34a;border-radius:50%;"></span> บริการ 24 ชม.' +
+          '        </span>' +
+          '      </div>' +
+          '      <div style="font-size:12px;color:#475569;margin-top:2px;">ศูนย์กุมารเวชกรรมและสุขภาพเด็กและวัยรุ่น • ยินดีให้คำปรึกษาและนัดหมายแพทย์</div>' +
+          '    </div>' +
+          '  </div>' +
+          '</div>' +
+          '<div class="tool-contact-grid" style="font-size:13px;">' +
+          '  <a href="tel:020323888" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">' +
+          '    <span style="font-size:18px;flex-shrink:0;">☎️</span>' +
+          '    <div style="min-width:0;overflow:hidden;">' +
+          '      <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">Call Center</div>' +
+          '      <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">02-032-3888</div>' +
+          '    </div>' +
+          '  </a>' +
+          '  <a href="tel:0957719739" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">' +
+          '    <span style="font-size:18px;flex-shrink:0;">📱</span>' +
+          '    <div style="min-width:0;overflow:hidden;">' +
+          '      <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">สายด่วน / ฉุกเฉิน</div>' +
+          '      <div style="font-weight:700;color:#0047cc;font-size:13.5px;white-space:nowrap;">095-771-9739</div>' +
+          '    </div>' +
+          '  </a>' +
+          '  <a href="https://line.me/R/ti/p/@ram2" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 8px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;">' +
+          '    <span style="font-size:18px;font-weight:800;color:#06c755;flex-shrink:0;">💬</span>' +
+          '    <div style="min-width:0;overflow:hidden;">' +
+          '      <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">LINE Official</div>' +
+          '      <div style="font-weight:700;color:#059669;font-size:13.5px;white-space:nowrap;">@ram2</div>' +
+          '    </div>' +
+          '  </a>' +
+          '  <a href="mailto:information@ram2-hosp.com" target="_top" style="display:flex;align-items:center;gap:8px;background:#fff;padding:10px 6px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,0.03);min-width:0;" title="information@ram2-hosp.com">' +
+          '    <span style="font-size:18px;flex-shrink:0;">✉️</span>' +
+          '    <div style="min-width:0;overflow:hidden;">' +
+          '      <div style="font-size:11px;color:#64748b;font-weight:500;white-space:nowrap;">อีเมลติดต่อ</div>' +
+          '      <div style="font-weight:700;color:#0284c7;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.3px;">information@ram2-hosp.com</div>' +
+          '    </div>' +
+          '  </a>' +
+          '</div>' +
+          '<div style="margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12px;color:#64748b;display:flex;align-items:center;gap:6px;">' +
+          '  <span>📍</span>' +
+          '  <span><b>โรงพยาบาลรามคำแหง 2:</b> 222 ถนนรามคำแหง แขวงราษฎร์พัฒนา เขตสะพานสูง กรุงเทพฯ 10240</span>' +
+          '</div>';
         const rowBtn = resEl.querySelector(".row.noprint") || document.querySelector(".row.noprint");
         if(rowBtn && rowBtn.parentNode){
           rowBtn.parentNode.insertBefore(cCard, rowBtn);
@@ -6256,14 +6243,35 @@ $("resetAll").onclick=()=>{
   }
 };
 
-calcAge();
-updateNameLockUI();
-loadPdpaSuiteConfig();
-if(!pdpaConsentAccepted){
-  lockForm();
+try {
+  calcAge();
+  updateNameLockUI();
+} catch(e) {
+  console.warn("calcAge/updateNameLockUI error:", e);
 }
-if(!isEmbedded){
-  showStandalonePdpaModal();
+
+try {
+  loadPdpaSuiteConfig();
+} catch(e) {
+  console.warn("loadPdpaSuiteConfig error:", e);
+}
+
+function initPdpaState(){
+  try {
+    if(!pdpaConsentAccepted){
+      lockForm();
+      if(!isEmbedded){
+        showStandalonePdpaModal();
+      }
+    }
+  } catch(e) {
+    console.error("PDPA init error:", e);
+  }
+}
+
+initPdpaState();
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", initPdpaState);
 }
 </script>
 </body>
